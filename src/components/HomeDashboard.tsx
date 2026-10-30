@@ -420,6 +420,42 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       badge: { en: 'Official Live Stream', hi: 'सीधा दर्शन', mr: '🔴 थेट दर्शन' },
       tab: 'live-darshan',
     },
+    {
+      id: 'rashi',
+      title: { en: 'Janma Rashi, Ishta Devata & Beej Mantra', hi: 'जन्मराशि, इष्टदेवता एवं सिद्ध बीजमंत्र', mr: 'जन्मरास, इष्टदेवता व सिद्ध बीजमंत्र' },
+      description: {
+        en: 'Discover your ruling planet, presiding deity, lucky color, and personal Vedic Beej Mantra according to your zodiac sign.',
+        hi: 'अपनी राशि के अनुसार स्वामी ग्रह, इष्टदेव, शुभ रंग और सिद्ध बीजमंत्र जानें एवं १०८ जप साधना करें।',
+        mr: 'आपल्या १२ राशींनुसार आराध्य दैवत, राशी स्वामी, शुभ रंग व सिद्ध बीजमंत्र शोधा आणि १-क्लिकमध्ये १०८ जपमाळ सुरू करा.',
+      },
+      icon: '♈',
+      badge: { en: 'Vedic Rashi Guide', hi: 'राशि मन्त्र', mr: '♈ राशी व इष्टदेवता' },
+      tab: 'rashi',
+    },
+    {
+      id: 'bhajan',
+      title: { en: 'Sant Bhajan, Bhupali & Abhang Hub', hi: 'संत भजन, प्रभात भूपाळी एवं अभंग', mr: 'संत ज्ञानेश्वर-तुकाराम भजन व भूपाळी प्लेअर' },
+      description: {
+        en: 'Listen to dawn Bhupali (Ghanashyama Sundara), immortal Vitthal Abhangas, and Datta chants with Tanpura drone accompaniment.',
+        hi: 'प्रभात की पावन भूपाळी, संत तुकाराम जी के अमर अभंग और तानपुरा नाद के साथ शांत ध्यान का आनंद लें।',
+        mr: 'पहाटेची अमृत भूपाळी घनश्याम सुंदरा, रूप पाहता लोचनी, कानडा राजा पंढरीचा व तानपुरा नादासह संतवाणीचे शांत श्रवण.',
+      },
+      icon: '🎵',
+      badge: { en: 'Bhajan & Bhupali', hi: 'संत वाणी', mr: '🎵 भजन व भूपाळी' },
+      tab: 'bhajan',
+    },
+    {
+      id: 'reminders',
+      title: { en: 'Daily Suprabhatam & Aarti Notification Alarm', hi: 'दैनिक सुप्रभातम एवं आरती स्मरण अलार्म', mr: 'दैनिक सुप्रभातम व महाआरती स्मरण' },
+      description: {
+        en: 'Receive automated notifications on your phone for Brahma Muhurta (5:30 AM), auspicious Choghadiya (8:00 AM), and evening Aarti (7:00 PM).',
+        hi: 'ब्रह्म मुहूर्त, दैनिक अमृत चौघड़िया एवं सायंकाल महाआरती के समय अपने फोन पर स्वचालित पावन स्मरण प्राप्त करें।',
+        mr: 'पहाटे ५:३० ब्रह्म मुहूर्त, सकाळी ८:०० अमृत चौघडिया आणि संध्याकाळी ७:०० महाआरतीची आपल्या मोबाईलवर आपोआप सूचना.',
+      },
+      icon: '🔔',
+      badge: { en: 'Daily Alarm', hi: 'दैनिक स्मरण', mr: '🔔 दैनिक स्मरण' },
+      tab: 'reminders',
+    },
   ];
 
   return (

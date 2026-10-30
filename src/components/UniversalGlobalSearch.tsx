@@ -14,6 +14,8 @@ import { digitalLibraryDatabase } from '../data/digitalLibraryData';
 import { childrenStoriesDatabase } from '../data/childrenStoriesData';
 import { deitySymbolismDatabase } from '../data/deitySymbolismData';
 import { liveDarshanDatabase } from '../data/liveDarshanData';
+import { rashiDatabase } from '../data/rashiGuideData';
+import { bhajanDatabase } from '../data/bhajanHubData';
 import {
   Search,
   X,
@@ -30,7 +32,7 @@ interface UniversalGlobalSearchProps {
 
 interface SearchResultItem {
   id: string;
-  category: 'deity' | 'mantra' | 'temple' | 'festival' | 'checklist' | 'recipe' | 'book' | 'story' | 'symbol' | 'live';
+  category: 'deity' | 'mantra' | 'temple' | 'festival' | 'checklist' | 'recipe' | 'book' | 'story' | 'symbol' | 'live' | 'rashi' | 'bhajan';
   title: string;
   subtitle: string;
   badge: string;
@@ -296,7 +298,43 @@ export function UniversalGlobalSearch({
       }
     });
 
-    return list.slice(0, 30); // Top 30 results
+    // 12. Search Janma Rashis
+    rashiDatabase.forEach((r) => {
+      const nameEn = r.name.en.toLowerCase();
+      const nameMr = r.name.mr.toLowerCase();
+      const initials = r.nameInitials.toLowerCase();
+      if (nameEn.includes(q) || nameMr.includes(q) || initials.includes(q)) {
+        list.push({
+          id: `rashi_${r.id}`,
+          category: 'rashi',
+          title: r.name[currentLang] || r.name.mr,
+          subtitle: `इष्टदेव: ${r.ishtaDevata[currentLang] || r.ishtaDevata.mr} • ${r.rulingPlanet[currentLang] || r.rulingPlanet.mr}`,
+          badge: currentLang === 'en' ? 'Vedic Rashi' : 'जन्मरास',
+          icon: r.symbolIcon,
+          tab: 'rashi',
+        });
+      }
+    });
+
+    // 13. Search Bhajans & Bhupali
+    bhajanDatabase.forEach((b) => {
+      const titleEn = b.title.en.toLowerCase();
+      const titleMr = b.title.mr.toLowerCase();
+      const author = b.saintAuthor.toLowerCase();
+      if (titleEn.includes(q) || titleMr.includes(q) || author.includes(q)) {
+        list.push({
+          id: `bhajan_${b.id}`,
+          category: 'bhajan',
+          title: b.title[currentLang] || b.title.mr,
+          subtitle: `${b.saintAuthor} • ${b.categoryLabel[currentLang] || b.categoryLabel.mr}`,
+          badge: currentLang === 'en' ? 'Sant Bhajan' : 'भजन/अभंग',
+          icon: b.iconEmoji,
+          tab: 'bhajan',
+        });
+      }
+    });
+
+    return list.slice(0, 35); // Top 35 results
   }, [query, allMantras, currentLang]);
 
   if (!isOpen) return null;

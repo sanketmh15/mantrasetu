@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage & Core Sanctuary -->
+  <url>
+    <loc>https://sanketmh15.github.io/mantrasetu/</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Live Choghadiya & Rahu Kaal Clock -->
+  <url>
+    <loc>https://sanketmh15.github.io/mantrasetu/#choghadiya</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Digital Devotional Library: Dnyaneshwari, Dasbodh, Gita -->
+  <url>
+    <loc>https://sanketmh15.github.io/mantrasetu/#digital-library</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 24x7 Live Temple Darshan: Siddhivinayak, Shirdi, Pandharpur -->
+  <url>
+    <loc>https://sanketmh15.github.io/mantrasetu/#live-darshan</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 50 Deities Portal & 108 Japa Malas -->
+  <url>
+    <loc>https://sanketmh15.github.io/mantrasetu/#deities</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- 3D Temple Explorer (Trimbakeshwar, Pandharpur, Kailasa) -->
+  <url>
+    <loc>https://sanketmh15.github.io/mantrasetu/#temple-3d</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Hanuman Chalisa Line-by-Line Meaning -->
+  <url>
+    <loc>https://sanketmh15.github.io/mantrasetu/#chalisa</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Ashtavinayak Circuit & Pandharpur Wari -->
+  <url>
+    <loc>https://sanketmh15.github.io/mantrasetu/#ashtavinayak</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Satvik Prasad Recipes & Fasting Guide -->
+  <url>
+    <loc>https://sanketmh15.github.io/mantrasetu/#satvik</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+</urlset>

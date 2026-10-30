@@ -132,6 +132,9 @@ const tabKeywords: Record<string, { id: string; nameEn: string; nameMr: string; 
   stories: { id: 'stories', nameEn: 'Stories for Children', nameMr: 'बाल संस्कार बोधकथा', nameHi: 'बाल संस्कार कथाएँ', keywords: ['story', 'stories', 'kids', 'children', 'गोष्ट', 'गोष्टी', 'बाल संस्कार', 'मुलांसाठी', 'बोधकथा'] },
   symbolism: { id: 'symbolism', nameEn: 'Deity Symbolism Explorer', nameMr: 'देवता प्रतीक रहस्य', nameHi: 'प्रतीक मीमांसा', keywords: ['symbol', 'weapon', 'mudra', 'trishula', 'chakra', 'प्रतीक', 'त्रिशूळ', 'सुदर्शन', 'नंदी', 'आयुध', 'मुद्रा'] },
   'live-darshan': { id: 'live-darshan', nameEn: '24x7 Live Temple Darshan', nameMr: 'थेट मंदिर दर्शन', nameHi: 'सीधा मन्दिर दर्शन', keywords: ['live', 'live darshan', 'stream', 'थेट दर्शन', 'लाईव्ह', 'लाईव्ह दर्शन', 'सिद्धिविनायक लाईव्ह', 'शिर्डी लाईव्ह'] },
+  rashi: { id: 'rashi', nameEn: 'Rashi & Beej Mantra', nameMr: 'राशी व इष्टदेवता', nameHi: 'राशि एवं इष्टदेवता', keywords: ['rashi', 'zodiac', 'beej mantra', 'रास', 'राशी', 'जन्मरास', 'मेष', 'वृषभ', 'इष्टदेवता', 'बीजमंत्र'] },
+  bhajan: { id: 'bhajan', nameEn: 'Bhajan & Bhupali Hub', nameMr: 'भजन व भूपाळी', nameHi: 'भजन एवं भूपाळी', keywords: ['bhajan', 'bhupali', 'abhang', 'घनश्याम सुंदरा', 'भूपाळी', 'अभंग', 'भजन', 'कानडा राजा'] },
+  reminders: { id: 'reminders', nameEn: 'Daily Reminders & Alarm', nameMr: 'दैनिक स्मरण सूचना', nameHi: 'दैनिक स्मरण', keywords: ['reminder', 'notification', 'alarm', 'रिमाइंडर', 'सूचना', 'अलार्म', 'स्मरण'] },
   admin: { id: 'admin', nameEn: 'Admin Command Center', nameMr: 'अ‍ॅडमिन कमांड केंद्र', nameHi: 'प्रशासक कमांड सेंटर', keywords: ['admin', 'admin panel', 'अ‍ॅडमिन', 'प्रशासक', 'मालक लॉगिन', 'admin login', 'admin portal'] }
 };
 

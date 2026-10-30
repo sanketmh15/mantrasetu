@@ -45,6 +45,9 @@ import { DigitalDevotionalLibrary } from './components/DigitalDevotionalLibrary'
 import { StoriesForChildren } from './components/StoriesForChildren';
 import { DeitySymbolismExplorer } from './components/DeitySymbolismExplorer';
 import { LiveTempleDarshan } from './components/LiveTempleDarshan';
+import { RashiGuideCalculator } from './components/RashiGuideCalculator';
+import { AudioBhajanHub } from './components/AudioBhajanHub';
+import { DailyNotificationReminder } from './components/DailyNotificationReminder';
 import { UniversalGlobalSearch } from './components/UniversalGlobalSearch';
 import { Footer } from './components/Footer';
 import { fiftyGodsList } from './data/fiftyGods';
@@ -706,6 +709,25 @@ export function App() {
         {/* 32. LIVE TEMPLE DARSHAN TAB */}
         {activeTab === 'live-darshan' && (
           <LiveTempleDarshan currentLang={currentLang} />
+        )}
+
+        {/* 33. RASHI & ISHTA DEVATA CALCULATOR TAB */}
+        {activeTab === 'rashi' && (
+          <RashiGuideCalculator
+            currentLang={currentLang}
+            onOpenJapaWithMantra={handleOpenJapaWithMantra}
+            onNavigateTab={setActiveTab}
+          />
+        )}
+
+        {/* 34. AUDIO BHAJAN & BHUPALI HUB TAB */}
+        {activeTab === 'bhajan' && (
+          <AudioBhajanHub currentLang={currentLang} />
+        )}
+
+        {/* 35. DAILY NOTIFICATIONS & REMINDER TAB */}
+        {activeTab === 'reminders' && (
+          <DailyNotificationReminder currentLang={currentLang} />
         )}
       </main>
 

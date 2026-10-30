@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "in.mantrasetu.twa",
+      "sha256_cert_fingerprints": [
+        "14:6D:E9:01:F8:85:72:0B:2D:37:77:CE:19:91:1F:A2:B9:74:44:F1:A6:6D:32:88:79:8B:0E:5E:20:C6:E0:A4"
+      ]
+    }
+  }
+]
