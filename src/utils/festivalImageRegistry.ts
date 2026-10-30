@@ -12,7 +12,7 @@ export interface FestivalImageInfo {
 
 export const FESTIVAL_IMAGE_REGISTRY: Record<string, FestivalImageInfo> = {
   'ganesh_chaturthi': {
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Ganapati1.jpg',
+    imageUrl: 'https://i.pinimg.com/736x/9d/2f/5e/9d2f5ed8c0c5908f43fe6e9371fc9ae2.jpg',
     festivalPlaceName: {
       en: 'Siddhivinayak (Mumbai) & Ashtavinayak (Pune/Raigad)',
       hi: 'सिद्धिविनायक (मुंबई) एवं अष्टविनायक तीर्थक्षेत्र',
@@ -104,6 +104,6 @@ export const FESTIVAL_IMAGE_REGISTRY: Record<string, FestivalImageInfo> = {
 };
 
 export function getFestivalImage(festivalId: string): string {
-  return FESTIVAL_IMAGE_REGISTRY[festivalId]?.imageUrl || 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Ganapati1.jpg';
+  return FESTIVAL_IMAGE_REGISTRY[festivalId]?.imageUrl || 'https://i.pinimg.com/736x/9d/2f/5e/9d2f5ed8c0c5908f43fe6e9371fc9ae2.jpg';
 }
 

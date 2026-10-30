@@ -32,7 +32,7 @@ const pujaDeities: PujaDeity[] = [
     id: 'ganesha',
     name: { en: 'Shri Ganesha', hi: 'श्री गणेश', mr: 'श्री गणेश (विघ्नहर्ता)' },
     symbol: '🐘',
-    image: DEITY_IMAGE_REGISTRY['ganesha']?.primary || 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Ganapati1.jpg',
+    image: DEITY_IMAGE_REGISTRY['ganesha']?.primary || './images/ganesha.jpg',
     mantra: 'ॐ गं गणपतये नमः • सुखकर्ता दुखहर्ता वार्ता विघ्नाची',
     flowerType: { en: 'Red Hibiscus (जास्वंद) & Durva', hi: 'लाल जासवंद एवं दूर्वा', mr: 'लाल जास्वंद व २१ दुर्वांची जुडी' },
     flowerEmoji: '🌺',

@@ -15,8 +15,8 @@ export interface DeityImageMeta {
 export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
   // 1. Lord Ganesha (विघ्नहर्ता गणेश)
   'ganesha': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Ganapati1.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Shree_Siddhivinayak_Temple_Mumbai.jpg/960px-Shree_Siddhivinayak_Temple_Mumbai.jpg',
+    primary: 'https://i.pinimg.com/736x/9d/2f/5e/9d2f5ed8c0c5908f43fe6e9371fc9ae2.jpg',
+    fallback: './images/ganesha.jpg',
     icon: '🐘',
     beejMantra: 'ॐ गं गणपतये नमः',
     tilak: '🔴 रक्तचंदन'

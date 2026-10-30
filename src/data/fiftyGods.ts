@@ -31,7 +31,7 @@ const rawFiftyGodsList: GodEntry[] = [
     name: { en: 'Lord Ganesha', hi: 'भगवान श्री गणेश', mr: 'श्री विघ्नहर्ता गणेश', sa: 'श्रीगणेशः' },
     title: { en: 'Remover of Obstacles & God of Wisdom', hi: 'विघ्नहर्ता एवं बुद्धिदाता', mr: 'सुखकर्ता, दुःखहर्ता व अष्टविनायक' },
     category: 'trideva',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Ganapati1.jpg',
+    image: 'https://i.pinimg.com/736x/9d/2f/5e/9d2f5ed8c0c5908f43fe6e9371fc9ae2.jpg',
     placeImage: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Shree_Siddhivinayak_Temple_Mumbai.jpg/960px-Shree_Siddhivinayak_Temple_Mumbai.jpg',
     primaryShrine: { en: 'Morgaon Mayureshwar / Siddhivinayak Mumbai', hi: 'सिद्धिविनायक मुंबई / मोरगांव', mr: 'सिद्धिविनायक मुंबई / मोरगाव अष्टविनायक' },
     districtOrState: 'Maharashtra',

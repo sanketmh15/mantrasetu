@@ -42,11 +42,11 @@ export const GaneshaHero: React.FC<GaneshaHeroProps> = ({ currentLang, onNavigat
               <div className="absolute -inset-1.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-orange-500 rounded-3xl blur-md opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse" />
               <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border-2 border-amber-400/60 shadow-2xl bg-stone-900 flex flex-col items-center justify-center">
                 <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Ganapati1.jpg"
+                  src="https://i.pinimg.com/736x/9d/2f/5e/9d2f5ed8c0c5908f43fe6e9371fc9ae2.jpg"
                   alt="Lord Ganesha - Riddhi Siddhi Ganapati"
                   className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Shree_Siddhivinayak_Temple_Mumbai.jpg/960px-Shree_Siddhivinayak_Temple_Mumbai.jpg';
+                    (e.target as HTMLImageElement).src = './images/ganesha.jpg';
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent pointer-events-none" />
