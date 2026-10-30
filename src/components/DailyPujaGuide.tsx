@@ -102,7 +102,7 @@ export const DailyPujaGuide: React.FC<DailyPujaGuideProps> = ({
       </div>
 
       {/* 2. Interactive 7-Day Navigation Tabs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 mb-6">
         {weekdayPujaGuideData.map((day) => {
           const isSelected = day.dayIndex === selectedDayIndex;
           const isRealToday = day.dayIndex === todayInfo.dayIndex;
@@ -118,7 +118,7 @@ export const DailyPujaGuide: React.FC<DailyPujaGuideProps> = ({
               }`}
             >
               {isRealToday && (
-                <span className="absolute -top-2.5 right-2 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-red-600 to-saffron-600 text-white shadow-sm flex items-center gap-1">
+                <span className="absolute -top-2.5 right-2 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-red-600 to-saffron-600 text-white shadow-sm flex items-center gap-1 z-10">
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
                   {currentLang === 'en' ? 'Today' : 'आजचा वार'}
                 </span>
@@ -133,15 +133,81 @@ export const DailyPujaGuide: React.FC<DailyPujaGuideProps> = ({
                 />
               </div>
 
-              <h4 className="text-xs sm:text-sm font-bold text-stone-900 dark:text-white font-serifDev truncate">
-                {day.dayName[currentLang].split('(')[0]}
+              <h4 className="text-xs sm:text-sm font-bold text-stone-900 dark:text-white font-serifDev">
+                {day.dayName[currentLang].split('(')[0].trim()}
               </h4>
-              <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold truncate mt-0.5">
-                {day.deities.primary[currentLang].split('&')[0].split('व')[0]}
+              <p className="text-[11px] text-amber-700 dark:text-amber-300 font-bold leading-tight mt-1 line-clamp-2 min-h-[2.3rem]">
+                {day.shortDeities ? day.shortDeities[currentLang] : day.deities.primary[currentLang]}
               </p>
             </button>
           );
         })}
+      </div>
+
+      {/* 2.5 Complete 7-Day Puja Guide Overview Section */}
+      <div className="mb-8 rounded-3xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-saffron-500/10 dark:from-stone-900 dark:via-stone-900/60 dark:to-amber-950/30 border-2 border-amber-400/60 dark:border-amber-700/60 p-4 sm:p-6 shadow-lg">
+        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-amber-300/60 dark:border-amber-800/60">
+          <Sparkles className="w-5 h-5 text-saffron-600 dark:text-saffron-400 shrink-0" />
+          <h3 className="text-sm sm:text-base font-black font-serifDev text-stone-950 dark:text-white">
+            {currentLang === 'en'
+              ? 'Complete Guide: Which Deity is Worshipped on Which Day of the Week?'
+              : currentLang === 'hi'
+              ? 'यहाँ सप्ताह के प्रत्येक वार एवं उस दिन पूजे जाने वाले देवी-देवताओं की सम्पूर्ण जानकारी दी गई है:'
+              : 'येथे आठवड्यातील प्रत्येक वार आणि त्या दिवशी कोणत्या देवतेची पूजा केली जाते याची संपूर्ण माहिती दिली आहे:'}
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm">
+          {weekdayPujaGuideData.map((d) => {
+            const isCurrentDay = d.dayIndex === todayInfo.dayIndex;
+            const isSelectedDay = d.dayIndex === selectedDayIndex;
+            const englishDayName = d.id.includes('sunday')
+              ? 'Sunday'
+              : d.id.includes('monday')
+              ? 'Monday'
+              : d.id.includes('tuesday')
+              ? 'Tuesday'
+              : d.id.includes('wednesday')
+              ? 'Wednesday'
+              : d.id.includes('thursday')
+              ? 'Thursday'
+              : d.id.includes('friday')
+              ? 'Friday'
+              : 'Saturday';
+
+            return (
+              <div
+                key={d.id}
+                onClick={() => handleDayChange(d.dayIndex)}
+                className={`cursor-pointer rounded-2xl p-3.5 sm:p-4 border transition-all flex items-start gap-3 ${
+                  isSelectedDay
+                    ? 'bg-amber-100/90 dark:bg-amber-950/60 border-amber-500 ring-2 ring-amber-500/40 shadow-md'
+                    : 'bg-white/90 dark:bg-stone-900/80 border-stone-200/90 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-700 shadow-xs'
+                }`}
+              >
+                <span className="text-2xl shrink-0 mt-0.5 select-none">{d.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                    <span className="font-black font-serifDev text-stone-950 dark:text-white text-xs sm:text-sm">
+                      • {d.dayName[currentLang].split('(')[0].trim()} ({englishDayName}):
+                    </span>
+                    <span className="font-extrabold text-saffron-700 dark:text-saffron-400">
+                      {d.deities.primary[currentLang]}.
+                    </span>
+                    {isCurrentDay && (
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-red-600 text-white shrink-0 shadow-xs">
+                        {currentLang === 'en' ? 'Today' : 'आजचा वार'}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-stone-700 dark:text-stone-300 font-serifDev text-xs leading-relaxed">
+                    {d.canonicalSummary[currentLang]}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* 3. Main Featured Card for the Selected Day */}

@@ -58,13 +58,13 @@ const dailySantQuotes: SantQuote[] = [
 
 // Weekday deity and color theme reference
 const weekdayDeityMap: Record<number, { deity: string; marathiDay: string; colorName: string; bgGradient: string }> = {
-  0: { deity: 'श्री सूर्यनारायण', marathiDay: 'रविवार (सूर्य देव)', colorName: 'सुवर्ण तांबूस (रक्तचंदन)', bgGradient: 'from-amber-600 via-orange-600 to-rose-700' },
-  1: { deity: 'देवाधिदेव महादेव', marathiDay: 'सोमवार (भगवान शिव)', colorName: 'श्वेत कर्पूर व गंगाजल', bgGradient: 'from-slate-800 via-blue-900 to-indigo-950' },
-  2: { deity: 'संकटमोचन हनुमान व श्रीगणेश', marathiDay: 'मंगळवार (मारुती-गणेश)', colorName: 'शेंदूरी लाल व जास्वंद', bgGradient: 'from-orange-600 via-red-600 to-amber-700' },
-  3: { deity: 'विठू माऊली व श्रीकृष्ण', marathiDay: 'बुधवार (विठ्ठल-रखुमाई)', colorName: 'पाचू हिरवा व दुर्वा', bgGradient: 'from-emerald-700 via-teal-800 to-stone-900' },
-  4: { deity: 'भगवान श्रीविष्णू व दत्तगुरु', marathiDay: 'गुरुवार (श्रीगुरुदेव दत्त)', colorName: 'पीतांबर पिवळा', bgGradient: 'from-amber-500 via-yellow-600 to-orange-700' },
-  5: { deity: 'श्री महालक्ष्मी माता', marathiDay: 'शुक्रवार (देवी महालक्ष्मी)', colorName: 'गुलाबी कमळ व हळदी-कुंकू', bgGradient: 'from-rose-600 via-pink-700 to-amber-800' },
-  6: { deity: 'शनिदेव व मारुतीराय', marathiDay: 'शनिवार (शनि-हनुमान)', colorName: 'नील वर्ण व तेल-सिंदूर', bgGradient: 'from-stone-900 via-indigo-950 to-stone-900' },
+  0: { deity: 'सूर्यदेव आणि खंडोबा', marathiDay: 'रविवार (सूर्यदेव व खंडोबा)', colorName: 'सुवर्ण तांबूस (रक्तचंदन)', bgGradient: 'from-amber-600 via-orange-600 to-rose-700' },
+  1: { deity: 'भगवान शिव (महादेव)', marathiDay: 'सोमवार (महादेव)', colorName: 'श्वेत कर्पूर व गंगाजल', bgGradient: 'from-slate-800 via-blue-900 to-indigo-950' },
+  2: { deity: 'श्री गणपती, हनुमान आणि देवी दुर्गा', marathiDay: 'मंगळवार (गणपती, हनुमान व दुर्गा)', colorName: 'शेंदूरी लाल व जास्वंद', bgGradient: 'from-orange-600 via-red-600 to-amber-700' },
+  3: { deity: 'विठ्ठल आणि बुध ग्रह', marathiDay: 'बुधवार (विठुराया व बुध ग्रह)', colorName: 'पाचू हिरवा व दुर्वा', bgGradient: 'from-emerald-700 via-teal-800 to-stone-900' },
+  4: { deity: 'दत्तगुरू आणि भगवान विष्णू', marathiDay: 'गुरुवार (दत्तगुरू व विष्णू)', colorName: 'पीतांबर पिवळा', bgGradient: 'from-amber-500 via-yellow-600 to-orange-700' },
+  5: { deity: 'महालक्ष्मी आणि देवी अंबाबाई', marathiDay: 'शुक्रवार (महालक्ष्मी व अंबाबाई)', colorName: 'गुलाबी कमळ व हळदी-कुंकू', bgGradient: 'from-rose-600 via-pink-700 to-amber-800' },
+  6: { deity: 'शनिदेव आणि हनुमान', marathiDay: 'शनिवार (शनिदेव व हनुमान)', colorName: 'नील वर्ण व तेल-सिंदूर', bgGradient: 'from-stone-900 via-indigo-950 to-stone-900' },
 };
 
 export function DevotionalStatusCard({ currentLang }: DevotionalStatusCardProps) {
