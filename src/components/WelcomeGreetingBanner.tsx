@@ -93,6 +93,23 @@ export const WelcomeGreetingBanner: React.FC<WelcomeGreetingBannerProps> = ({
       };
     }
 
+    if (activeTab === 'wari') {
+      return {
+        icon: '🚩',
+        title: {
+          en: 'Pandharpur Ashadhi Wari Palkhi Marg',
+          hi: 'जय जय राम कृष्ण हरी! पंढरपुर आषाढी वारी',
+          mr: 'ज्ञानोबा माऊली तुकाराम! पंढरपूर आषाढी वारी',
+        },
+        subtitle: {
+          en: 'Experience the 255 km sacred walking pilgrimage with Sant Dnyaneshwar and Sant Tukaram Maharaj Palkhis to Pandharpur.',
+          hi: 'आळंदी एवं देहू से पंढरपुर तक २५५ किमी की पावन पदयात्रा—अश्व रिंगण, नीरा स्नान व अखंड नामघोष।',
+          mr: 'आळंदी व देहू ते पंढरपूर पावन पायी वारी—अश्वाचे गोल व उभे रिंगण, नीरा स्नान आणि विठूनामाचा अखंड गजर.',
+        },
+        speechText: 'ज्ञानोबा माऊली तुकाराम! पंढरपूर आषाढी वारी पालखी महामार्ग दालनात आपले सहर्ष स्वागत आहे.',
+      };
+    }
+
     if (activeTab === 'god-detail' && selectedGodName) {
       return {
         icon: '🪷',

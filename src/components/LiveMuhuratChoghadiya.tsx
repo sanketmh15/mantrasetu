@@ -15,7 +15,10 @@ import {
   Sparkles,
   Info,
   ShieldAlert,
+  Share2,
+  Volume2
 } from 'lucide-react';
+import { audioEngine } from '../utils/audioSynth';
 
 interface LiveMuhuratChoghadiyaProps {
   currentLang: Language;
@@ -25,6 +28,7 @@ export function LiveMuhuratChoghadiya({ currentLang }: LiveMuhuratChoghadiyaProp
   const [now, setNow] = useState(new Date());
   const [selectedDayIndex, setSelectedDayIndex] = useState<number>(() => new Date().getDay());
   const [timeMode, setTimeMode] = useState<'day' | 'night'>('day');
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   // Real-time clock tick every second
   useEffect(() => {
@@ -58,6 +62,47 @@ export function LiveMuhuratChoghadiya({ currentLang }: LiveMuhuratChoghadiyaProp
     const q = choghadiyaQualities[type];
     if (!q) return type;
     return q.badge[currentLang];
+  };
+
+  const handleSpeakChoghadiya = () => {
+    if (isSpeaking) {
+      audioEngine.stopSpeaking();
+      setIsSpeaking(false);
+      return;
+    }
+
+    setIsSpeaking(true);
+    audioEngine.playTempleBell();
+    const text = currentLang === 'en'
+      ? `Currently active Choghadiya is ${currentChoghadiya.slot.name.en}. It is considered ${getSlotQualityBadge(currentChoghadiya.slot.type)}. ${currentChoghadiya.slot.significance.en}`
+      : currentLang === 'hi'
+      ? `वर्तमान में ${currentChoghadiya.slot.name.hi} चौघड़िया सक्रिय है। यह ${getSlotQualityBadge(currentChoghadiya.slot.type)} माना जाता है। ${currentChoghadiya.slot.significance.hi}`
+      : `सध्या ${currentChoghadiya.slot.name.mr} चौघडिया चालू असून तो ${getSlotQualityBadge(currentChoghadiya.slot.type)} मानला जातो. ${currentChoghadiya.slot.significance.mr}`;
+
+    audioEngine.speakText(text, currentLang === 'en' ? 'en-IN' : 'mr-IN', 0.9, () => {
+      setIsSpeaking(false);
+    });
+  };
+
+  const handleShareWhatsApp = () => {
+    const dateStr = now.toLocaleDateString('mr-IN', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    const text = `⏰ *सनातन अमृतधारा — आजचे थेट चौघडिया व राहुकाळ*\n` +
+      `📅 *दिनांक:* ${dateStr}\n` +
+      `✨ *सध्या चालू चौघडिया:* ${currentChoghadiya.slot.name.mr} (${getSlotQualityBadge(currentChoghadiya.slot.type)})\n` +
+      `🪐 *स्वामी ग्रह:* ${currentChoghadiya.slot.rulingPlanet}\n` +
+      `⏳ *उर्वरित वेळ:* ${currentChoghadiya.timeLeftMinutes} मिनिटे\n` +
+      `📜 *फळ:* ${currentChoghadiya.slot.significance.mr}\n\n` +
+      `⚠️ *आजचा राहुकाळ:* ${dayData.rahuKaal.start} ते ${dayData.rahuKaal.end}\n` +
+      `✨ *अमृत मुहूर्त:* ${dayData.amritKaal.start} ते ${dayData.amritKaal.end}\n\n` +
+      `👉 थेट लाईव्ह चौघडिया घड्याळ येथे पहा:\nhttps://sanketmh15.github.io/mantrasetu/#choghadiya`;
+
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
   };
 
   const daysOfWeek = [
@@ -182,12 +227,35 @@ export function LiveMuhuratChoghadiya({ currentLang }: LiveMuhuratChoghadiyaProp
         {/* Significance & Recommendation */}
         <div className="p-4 rounded-2xl bg-amber-100/60 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-stone-800 dark:text-amber-100 text-sm leading-relaxed flex items-start gap-3">
           <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-          <div>
+          <div className="flex-1">
             <p className="font-semibold text-amber-900 dark:text-amber-200 mb-0.5">
               {currentLang === 'en' ? 'Vedic Guidance' : currentLang === 'hi' ? 'वैदिक परामर्श' : 'शास्त्रोक्त फळ व मार्गदर्शन'}:
             </p>
             <p>{currentChoghadiya.slot.significance[currentLang]}</p>
           </div>
+        </div>
+
+        {/* Live Voice & WhatsApp Share Actions */}
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <button
+            onClick={handleSpeakChoghadiya}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-600 to-saffron-600 hover:from-amber-500 hover:to-saffron-500 text-white font-bold text-xs shadow-md transition-all"
+          >
+            <Volume2 className={`w-4 h-4 ${isSpeaking ? 'animate-bounce text-yellow-200' : ''}`} />
+            <span>
+              {isSpeaking
+                ? (currentLang === 'en' ? 'Announcing Muhurat...' : 'मुहूर्त माहिती सांगत आहे...')
+                : (currentLang === 'en' ? 'Listen Muhurat Guidance' : '📢 चौघडिया मार्गदर्शन ऐका')}
+            </span>
+          </button>
+
+          <button
+            onClick={handleShareWhatsApp}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-bold text-xs shadow-md transition-all"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>{currentLang === 'en' ? 'Share Live Muhurat on WhatsApp' : '📲 व्हॉट्सॲपवर आजचे मुहूर्त पाठवा'}</span>
+          </button>
         </div>
       </div>
 

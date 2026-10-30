@@ -29,7 +29,8 @@ import {
   Smile,
   Shield,
   Music,
-  Bell
+  Bell,
+  Footprints
 } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -127,6 +128,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'pilgrimage', label: { en: 'Pilgrimage', hi: 'तीर्थ नियोजन', mr: 'तीर्थ नियोजन' }, icon: Navigation },
     { id: 'calendar', label: { en: 'Panchang', hi: 'पंचांग', mr: 'दिनदर्शिका' }, icon: Calendar },
     { id: 'maharashtra', label: { en: 'Maharashtra', hi: 'महाराष्ट्र दर्शन', mr: 'महाराष्ट्र दर्शन' }, icon: MapPin },
+    { id: 'wari', label: { en: 'Pandharpur Wari', hi: 'पंढरपुर वारी', mr: '🚩 पंढरपूर वारी' }, icon: Footprints },
     { id: 'worship', label: { en: 'Day-Wise Puja', hi: 'वार पूजा विधि', mr: 'वारानुसार पूजा' }, icon: Calendar },
     { id: 'puja', label: { en: 'E-Puja & Aarti', hi: 'ई-पूजा एवं आरती', mr: '🪔 ई-पूजा व आरती' }, icon: Flame },
     { id: 'choghadiya', label: { en: 'Live Choghadiya', hi: 'चौघड़िया व राहुकाल', mr: '⏰ चौघडिया व राहुकाळ' }, icon: Sun },

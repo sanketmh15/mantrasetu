@@ -538,7 +538,15 @@ class AudioEngine {
     'सर्व ५० पावन देव देवता दर्शन दालनात आपले स्वागत आहे. कोणत्याही देवतेवर क्लिक करून दर्शन व जपमाळ सुरू करा.':
       'Sarva panchaas paavan deva devataa darshan daalnaat aaple swaagat aahe. Kon-tyaahi devte-var click karoon darshan aani japa-maala shuru karaa.',
     'हर हर गंगे! सिंहस्थ कुंभमेळा नाशिक त्र्यंबकेश्वर व प्रयागराज पावन पर्वात आपले स्वागत आहे.':
-      'Har Har Gange! Simhastha Kumbh Mela Nashik Trimbakeshwar va Prayagraj paavan parvaat aaple swaagat aahe.'
+      'Har Har Gange! Simhastha Kumbh Mela Nashik Trimbakeshwar va Prayagraj paavan parvaat aaple swaagat aahe.',
+    'ज्ञानोबा माऊली तुकाराम! पंढरपूर आषाढी वारी पालखी महामार्ग दालनात आपले सहर्ष स्वागत आहे.':
+      'Dnyanoba Mauli Tukaram! Pandharpur Aashadhi Wari palkhi mahamarg daalnaat aaple saharsha swaagat aahe.',
+    'ज्ञानोबा माऊली तुकाराम, ज्ञानोबा माऊली तुकाराम!':
+      'Dnyanoba Mauli Tukaram, Dnyanoba Mauli Tukaram!',
+    'राम कृष्ण हरी, जय जय राम कृष्ण हरी! राम कृष्ण हरी, जय जय राम कृष्ण हरी!':
+      'Ram Krishna Hari, Jai Jai Ram Krishna Hari! Ram Krishna Hari, Jai Jai Ram Krishna Hari!',
+    'पुंडलिक वरदे हरी विठ्ठल, श्री ज्ञानदेव तुकाराम! पंढरीनाथ महाराज की जय!':
+      'Pundalik Varade Hari Vitthal, Shri Dnyanadev Tukaram! Pandharinath Maharaj Ki Jai!'
   };
 
   /**
