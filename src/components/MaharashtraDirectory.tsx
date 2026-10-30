@@ -195,7 +195,7 @@ export const MaharashtraDirectory: React.FC<MaharashtraDirectoryProps> = ({ curr
                 </div>
 
                 <button
-                  onClick={() => audioEngine.speakText(item.traditionalMantra, 'hi-IN', 0.9)}
+                  onClick={() => audioEngine.speakText(item.traditionalMantra, 'hi-IN', 0.78)}
                   className="p-2 rounded-xl bg-stone-900 text-stone-300 hover:text-white hover:bg-stone-800 border border-stone-700 transition-colors"
                   title="Listen pronunciation"
                 >

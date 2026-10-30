@@ -26,7 +26,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
       setIsPlayingChant(false);
     } else {
       setIsPlayingChant(true);
-      audioEngine.speakText('ज्ञानोबा माऊली तुकाराम, ज्ञानोबा माऊली तुकाराम', 'mr-IN', 0.95, () => {
+      audioEngine.speakText('ज्ञानोबा माऊली तुकाराम, ज्ञानोबा माऊली तुकाराम', 'mr-IN', 0.78, () => {
         setIsPlayingChant(false);
       });
     }

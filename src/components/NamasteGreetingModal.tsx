@@ -103,6 +103,7 @@ export const NamasteGreetingModal: React.FC<NamasteGreetingModalProps> = ({
               text: greetingTexts.speechText[currentLang],
               lang: currentLang === 'mr' ? 'mr-IN' : currentLang === 'hi' ? 'hi-IN' : 'en-IN',
               withTanpura: true,
+              rate: 0.78,
               onEnd: () => {
                 if (!isCancelled) {
                   setIsPlayingAudio(false);
@@ -134,6 +135,7 @@ export const NamasteGreetingModal: React.FC<NamasteGreetingModalProps> = ({
         text: greetingTexts.speechText[currentLang],
         lang: currentLang === 'mr' ? 'mr-IN' : currentLang === 'hi' ? 'hi-IN' : 'en-IN',
         withTanpura: true,
+        rate: 0.78,
         onEnd: () => setIsPlayingAudio(false),
       });
     } else {

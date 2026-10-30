@@ -344,7 +344,7 @@ Regarding your question, here is profound guidance blending ancient spiritual wi
       setIsSpeakingMessageId(null);
     } else {
       setIsSpeakingMessageId(msgId);
-      audioEngine.speakText(text, selectedVoiceLang.speechCode, 1.0, () => {
+      audioEngine.speakText(text, selectedVoiceLang.speechCode, 0.82, () => {
         setIsSpeakingMessageId(null);
       });
     }

@@ -203,6 +203,7 @@ export const VirtualPujaSanctum: React.FC<VirtualPujaSanctumProps> = ({
           text: 'सुखकर्ता दुखहर्ता वार्ता विघ्नाची । नुरवी पुरवी प्रेम कृपा जयाची ॥ जय देव जय देव जय मंगलमूर्ती',
           audioUrl,
           lang: 'mr-IN',
+          rate: 0.78,
           withTanpura: true,
           onEnd: () => {
             setIsAartiAudioPlaying(false);
@@ -213,6 +214,7 @@ export const VirtualPujaSanctum: React.FC<VirtualPujaSanctumProps> = ({
         audioEngine.playBrahmanChant({
           text: activeDeity.mantra,
           lang: currentLang === 'mr' ? 'mr-IN' : currentLang === 'hi' ? 'hi-IN' : 'en-IN',
+          rate: 0.78,
           withTanpura: true,
           onEnd: () => {
             setIsAartiAudioPlaying(false);

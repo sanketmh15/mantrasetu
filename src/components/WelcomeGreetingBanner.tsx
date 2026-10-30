@@ -136,6 +136,7 @@ export const WelcomeGreetingBanner: React.FC<WelcomeGreetingBannerProps> = ({
         text: greeting.speechText,
         lang: currentLang === 'mr' ? 'mr-IN' : currentLang === 'hi' ? 'hi-IN' : 'en-IN',
         withTanpura: true,
+        rate: 0.78,
         onEnd: () => {
           if (!isCancelled) {
             setIsSpeaking(false);
@@ -187,6 +188,7 @@ export const WelcomeGreetingBanner: React.FC<WelcomeGreetingBannerProps> = ({
         text: greeting.speechText,
         lang: currentLang === 'mr' ? 'mr-IN' : currentLang === 'hi' ? 'hi-IN' : 'en-IN',
         withTanpura: true,
+        rate: 0.78,
         onEnd: () => setIsSpeaking(false),
       });
     }

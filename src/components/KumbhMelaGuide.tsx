@@ -47,7 +47,7 @@ export const KumbhMelaGuide: React.FC<KumbhMelaGuideProps> = ({ currentLang }) =
     } else {
       setIsPlayingStotram(true);
       const textToSpeak = 'गौतमीये तटस्थानां नराणां मुक्तिदायिनी । पापापहारिणी पुण्या गोदावरी नमोऽस्तु ते ॥ सह्यपादसमुद्भूते शङ्करस्य जटाधरे । त्र्यम्बकप्रियकल्याणि गोदावरी नमोऽस्तु ते ॥';
-      audioEngine.speakText(textToSpeak, 'hi-IN', 0.9, () => {
+      audioEngine.speakText(textToSpeak, 'hi-IN', 0.78, () => {
         setIsPlayingStotram(false);
       });
     }

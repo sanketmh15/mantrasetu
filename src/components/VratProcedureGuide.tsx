@@ -35,7 +35,7 @@ export function VratProcedureGuide({ currentLang }: VratProcedureGuideProps) {
 
     setIsSpeakingSankalpa(true);
     audioEngine.playTempleBell();
-    audioEngine.speakText(activeVrat.sankalpaMantra.sanskrit, 'hi-IN', 0.80, () => {
+    audioEngine.speakText(activeVrat.sankalpaMantra.sanskrit, 'hi-IN', 0.78, () => {
       setIsSpeakingSankalpa(false);
     });
   };

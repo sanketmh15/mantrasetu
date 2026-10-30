@@ -50,7 +50,7 @@ export function Temple3DExplorer({ currentLang }: Temple3DExplorerProps) {
     audioEngine.playTempleBell();
     const script = `${activeTemple.name[currentLang]}। ${activeTemple.description[currentLang]}। गर्भगृह व शिखर रचना: ${activeZone.name[currentLang]}। ${activeZone.meaning[currentLang]}`;
 
-    audioEngine.speakText(script, currentLang === 'en' ? 'en-IN' : 'mr-IN', 0.88, () => {
+    audioEngine.speakText(script, currentLang === 'en' ? 'en-IN' : 'mr-IN', 0.78, () => {
       setIsTourPlaying(false);
     });
   };

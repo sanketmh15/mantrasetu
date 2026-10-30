@@ -109,7 +109,7 @@ export function DigitalDevotionalLibrary({ currentLang }: DigitalDevotionalLibra
       return;
     }
     setPlayingVerseId(verseKey);
-    audioEngine.speakText(text, 'mr-IN', 0.85, () => {
+    audioEngine.speakText(text, 'mr-IN', 0.78, () => {
       setPlayingVerseId(null);
     });
   };

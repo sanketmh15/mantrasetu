@@ -42,7 +42,7 @@ export const MantrasGrid: React.FC<MantrasGridProps> = ({ currentLang, onOpenJap
       text: mantra.devanagari,
       audioUrl: slow ? undefined : audioUrl, // use speech synthesis for custom slow rate
       lang: currentLang === 'mr' ? 'mr-IN' : 'hi-IN',
-      rate: slow ? 0.70 : 0.85,
+      rate: slow ? 0.70 : 0.78,
       withTanpura: true,
       onEnd: () => {
         setPlayingMantraId(null);

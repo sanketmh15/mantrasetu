@@ -75,7 +75,7 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
     } else {
       audioEngine.playTempleBell();
       setPlayingAudioId(god.id);
-      audioEngine.speakText(god.audioGreetingText, currentLang === 'en' ? 'en-IN' : currentLang === 'mr' ? 'mr-IN' : 'hi-IN', 0.95, () => {
+      audioEngine.speakText(god.audioGreetingText, currentLang === 'en' ? 'en-IN' : currentLang === 'mr' ? 'mr-IN' : 'hi-IN', 0.78, () => {
         setPlayingAudioId(null);
       });
     }

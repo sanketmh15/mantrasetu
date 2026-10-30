@@ -60,7 +60,7 @@ export function DeitySymbolismExplorer({ currentLang }: DeitySymbolismExplorerPr
       return;
     }
     setPlayingSanskritId(id);
-    audioEngine.speakText(text, 'hi-IN', 0.8, () => {
+    audioEngine.speakText(text, 'hi-IN', 0.78, () => {
       setPlayingSanskritId(null);
     });
   };

@@ -216,7 +216,7 @@ export const JapaCounter: React.FC<JapaCounterProps> = ({ currentLang, preselect
           </p>
           <div className="mt-2 flex items-center justify-center gap-2">
             <button
-              onClick={() => audioEngine.speakText(activeMantra.devanagari, 'hi-IN', 0.9)}
+              onClick={() => audioEngine.speakText(activeMantra.devanagari, 'hi-IN', 0.78)}
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-stone-800 text-stone-300 hover:text-white border border-stone-700 transition-colors"
             >
               <Volume2 className="w-3.5 h-3.5 text-saffron-400" />

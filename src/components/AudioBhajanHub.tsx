@@ -74,7 +74,7 @@ export function AudioBhajanHub({ currentLang }: AudioBhajanHubProps) {
     const fullText = activeTrack.lyrics.join(' । ');
     const langCode = 'mr-IN';
 
-    audioEngine.speakText(fullText, langCode, 0.84, () => {
+    audioEngine.speakText(fullText, langCode, 0.78, () => {
       setIsPlaying(false);
       if (isTanpuraEnabled) {
         audioEngine.stopTanpura();

@@ -29,7 +29,7 @@ export const VitthalHero: React.FC<VitthalHeroProps> = ({ currentLang, onNavigat
       setIsPlayingMantra(false);
     } else {
       setIsPlayingMantra(true);
-      audioEngine.speakText('राम कृष्ण हरि, जय जय राम कृष्ण हरि', 'mr-IN', 0.9, () => {
+      audioEngine.speakText('राम कृष्ण हरी, जय जय राम कृष्ण हरी', 'mr-IN', 0.78, () => {
         setIsPlayingMantra(false);
       });
     }

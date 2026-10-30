@@ -88,6 +88,91 @@ class AudioEngine {
 
 
   /**
+   * Splits devotional text into short, natural, breath-paced clauses
+   * (split by ।, ॥, ., ?, !, comma, semicolon, newline).
+   * Keeps chunks between 20-80 chars so browser TTS NEVER buffers or times out!
+   */
+  public splitIntoDevotionalPhrases(text: string): string[] {
+    if (!text) return [];
+    const clean = text.replace(/[\r\n]+/g, ' ').trim();
+    if (!clean) return [];
+
+    // Split on sacred punctuation & standard sentence breaks
+    const rawTokens = clean.split(/([।॥.?!;,\n]+)/);
+    const phrases: string[] = [];
+    let current = '';
+
+    for (let i = 0; i < rawTokens.length; i++) {
+      const token = rawTokens[i];
+      if (!token) continue;
+
+      if (/^[।॥.?!;,\n]+$/.test(token)) {
+        current += token;
+        if (current.trim().length > 0) {
+          phrases.push(current.trim());
+          current = '';
+        }
+      } else {
+        if (current.length + token.length > 80) {
+          if (current.trim()) phrases.push(current.trim());
+          current = token;
+        } else {
+          current += (current ? ' ' : '') + token;
+        }
+      }
+    }
+    if (current.trim()) {
+      phrases.push(current.trim());
+    }
+
+    return phrases.filter((p) => p.length > 0);
+  }
+
+  /**
+   * Asynchronously guarantees that browser voices are loaded before voice selection
+   */
+  public async ensureVoicesLoaded(): Promise<SpeechSynthesisVoice[]> {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return [];
+
+    let voices = window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      this.cachedVoices = voices;
+      return voices;
+    }
+
+    if (this.cachedVoices && this.cachedVoices.length > 0) {
+      return this.cachedVoices;
+    }
+
+    return new Promise((resolve) => {
+      let resolved = false;
+      const finish = () => {
+        if (!resolved) {
+          resolved = true;
+          try {
+            const v = window.speechSynthesis.getVoices();
+            if (v && v.length > 0) this.cachedVoices = v;
+            resolve(this.cachedVoices || []);
+          } catch {
+            resolve([]);
+          }
+        }
+      };
+
+      if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        const prev = window.speechSynthesis.onvoiceschanged;
+        window.speechSynthesis.onvoiceschanged = (e) => {
+          if (prev) {
+            try { (prev as any)(e); } catch {}
+          }
+          finish();
+        };
+      }
+      setTimeout(finish, 200);
+    });
+  }
+
+  /**
    * Splits a long text into clean sentence segments under 150 characters
    * by punctuation boundaries (।, ॥, ., ?, !, comma, newline)
    */
@@ -344,6 +429,18 @@ class AudioEngine {
       'Om Namah Shivaaya.',
     'ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्॥':
       'Om Bhoor Bhuva-ha Swaha, Tat Savitur Varenyam, Bhargo Devasya Dheemahi, Dhiyo Yo Nah Prachodayaat.',
+    'मंत्रसेतू पावन भक्ती दालनात आपले सहर्ष स्वागत आहे.':
+      'MantraSetu paavan bhakti daalnaat aaple saharsha swaagat aahe.',
+    'महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला आजचा दिवस मंगलमय व शांततेचा जावो.':
+      'Mahadev, Prabhu Shri Ram aani Vithu Mauli chya krupe-ne aaplaa aajj-chaa divas mangalmay aani shaant-te-cha jaavo.',
+    'मंत्रसेतु पावन भक्ति संकुल में आपका हार्दिक स्वागत है।':
+      'MantraSetu paavan bhakti sankul mein aapka haardik swaagat hai.',
+    'भगवान शिव, श्री राम एवं विठुराया के आशीर्वाद से आपका दिन मंगलमय एवं शांतिमय हो।':
+      'Bhagwan Shiv, Shri Ram evam Vithuraaya ke aasheervaad se aapka din mangalmay evam shaantimay ho.',
+    'सर्व ५० पावन देव देवता दर्शन दालनात आपले स्वागत आहे.':
+      'Sarva panchaas paavan deva devataa darshan daalnaat aaple swaagat aahe.',
+    'कोणत्याही देवतेवर क्लिक करून दर्शन व जपमाळ सुरू करा.':
+      'Kon-tyaahi devte-var click karoon darshan aani japa-maala shuru karaa.',
     'सर्व ५० पावन देव देवता दर्शन दालनात आपले स्वागत आहे. कोणत्याही देवतेवर क्लिक करून दर्शन व जपमाळ सुरू करा.':
       'Sarva panchaas paavan deva devataa darshan daalnaat aaple swaagat aahe. Kon-tyaahi devte-var click karoon darshan aani japa-maala shuru karaa.',
     'हर हर गंगे! सिंहस्थ कुंभमेळा नाशिक त्र्यंबकेश्वर व प्रयागराज पावन पर्वात आपले स्वागत आहे.':
@@ -595,127 +692,135 @@ class AudioEngine {
   /**
    * Universal Sacred Male Voice Engine:
    * Speaks using the high-fidelity MALE voice engine (Microsoft Madhav/Hemant/Ravi or Google Marathi/Hindi Male)
-   * with natural cadence and reverent Pandit resonance across mobile and desktop.
+   * with natural, peaceful cadence (0.78 speed) and meditative breath pauses between phrases.
    */
-  public async speakText(text: string, lang = 'hi-IN', rate?: number, onEnd?: () => void): Promise<void> {
+  public async speakText(text: string, lang = 'hi-IN', userRate?: number, onEnd?: () => void): Promise<void> {
     this.stopSpeaking();
     this.isTTSAborted = false;
 
-    let ended = false;
-    const safeEnd = () => {
-      if (!ended) {
-        ended = true;
-        this.currentUtterance = null;
-        onEnd?.();
-      }
-    };
-
-    // Directly use the high-fidelity Male Voice Web Speech engine
-    this.speakSynthesisFallback(text, lang, rate, safeEnd);
-  }
-
-  /**
-   * Web Speech API fallback engine with unpause queue recovery and phonetic mapping.
-   * Completely eliminates wobbling and glitching on mobile by normalizing pitch to 1.0.
-   */
-  private speakSynthesisFallback(text: string, lang = 'hi-IN', rate?: number, onEnd?: () => void) {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window) || this.isTTSAborted) {
+    if (!text || typeof text !== 'string' || !text.trim()) {
       onEnd?.();
       return;
     }
 
-    window.speechSynthesis.cancel(); // Clear any hung queue
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      onEnd?.();
+      return;
+    }
+
+    // 1. Ensure voices are loaded from browser asynchronously
+    await this.ensureVoicesLoaded();
+
+    if (this.isTTSAborted) {
+      onEnd?.();
+      return;
+    }
+
+    // 2. Devotional pacing: Default speed calibrated to 0.78 (calm, meditative, reverent Pandit cadence)
+    // Prevents rushed, hurried speech!
+    const sacredRate = userRate ? Math.min(userRate, 0.82) : 0.78;
+
+    // 3. Break into natural breath-paced chanting phrases
+    const phrases = this.splitIntoDevotionalPhrases(text);
+    if (!phrases.length) {
+      onEnd?.();
+      return;
+    }
+
+    const { voice: bestVoice, isDevanagariCapable, isMale } = this.getBestBrahmanVoice(lang);
+    const isMobile = this.isMobileDevice();
+
+    let phraseIdx = 0;
+
+    const speakNextPhrase = () => {
+      if (this.isTTSAborted || phraseIdx >= phrases.length) {
+        this.currentUtterance = null;
+        onEnd?.();
+        return;
+      }
+
+      const phraseText = phrases[phraseIdx];
+      phraseIdx++;
+
+      let textToSpeak = phraseText;
+      let targetLang = lang;
+
+      const hasDevanagari = /[\u0900-\u097F]/.test(phraseText);
+
+      if (hasDevanagari) {
+        if (isDevanagariCapable) {
+          // Native Devanagari voice available (Microsoft Madhav/Hemant or Google Marathi/Hindi)
+          textToSpeak = phraseText;
+          targetLang = bestVoice && bestVoice.lang.toLowerCase().startsWith('mr') ? 'mr-IN' : 'hi-IN';
+        } else {
+          // English male voice fallback (Microsoft Ravi, David, Rishi)
+          textToSpeak = this.toPhoneticRoman(phraseText);
+          targetLang = bestVoice ? bestVoice.lang : 'en-IN';
+        }
+      } else if (lang.toLowerCase().startsWith('en')) {
+        targetLang = 'en-IN';
+      }
+
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      this.currentUtterance = utterance; // Pin to prevent mobile GC collection!
+      utterance.lang = targetLang;
+
+      if (bestVoice) {
+        utterance.voice = bestVoice;
+      }
+
+      // Voice Pitch & Rate Calibration:
+      // Pacing: 0.78 for deep, serene, wondrous listening experience!
+      utterance.rate = sacredRate;
+      utterance.volume = 1.0;
+
+      if (isMobile) {
+        // Mobile DSPs: pitch MUST be 1.0 (avoids phase jitter and metallic robotic artifacts)
+        utterance.pitch = 1.0;
+      } else {
+        // Desktop:
+        const isNaturalVoice = bestVoice && (bestVoice.name.toLowerCase().includes('natural') || bestVoice.name.toLowerCase().includes('madhav') || bestVoice.name.toLowerCase().includes('hemant'));
+        utterance.pitch = isNaturalVoice ? 0.98 : (isMale ? 0.92 : 0.90);
+      }
+
+      let phraseFinished = false;
+      const onPhraseDone = () => {
+        if (!phraseFinished) {
+          phraseFinished = true;
+          // Natural meditative breath pause (240ms) between sacred lines
+          setTimeout(() => {
+            if (!this.isTTSAborted) {
+              speakNextPhrase();
+            } else {
+              onEnd?.();
+            }
+          }, 240);
+        }
+      };
+
+      utterance.onend = onPhraseDone;
+      utterance.onerror = (e) => {
+        if (e.error !== 'canceled' && e.error !== 'interrupted') {
+          console.warn('SpeechSynthesis phrase error:', e.error);
+        }
+        onPhraseDone();
+      };
+
+      try {
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {
+        console.error('SpeechSynthesis.speak failed:', err);
+        onPhraseDone();
+      }
+    };
+
+    // Make sure speech synthesis isn't paused
     if (window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
     }
 
-    const isMobile = this.isMobileDevice();
-    const { voice: bestVoice, isDevanagariCapable, isMale } = this.getBestBrahmanVoice(lang);
-
-    let textToSpeak = text;
-    let targetLang = lang;
-
-    const hasDevanagari = /[\u0900-\u097F]/.test(text);
-
-    if (hasDevanagari) {
-      // If voice is capable or on mobile, preserve pure Devanagari!
-      if (isDevanagariCapable || isMobile) {
-        textToSpeak = text;
-        targetLang = bestVoice && bestVoice.lang.toLowerCase().startsWith('mr') ? 'mr-IN' : 'hi-IN';
-      } else {
-        textToSpeak = this.toPhoneticRoman(text);
-        targetLang = bestVoice ? bestVoice.lang : 'en-IN';
-      }
-    } else if (lang.toLowerCase().startsWith('en')) {
-      targetLang = 'en-IN';
-    }
-
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    this.currentUtterance = utterance; // Pin to class instance to prevent mobile GC destruction!
-    utterance.lang = targetLang;
-
-    if (isMobile) {
-      // On mobile (Android & iOS), pitch MUST be 1.0 (natural).
-      // Pitch < 0.9 causes severe robotic vibrato, wobbling, and distortion on mobile DSP chips!
-      utterance.pitch = 1.0;
-      utterance.rate = rate || 0.90;
-      utterance.volume = 1.0;
-    } else {
-      // On desktop:
-      // Male voice with measured, resonant Pandit cadence
-      const isNaturalVoice = bestVoice && (bestVoice.name.toLowerCase().includes('natural') || bestVoice.name.toLowerCase().includes('madhav') || bestVoice.name.toLowerCase().includes('hemant'));
-      utterance.pitch = isNaturalVoice ? 0.98 : (isMale ? 0.92 : 0.90);
-      utterance.rate = rate || 0.88;
-      utterance.volume = 1.0;
-    }
-
-    if (bestVoice) {
-      utterance.voice = bestVoice;
-    }
-
-    let isCompleted = false;
-    const safeEnd = () => {
-      if (!isCompleted) {
-        isCompleted = true;
-        this.currentUtterance = null;
-        if (keepAliveTimer) clearInterval(keepAliveTimer);
-        onEnd?.();
-      }
-    };
-
-    utterance.onend = () => safeEnd();
-    utterance.onerror = (e) => {
-      console.warn('SpeechSynthesis error event:', e.error);
-      safeEnd();
-    };
-
-    // On mobile, never run aggressive resume() loops while active as it causes stutter
-    let keepAliveTimer: any = null;
-    if (!isMobile) {
-      keepAliveTimer = setInterval(() => {
-        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-          if (!window.speechSynthesis.speaking) {
-            clearInterval(keepAliveTimer);
-          } else if (window.speechSynthesis.paused) {
-            window.speechSynthesis.resume();
-          }
-        }
-      }, 5000);
-    }
-
-    const maxSafetyDuration = Math.max(10000, textToSpeak.length * 200 + 5000);
-    setTimeout(() => {
-      if (!isCompleted && typeof window !== 'undefined' && 'speechSynthesis' in window && !window.speechSynthesis.speaking) {
-        safeEnd();
-      }
-    }, maxSafetyDuration);
-
-    try {
-      window.speechSynthesis.speak(utterance);
-    } catch (err) {
-      console.error('SpeechSynthesis.speak failed:', err);
-      safeEnd();
-    }
+    // Start chanting phrase by phrase!
+    speakNextPhrase();
   }
 
   /**
@@ -777,7 +882,9 @@ class AudioEngine {
 
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       try {
-        window.speechSynthesis.cancel();
+        if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+          window.speechSynthesis.cancel();
+        }
         if (window.speechSynthesis.paused) {
           window.speechSynthesis.resume();
         }

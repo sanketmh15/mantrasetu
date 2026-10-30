@@ -11,7 +11,7 @@ interface ChalisaReaderProps {
 export const ChalisaReader: React.FC<ChalisaReaderProps> = ({ currentLang }) => {
   const [activeVerseIndex, setActiveVerseIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1.0);
+  const [playbackSpeed, setPlaybackSpeed] = useState<number>(0.78);
   const [showRoman, setShowRoman] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
 

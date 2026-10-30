@@ -57,7 +57,7 @@ export function StoriesForChildren({ currentLang }: StoriesForChildrenProps) {
       .join(' । ');
 
     const langCode = currentLang === 'en' ? 'en-US' : currentLang === 'hi' ? 'hi-IN' : 'mr-IN';
-    audioEngine.speakText(fullNarration, langCode, 0.88, () => {
+    audioEngine.speakText(fullNarration, langCode, 0.78, () => {
       setIsPlayingAudio(false);
     });
   };

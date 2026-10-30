@@ -45,7 +45,7 @@ export function FestivalPrepGuide({ currentLang }: FestivalPrepGuideProps) {
     const textToSpeak = `${activeFestival.name[currentLang]}। तिथी: ${activeFestival.tithiAndMonth[currentLang]}। आराध्य: ${activeFestival.deity[currentLang]}। ${homeTips}। ${templeTips}। पारंपारिक नैवेद्य: ${activeFestival.traditionalPrasad[currentLang]}`;
 
     setIsSpeaking(true);
-    audioEngine.speakText(textToSpeak, currentLang === 'en' ? 'en-IN' : 'mr-IN', 0.88, () => {
+    audioEngine.speakText(textToSpeak, currentLang === 'en' ? 'en-IN' : 'mr-IN', 0.78, () => {
       setIsSpeaking(false);
     });
   };

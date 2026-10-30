@@ -47,7 +47,7 @@ export function RashiGuideCalculator({
     setIsPlayingAudio(true);
     audioEngine.playTempleBell();
     const text = activeRashi.beejMantra.sanskrit;
-    audioEngine.speakText(text, 'hi-IN', 0.82, () => {
+    audioEngine.speakText(text, 'hi-IN', 0.78, () => {
       setIsPlayingAudio(false);
     });
   };

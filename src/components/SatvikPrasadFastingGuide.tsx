@@ -44,7 +44,7 @@ export function SatvikPrasadFastingGuide({ currentLang }: SatvikPrasadFastingGui
     const fullText = `${selectedRecipe.title[currentLang]}। आराध्य: ${selectedRecipe.deityAssociated[currentLang]}। ${selectedRecipe.significance[currentLang]}। पाककृती: ${stepsText}। आरोग्य लाभ: ${selectedRecipe.healthTip[currentLang]}`;
 
     setIsSpeaking(true);
-    audioEngine.speakText(fullText, currentLang === 'en' ? 'en-IN' : 'mr-IN', 0.88, () => {
+    audioEngine.speakText(fullText, currentLang === 'en' ? 'en-IN' : 'mr-IN', 0.78, () => {
       setIsSpeaking(false);
     });
   };
