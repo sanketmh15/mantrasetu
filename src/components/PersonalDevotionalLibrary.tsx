@@ -196,12 +196,12 @@ export function PersonalDevotionalLibrary({
 
       {/* Bookmarks Grid */}
       {filteredBookmarks.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
           {filteredBookmarks.map((bookmark) => {
             return (
               <div
                 key={`${bookmark.type}_${bookmark.id}`}
-                className="p-5 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-md hover:shadow-xl transition-all flex flex-col justify-between group"
+                className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-md hover:shadow-xl transition-all flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-3">

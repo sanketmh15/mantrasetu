@@ -234,7 +234,7 @@ export function NearbyTemplesGuide({ currentLang }: NearbyTemplesGuideProps) {
       </div>
 
       {/* TEMPLE CARDS GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {processedTemples.map((temple: AncientTemple & { distanceKm: number | null }) => {
           const openStatus = isTempleOpenNow(temple.timings);
           const isSaved = bookmarkedMap[temple.id] ?? isBookmarkSaved(temple.id, 'temple');
@@ -242,10 +242,10 @@ export function NearbyTemplesGuide({ currentLang }: NearbyTemplesGuideProps) {
           return (
             <div
               key={temple.id}
-              className="rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 overflow-hidden shadow-lg hover:shadow-2xl transition-all flex flex-col justify-between group"
+              className="rounded-2xl sm:rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 overflow-hidden shadow-lg hover:shadow-2xl transition-all flex flex-col justify-between group"
             >
               {/* Card Header & Distance Badge */}
-              <div className="p-6 pb-4">
+              <div className="p-4 sm:p-6 pb-3 sm:pb-4">
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <div className="flex items-center gap-2 text-xs font-semibold text-amber-700 dark:text-amber-400">
                     <MapPin className="w-4 h-4 text-amber-600 shrink-0" />

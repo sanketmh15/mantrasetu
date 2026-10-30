@@ -734,7 +734,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {deitiesList.map((deity) => {
             const isSelected = deity.id === activeDeity;
 
@@ -755,7 +755,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             return (
               <div
                 key={deity.id}
-                className={`p-5 rounded-3xl text-left transition-all border relative overflow-hidden group shadow-md flex flex-col justify-between ${
+                className={`p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl text-left transition-all border relative overflow-hidden group shadow-md flex flex-col justify-between ${
                   isSelected
                     ? 'bg-gradient-to-b from-amber-50 to-orange-50/40 dark:from-amber-950/40 dark:to-stone-900 border-amber-500 ring-2 ring-amber-400/60 shadow-lg scale-[1.01]'
                     : 'bg-white dark:bg-stone-900/80 border-stone-200 dark:border-stone-800 hover:border-amber-400 hover:shadow-lg'
@@ -767,12 +767,12 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                   className="cursor-pointer"
                   title={currentLang === 'en' ? 'Click to select as active deity' : 'इष्टदेवता म्हणून निवडण्यासाठी टॅप करा'}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-3xl p-2 rounded-2xl bg-stone-100 dark:bg-stone-800 shadow-sm">
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <span className="text-2xl sm:text-3xl p-1.5 sm:p-2 rounded-xl sm:rounded-2xl bg-stone-100 dark:bg-stone-800 shadow-sm">
                       {deity.symbol}
                     </span>
                     <span
-                      className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+                      className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold truncate max-w-[80px] sm:max-w-none ${
                         isSelected
                           ? 'bg-amber-600 text-white shadow-sm'
                           : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300'
@@ -780,26 +780,26 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                     >
                       {isSelected
                         ? currentLang === 'en'
-                          ? 'Active Shrine ✓'
-                          : 'सध्या निवडलेले ✓'
+                          ? 'Active ✓'
+                          : 'निवडलेले ✓'
                         : deity.badge[currentLang]}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold font-serifDev text-stone-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                  <h3 className="text-sm sm:text-lg font-bold font-serifDev text-stone-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
                     {deity.name[currentLang]}
                   </h3>
 
-                  <p className="text-xs text-stone-600 dark:text-stone-400 mt-1 leading-relaxed">
+                  <p className="text-[11px] sm:text-xs text-stone-600 dark:text-stone-400 mt-0.5 sm:mt-1 leading-snug line-clamp-2">
                     {deity.tagline[currentLang]}
                   </p>
                 </div>
 
                 {/* Bottom Action Area (Always navigable & clickable!) */}
-                <div className="mt-4 pt-3 border-t border-stone-200 dark:border-stone-800/80 space-y-2">
+                <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-stone-200 dark:border-stone-800/80 space-y-1.5">
                   <button
                     onClick={handleGoToShrine}
-                    className={`w-full py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all ${
+                    className={`w-full py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1 shadow-md active:scale-95 transition-all ${
                       isSelected
                         ? 'bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white ring-1 ring-amber-300/40'
                         : 'bg-stone-900 hover:bg-stone-800 dark:bg-stone-800 dark:hover:bg-stone-700 text-amber-300 border border-amber-500/30'
@@ -808,22 +808,22 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                     <span>
                       {isSelected
                         ? currentLang === 'en'
-                          ? 'Enter Shrine & Worship ➔'
-                          : 'दर्शन व उपासनेसाठी जा ➔'
+                          ? 'Enter Shrine ➔'
+                          : 'दर्शनासाठी जा ➔'
                         : currentLang === 'en'
-                        ? 'Enter Shrine (दर्शनासाठी जा) ➔'
-                        : 'दर्शनासाठी जा ➔'}
+                        ? 'Enter ➔'
+                        : 'दर्शन ➔'}
                     </span>
-                    <ChevronRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
+                    <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 transform group-hover:translate-x-1 transition-transform" />
                   </button>
 
                   {!isSelected && (
                     <button
                       onClick={handleSelectAsIshta}
-                      className="w-full py-1.5 px-2 rounded-lg text-[11px] font-semibold text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-stone-800/50 transition-colors flex items-center justify-center gap-1"
+                      className="w-full py-1 px-1.5 rounded-lg text-[10px] sm:text-[11px] font-semibold text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-stone-800/50 transition-colors flex items-center justify-center gap-1"
                     >
                       <span>📿</span>
-                      <span>{currentLang === 'en' ? 'Set as Active Deity' : 'इष्टदेवता म्हणून निवडा'}</span>
+                      <span className="truncate">{currentLang === 'en' ? 'Set as Active' : 'इष्टदेवता निवडा'}</span>
                     </button>
                   )}
                 </div>
@@ -844,33 +844,33 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
           {userInterestCards.map((item) => (
             <div
               key={item.id}
               onClick={() => onNavigateTab(item.tab)}
-              className="p-6 rounded-3xl bg-white dark:bg-stone-900/80 border border-stone-200 dark:border-stone-800 hover:border-amber-500 dark:hover:border-amber-500 shadow-md hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group transform hover:-translate-y-1"
+              className="p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-stone-900/80 border border-stone-200 dark:border-stone-800 hover:border-amber-500 dark:hover:border-amber-500 shadow-md hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group transform hover:-translate-y-1"
             >
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl">{item.icon}</span>
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/60">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <span className="text-2xl sm:text-3xl">{item.icon}</span>
+                  <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/60 truncate max-w-[85px] sm:max-w-none">
                     {item.badge[currentLang]}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold font-serifDev text-stone-900 dark:text-white group-hover:text-saffron-600 dark:group-hover:text-saffron-400 transition-colors mb-2">
+                <h3 className="text-xs sm:text-lg font-bold font-serifDev text-stone-900 dark:text-white group-hover:text-saffron-600 dark:group-hover:text-saffron-400 transition-colors mb-1 sm:mb-2 line-clamp-2 min-h-[30px] sm:min-h-0">
                   {item.title[currentLang]}
                 </h3>
 
-                <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed mb-4">
+                <p className="text-[10px] sm:text-xs text-stone-600 dark:text-stone-300 leading-snug mb-2 sm:mb-4 line-clamp-2 sm:line-clamp-3">
                   {item.description[currentLang]}
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-bold text-saffron-600 dark:text-saffron-400">
-                <span>{currentLang === 'en' ? 'Open Feature' : 'सुरू करा'}</span>
-                <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" />
+              <div className="pt-2 sm:pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-[11px] sm:text-xs font-bold text-saffron-600 dark:text-saffron-400">
+                <span>{currentLang === 'en' ? 'Open' : 'सुरू करा'}</span>
+                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transform group-hover:translate-x-1.5 transition-transform" />
               </div>
             </div>
           ))}

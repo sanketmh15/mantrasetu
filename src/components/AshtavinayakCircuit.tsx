@@ -186,7 +186,7 @@ export const AshtavinayakCircuit: React.FC<AshtavinayakCircuitProps> = ({ curren
         <span>{currentLang === 'en' ? 'All 8 Ashtavinayak Temples' : 'सर्व आठ अष्टविनायक देवस्थाने'}</span>
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {ashtavinayakCircuit.map((temple) => (
           <div
             key={temple.id}
@@ -194,7 +194,7 @@ export const AshtavinayakCircuit: React.FC<AshtavinayakCircuitProps> = ({ curren
               setSelectedTempleId(temple.id);
               window.scrollTo({ top: 300, behavior: 'smooth' });
             }}
-            className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+            className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
               temple.id === selectedTempleId
                 ? 'bg-amber-950/40 border-amber-500 shadow-md ring-1 ring-amber-500/50'
                 : 'bg-stone-900/60 border-stone-800 hover:border-stone-700'

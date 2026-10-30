@@ -160,7 +160,7 @@ export function DeitySymbolismExplorer({ currentLang }: DeitySymbolismExplorerPr
       </div>
 
       {/* Symbolism Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
         {filteredItems.map((item) => {
           const isPlaying = playingSanskritId === item.id;
           const isCopied = copiedId === item.id;
@@ -168,7 +168,7 @@ export function DeitySymbolismExplorer({ currentLang }: DeitySymbolismExplorerPr
           return (
             <div
               key={item.id}
-              className="bg-white dark:bg-[#16130f] rounded-3xl border border-stone-200 dark:border-stone-800/80 hover:border-purple-400 dark:hover:border-purple-800/70 p-6 shadow-md hover:shadow-xl transition-all flex flex-col justify-between group"
+              className="bg-white dark:bg-[#16130f] rounded-2xl sm:rounded-3xl border border-stone-200 dark:border-stone-800/80 hover:border-purple-400 dark:hover:border-purple-800/70 p-3.5 sm:p-6 shadow-md hover:shadow-xl transition-all flex flex-col justify-between group"
             >
               <div>
                 {/* Top Badge & Icon */}

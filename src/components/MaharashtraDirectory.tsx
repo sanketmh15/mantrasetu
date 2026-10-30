@@ -144,11 +144,11 @@ export const MaharashtraDirectory: React.FC<MaharashtraDirectoryProps> = ({ curr
       </div>
 
       {/* Deities Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         {filteredDeities.map((item) => (
           <div
             key={item.id}
-            className="p-6 rounded-3xl bg-stone-900/60 border border-stone-800 hover:border-stone-700 transition-all flex flex-col justify-between shadow-lg"
+            className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-stone-900/60 border border-stone-800 hover:border-stone-700 transition-all flex flex-col justify-between shadow-lg"
           >
             <div>
               {/* Top Badges */}

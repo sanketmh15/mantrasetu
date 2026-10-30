@@ -197,14 +197,14 @@ export function PujaShoppingChecklist({ currentLang }: PujaShoppingChecklistProp
       </div>
 
       {/* 1. Ritual / Puja Selector Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
         {pujaChecklistsDatabase.map((list) => {
           const isSelected = list.id === selectedListId;
           return (
             <button
               key={list.id}
               onClick={() => setSelectedListId(list.id)}
-              className={`p-4 rounded-2xl text-left transition-all border ${
+              className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border ${
                 isSelected
                   ? 'bg-gradient-to-br from-amber-500/15 via-saffron-500/10 to-transparent dark:from-amber-950/50 dark:via-stone-900 border-amber-500 shadow-md ring-2 ring-amber-400/30'
                   : 'bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/60'

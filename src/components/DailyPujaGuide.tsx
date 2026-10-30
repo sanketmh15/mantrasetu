@@ -258,7 +258,7 @@ export const DailyPujaGuide: React.FC<DailyPujaGuideProps> = ({
         </div>
 
         {/* 5. Four Pillars Grid: Offerings, Fasting, Significance & Benefits */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           
           {/* Pillar 1: Sacred Offerings */}
           <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm">

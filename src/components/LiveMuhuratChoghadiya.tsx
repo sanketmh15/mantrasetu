@@ -272,9 +272,9 @@ export function LiveMuhuratChoghadiya({ currentLang }: LiveMuhuratChoghadiyaProp
           </span>
         </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Brahma Muhurta */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-blue-950/40 border border-indigo-200 dark:border-indigo-800 shadow-sm">
+          <div className="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-blue-950/40 border border-indigo-200 dark:border-indigo-800 shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300">
                 {currentLang === 'en' ? 'Brahma Muhurta' : 'ब्रह्म मुहूर्त (ध्यान-साधना)'}

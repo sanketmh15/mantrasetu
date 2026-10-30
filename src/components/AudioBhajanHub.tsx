@@ -165,8 +165,8 @@ export function AudioBhajanHub({ currentLang }: AudioBhajanHubProps) {
       {/* Main Music Player & Playlist Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Playlist (5 Cols) */}
-        <div className="lg:col-span-5 space-y-3">
-          <h2 className="text-sm font-bold text-stone-700 dark:text-stone-300 flex items-center gap-2 mb-2">
+        <div className="lg:col-span-5">
+          <h2 className="text-sm font-bold text-stone-700 dark:text-stone-300 flex items-center gap-2 mb-3">
             <Layers className="w-4 h-4 text-amber-500" />
             <span>
               {currentLang === 'en'
@@ -175,19 +175,20 @@ export function AudioBhajanHub({ currentLang }: AudioBhajanHubProps) {
             </span>
           </h2>
 
-          {filteredTracks.map((track) => {
-            const isSelected = track.id === activeTrack.id;
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+            {filteredTracks.map((track) => {
+              const isSelected = track.id === activeTrack.id;
 
-            return (
-              <div
-                key={track.id}
-                onClick={() => handleSelectTrack(track.id)}
-                className={`cursor-pointer rounded-2xl p-4 transition-all border flex items-center justify-between gap-3 ${
-                  isSelected
-                    ? 'bg-amber-100/90 dark:bg-amber-950/40 border-amber-500 shadow-md ring-2 ring-amber-400/50'
-                    : 'bg-white dark:bg-[#16130f] border-stone-200 dark:border-stone-800 hover:border-amber-300 shadow-sm'
-                }`}
-              >
+              return (
+                <div
+                  key={track.id}
+                  onClick={() => handleSelectTrack(track.id)}
+                  className={`cursor-pointer rounded-xl sm:rounded-2xl p-3 sm:p-4 transition-all border flex items-center justify-between gap-3 ${
+                    isSelected
+                      ? 'bg-amber-100/90 dark:bg-amber-950/40 border-amber-500 shadow-md ring-2 ring-amber-400/50'
+                      : 'bg-white dark:bg-[#16130f] border-stone-200 dark:border-stone-800 hover:border-amber-300 shadow-sm'
+                  }`}
+                >
                 <div className="flex items-center gap-3">
                   <span className="text-3xl p-2 rounded-xl bg-amber-50 dark:bg-amber-900/30">
                     {track.iconEmoji}
@@ -226,6 +227,7 @@ export function AudioBhajanHub({ currentLang }: AudioBhajanHubProps) {
               </div>
             );
           })}
+          </div>
         </div>
 
         {/* Right Active Player & Lyrics Room (7 Cols) */}

@@ -208,7 +208,7 @@ export function RashiGuideCalculator({
         </div>
 
         {/* 4 Core Pillars Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
           {/* Ruling Planet */}
           <div className="p-4 rounded-2xl bg-amber-50/50 dark:bg-stone-900/50 border border-amber-200/60 dark:border-stone-800">
             <span className="text-[11px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider block mb-1">

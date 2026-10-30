@@ -295,11 +295,11 @@ export const KumbhMelaGuide: React.FC<KumbhMelaGuideProps> = ({ currentLang }) =
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {filteredAkharas.map((akhara: AkharaInfo, i: number) => (
               <div
                 key={i}
-                className="p-5 rounded-3xl bg-white dark:bg-stone-900/80 border border-stone-200 dark:border-stone-800 shadow-md flex flex-col justify-between"
+                className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-stone-900/80 border border-stone-200 dark:border-stone-800 shadow-md flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">

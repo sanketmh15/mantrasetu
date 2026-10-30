@@ -88,7 +88,7 @@ export function Temple3DExplorer({ currentLang }: Temple3DExplorerProps) {
       </div>
 
       {/* Temple Selection Pills */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-8">
         {temple3DDatabase.map((temple) => {
           const isSelected = temple.id === selectedTempleId;
           return (
@@ -102,7 +102,7 @@ export function Temple3DExplorer({ currentLang }: Temple3DExplorerProps) {
                   setIsTourPlaying(false);
                 }
               }}
-              className={`p-4 rounded-2xl text-left transition-all border ${
+              className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border ${
                 isSelected
                   ? 'bg-gradient-to-r from-amber-500/15 via-saffron-500/10 to-transparent dark:from-amber-950/50 dark:via-stone-900 border-amber-500 shadow-md ring-2 ring-amber-400/30'
                   : 'bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800'
@@ -110,12 +110,12 @@ export function Temple3DExplorer({ currentLang }: Temple3DExplorerProps) {
             >
               <div className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 font-semibold mb-1">
                 <MapPin className="w-3.5 h-3.5" />
-                <span>{temple.city}</span>
+                <span className="truncate">{temple.city}</span>
               </div>
-              <h3 className="font-bold text-base text-stone-900 dark:text-white font-serifDev">
+              <h3 className="font-bold text-sm sm:text-base text-stone-900 dark:text-white font-serifDev line-clamp-1">
                 {temple.name[currentLang]}
               </h3>
-              <span className="text-[11px] text-stone-500 dark:text-stone-400 mt-1 block">
+              <span className="text-[10px] sm:text-[11px] text-stone-500 dark:text-stone-400 mt-1 block truncate">
                 {temple.historicalEra}
               </span>
             </button>

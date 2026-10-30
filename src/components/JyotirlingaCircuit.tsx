@@ -180,7 +180,7 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
         <span>{currentLang === 'en' ? 'All 5 Maharashtra Jyotirlingas' : 'महाराष्ट्रातील सर्व ५ ज्योतिर्लिंगे'}</span>
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {maharashtraJyotirlingas.map((temple) => (
           <div
             key={temple.id}
@@ -188,7 +188,7 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
               setSelectedTempleId(temple.id);
               window.scrollTo({ top: 300, behavior: 'smooth' });
             }}
-            className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+            className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
               temple.id === selectedTempleId
                 ? 'bg-blue-950/40 border-blue-500 shadow-md ring-1 ring-blue-500/50'
                 : 'bg-stone-900/60 border-stone-800 hover:border-stone-700'

@@ -180,11 +180,11 @@ export const DevotionalCalendar: React.FC<DevotionalCalendarProps> = ({
           </h3>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {majorMaharashtraFestivals.map((fest, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-3xl bg-stone-900/60 border border-stone-800/80 flex flex-col justify-between"
+              className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-stone-900/60 border border-stone-800/80 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">

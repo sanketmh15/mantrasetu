@@ -280,11 +280,11 @@ export function SatvikPrasadFastingGuide({ currentLang }: SatvikPrasadFastingGui
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {fastingRulesDatabase.map((rule: FastingRule, idx: number) => (
               <div
                 key={idx}
-                className="p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-md flex flex-col justify-between"
+                className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-md flex flex-col justify-between"
               >
                 <div>
                   <h4 className="text-lg font-bold font-serifDev text-stone-900 dark:text-white mb-4 border-b border-stone-100 dark:border-stone-800 pb-2">

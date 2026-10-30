@@ -131,7 +131,7 @@ export function StoriesForChildren({ currentLang }: StoriesForChildrenProps) {
       </div>
 
       {/* Story Selectors Carousel / Tabs */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-8">
         {childrenStoriesDatabase.map((story) => {
           const isSelected = story.id === activeStory.id;
 
@@ -139,7 +139,7 @@ export function StoriesForChildren({ currentLang }: StoriesForChildrenProps) {
             <div
               key={story.id}
               onClick={() => handleSelectStory(story.id)}
-              className={`cursor-pointer rounded-2xl p-4 transition-all border flex items-center gap-4 ${
+              className={`cursor-pointer rounded-xl sm:rounded-2xl p-3 sm:p-4 transition-all border flex items-center gap-2.5 sm:gap-4 ${
                 isSelected
                   ? 'bg-amber-100 dark:bg-amber-950/40 border-amber-500 shadow-md ring-2 ring-amber-400'
                   : 'bg-white dark:bg-[#16130f] border-stone-200 dark:border-stone-800 hover:border-amber-300 shadow-sm'

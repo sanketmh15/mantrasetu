@@ -80,7 +80,7 @@ export const MantrasGrid: React.FC<MantrasGridProps> = ({ currentLang, onOpenJap
       </div>
 
       {/* Grid of Mantras */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {list.map((mantra) => {
           const isPlaying = playingMantraId === mantra.id;
           const isSlow = !!isSlowMode[mantra.id];
@@ -93,7 +93,7 @@ export const MantrasGrid: React.FC<MantrasGridProps> = ({ currentLang, onOpenJap
           return (
             <div
               key={mantra.id}
-              className={`p-6 rounded-3xl transition-all border flex flex-col justify-between ${
+              className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl transition-all border flex flex-col justify-between ${
                 isPlaying
                   ? 'bg-saffron-950/40 border-saffron-500 shadow-xl shadow-saffron-950/60 ring-1 ring-saffron-500/50'
                   : 'bg-stone-900/60 border-stone-800 hover:border-stone-700'

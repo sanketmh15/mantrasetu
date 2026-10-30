@@ -289,8 +289,8 @@ export function DigitalDevotionalLibrary({ currentLang }: DigitalDevotionalLibra
       {/* Main Content: Books Grid + Active Reader Pane */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Books List (5 Cols) */}
-        <div className="lg:col-span-5 space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="lg:col-span-5">
+          <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-bold text-stone-800 dark:text-stone-200 flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-amber-500" />
               <span>
@@ -310,20 +310,21 @@ export function DigitalDevotionalLibrary({ currentLang }: DigitalDevotionalLibra
               </p>
             </div>
           ) : (
-            filteredBooks.map((book) => {
-              const isSelected = book.id === activeBook.id;
-              const isSaved = bookmarkedIds[book.id];
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 sm:gap-4">
+              {filteredBooks.map((book) => {
+                const isSelected = book.id === activeBook.id;
+                const isSaved = bookmarkedIds[book.id];
 
-              return (
-                <div
-                  key={book.id}
-                  onClick={() => setActiveBookId(book.id)}
-                  className={`cursor-pointer rounded-2xl p-4 transition-all border ${
-                    isSelected
-                      ? 'bg-amber-50/90 dark:bg-amber-950/30 border-amber-500 shadow-lg ring-1 ring-amber-500/30'
-                      : 'bg-white dark:bg-[#16130f] border-stone-200 dark:border-stone-800/80 hover:border-amber-300 dark:hover:border-amber-800/60 shadow-sm'
-                  }`}
-                >
+                return (
+                  <div
+                    key={book.id}
+                    onClick={() => setActiveBookId(book.id)}
+                    className={`cursor-pointer rounded-xl sm:rounded-2xl p-3.5 sm:p-4 transition-all border ${
+                      isSelected
+                        ? 'bg-amber-50/90 dark:bg-amber-950/30 border-amber-500 shadow-lg ring-1 ring-amber-500/30'
+                        : 'bg-white dark:bg-[#16130f] border-stone-200 dark:border-stone-800/80 hover:border-amber-300 dark:hover:border-amber-800/60 shadow-sm'
+                    }`}
+                  >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3">
                       <span className="text-3xl p-2 rounded-xl bg-amber-100 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-800/50">
@@ -377,7 +378,8 @@ export function DigitalDevotionalLibrary({ currentLang }: DigitalDevotionalLibra
                   </div>
                 </div>
               );
-            })
+            })}
+            </div>
           )}
         </div>
 

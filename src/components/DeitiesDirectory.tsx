@@ -159,7 +159,7 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
       </div>
 
       {/* Grid of 50 Gods Serial-Wise */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
         {filteredGods.map((god) => {
           const isAudioPlaying = playingAudioId === god.id;
 
@@ -167,10 +167,10 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
             <div
               key={god.id}
               onClick={() => onSelectGod(god.id)}
-              className="group relative rounded-3xl overflow-hidden bg-white dark:bg-stone-900/80 border border-stone-200 dark:border-stone-800/90 hover:border-saffron-500/60 dark:hover:border-saffron-500/60 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+              className="group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-white dark:bg-stone-900/80 border border-stone-200 dark:border-stone-800/90 hover:border-saffron-500/60 dark:hover:border-saffron-500/60 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
             >
               {/* Top Image with Badge Overlays */}
-              <div className="relative h-56 w-full overflow-hidden bg-stone-950">
+              <div className="relative h-40 sm:h-56 w-full overflow-hidden bg-stone-950">
                 <DeityImage
                   src={god.image}
                   deityId={god.id}
@@ -181,7 +181,7 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/30 to-transparent" />
 
                 {/* Serial Number Badge */}
-                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-xl bg-stone-950/80 backdrop-blur-md border border-amber-500/40 text-amber-300 text-xs font-black tracking-wider shadow-md">
+                <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl bg-stone-950/80 backdrop-blur-md border border-amber-500/40 text-amber-300 text-[10px] sm:text-xs font-black tracking-wider shadow-md">
                   #{god.serialNo < 10 ? `0${god.serialNo}` : god.serialNo}
                 </div>
 
@@ -189,18 +189,18 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
                 <button
                   onClick={(e) => handlePlayAudio(e, god)}
                   title="Devotional Audio Greeting"
-                  className={`absolute top-3 right-3 p-2 rounded-xl backdrop-blur-md border transition-all ${
+                  className={`absolute top-2 right-2 sm:top-3 sm:right-3 p-1.5 sm:p-2 rounded-lg sm:rounded-xl backdrop-blur-md border transition-all ${
                     isAudioPlaying
                       ? 'bg-saffron-600 text-white border-saffron-300 animate-pulse'
                       : 'bg-stone-950/70 text-amber-300 border-amber-500/30 hover:bg-saffron-600 hover:text-white'
                   }`}
                 >
-                  <Volume2 className="w-4 h-4" />
+                  <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
 
                 {/* Holy Place Tag */}
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px] text-amber-200">
-                  <span className="flex items-center gap-1 bg-stone-950/80 px-2 py-0.5 rounded-lg border border-amber-900/50 truncate max-w-[85%]">
+                <div className="absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-3 flex items-center justify-between text-[10px] sm:text-[11px] text-amber-200">
+                  <span className="flex items-center gap-1 bg-stone-950/80 px-1.5 sm:px-2 py-0.5 rounded-lg border border-amber-900/50 truncate max-w-[90%]">
                     <MapPin className="w-3 h-3 text-amber-400 shrink-0" />
                     <span className="truncate">{god.primaryShrine[currentLang]}</span>
                   </span>
@@ -208,27 +208,27 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
               </div>
 
               {/* Card Body */}
-              <div className="p-5 flex-grow flex flex-col justify-between">
+              <div className="p-3 sm:p-5 flex-grow flex flex-col justify-between">
                 <div>
                   {/* Deity Name & Title */}
-                  <div className="mb-2">
-                    <h3 className="text-xl font-bold font-serifDev text-stone-900 dark:text-white group-hover:text-saffron-600 dark:group-hover:text-saffron-400 transition-colors">
+                  <div className="mb-1.5 sm:mb-2">
+                    <h3 className="text-sm sm:text-xl font-bold font-serifDev text-stone-900 dark:text-white group-hover:text-saffron-600 dark:group-hover:text-saffron-400 transition-colors line-clamp-1">
                       {god.name[currentLang]}
                     </h3>
-                    <p className="text-xs text-amber-700 dark:text-amber-400 font-medium line-clamp-1 mt-0.5">
+                    <p className="text-[10px] sm:text-xs text-amber-700 dark:text-amber-400 font-medium line-clamp-1 mt-0.5">
                       {god.title[currentLang]}
                     </p>
                   </div>
 
                   {/* Sacred Mantra Snippet */}
-                  <div className="p-2.5 rounded-xl bg-amber-50/70 dark:bg-stone-950/60 border border-amber-200/60 dark:border-amber-950/50 mb-3">
-                    <p className="text-xs font-serifDev font-semibold text-amber-900 dark:text-amber-300 truncate">
+                  <div className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-amber-50/70 dark:bg-stone-950/60 border border-amber-200/60 dark:border-amber-950/50 mb-2 sm:mb-3">
+                    <p className="text-[10px] sm:text-xs font-serifDev font-semibold text-amber-900 dark:text-amber-300 truncate">
                       {god.mantra}
                     </p>
                   </div>
 
                   {/* Vahana & Weapon Quick Info */}
-                  <div className="grid grid-cols-2 gap-2 text-[11px] text-stone-600 dark:text-stone-400 mb-4">
+                  <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] text-stone-600 dark:text-stone-400 mb-2 sm:mb-4">
                     <div className="truncate">
                       <span className="font-semibold text-stone-800 dark:text-stone-300">
                         {currentLang === 'en' ? 'Vahana: ' : 'वाहन: '}
@@ -245,13 +245,13 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
                 </div>
 
                 {/* Action Button: Explore God's Page */}
-                <div className="pt-3 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-saffron-600 dark:text-saffron-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                <div className="pt-2 sm:pt-3 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between">
+                  <span className="text-[11px] sm:text-xs font-semibold text-saffron-600 dark:text-saffron-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                     <span>{currentLang === 'en' ? 'Explore Sanctuary' : currentLang === 'hi' ? 'दर्शन एवं जपमाला' : 'दर्शन व १०८ जपमाळ'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </span>
-                  <div className="w-7 h-7 rounded-full bg-saffron-100 dark:bg-stone-800 flex items-center justify-center text-saffron-600 dark:text-saffron-400 group-hover:bg-saffron-600 group-hover:text-white transition-colors">
-                    <Sparkles className="w-3.5 h-3.5" />
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-saffron-100 dark:bg-stone-800 flex items-center justify-center text-saffron-600 dark:text-saffron-400 group-hover:bg-saffron-600 group-hover:text-white transition-colors">
+                    <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   </div>
                 </div>
               </div>
