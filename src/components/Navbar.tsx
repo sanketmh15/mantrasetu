@@ -247,11 +247,19 @@ export const ALL_SANATAN_TABS: TabItem[] = [
   },
   {
     id: 'rashi',
-    label: { en: 'Rashi & Kundali', hi: 'राशि व कुण्डली', mr: '🔮 रास व कुंडली' },
+    label: { en: 'Daily Nakshatra', hi: 'दैनिक नक्षत्र', mr: '🔮 आजची नक्षत्र पत्रिका' },
     desc: { en: 'Daily nakshatra horoscope, lucky color, number & remedies', hi: 'दैनिक नक्षत्र पत्रिका, भाग्यशाली रंग, शुभ अंक व १-मिनट उपाय', mr: 'दैनिक नक्षत्र पत्रिका, भाग्यशाली रंग, शुभ अंक व १-मिनिट बीजमंत्र उपाय' },
     icon: Compass,
     category: 'panchang',
     badge: 'रास'
+  },
+  {
+    id: 'kundali',
+    label: { en: 'AI Janam Kundali', hi: 'एआई जन्म कुण्डली', mr: '🔮 एआय जन्म कुंडली' },
+    desc: { en: 'AI-predicted exact Vedic Kundali, 12 Bhavas, planetary chart & life predictions', hi: 'एआई द्वारा सटीक जन्म पत्रिका, १२ भाव, ग्रह विश्लेषण एवं संपूर्ण जीवन भविष्यवाणी', mr: 'एआय-आधारित अचूक वैदिक जन्म कुंडली, १२ भाव आकृती, ग्रह विश्लेषण व संपूर्ण जीवन भविष्य' },
+    icon: Sparkles,
+    category: 'panchang',
+    badge: 'AI'
   },
   {
     id: 'festival-prep',
@@ -359,6 +367,7 @@ export const SURPRISE_PORTAL_LIST = [
   { id: 'wari', name: { en: 'Pandharpur Wari 3D Route', hi: 'पंढरपुर वारी ३D', mr: 'संत ज्ञानेश्वर व तुकाराम महाराज पालखी ३D' }, blessing: { en: 'Experience the holy joy of Warkari pilgrims! 🚩', mr: 'ज्ञानोबा-तुकारामांच्या पावन पालखी सोहळ्याचा आनंद घ्या! 🚩', hi: 'वारकरी संतों की पावन यात्रा का आनंद लें! 🚩' } },
   { id: 'japa', name: { en: '108 Sacred Mala Japa', hi: '१०८ जप माला', mr: '१०८ जप माळ व नामस्मरण' }, blessing: { en: 'Chant divine names with authentic bead resonance! 📿', mr: 'मन शांत करा आणि १०८ वेळा नामस्मरण पूर्ण करा! 📿', hi: 'मन को शांत कर १०८ बार पावन नाम जपें! 📿' } },
   { id: 'rashi', name: { en: 'Daily Nakshatra & Lucky Remedies', hi: 'दैनिक नक्षत्र एवं उपाय', mr: 'आजची नक्षत्र पत्रिका व १-मिनिट उपाय' }, blessing: { en: 'Today’s auspicious color, lucky number & beej mantra! 🔮', mr: 'आजचा शुभ रंग, लकी नंबर आणि १-मिनिटाचा बीजमंत्र उपाय! 🔮', hi: 'आज का शुभ रंग, भाग्यशाली अंक व बीजमंत्र उपाय! 🔮' } },
+  { id: 'kundali', name: { en: 'AI Janam Kundali Predictor', hi: 'एआई जन्म कुण्डली एवं भविष्य', mr: 'एआय जन्म कुंडली व १२ भाव भविष्य' }, blessing: { en: 'Discover your exact birth chart and life predictions! 🔮', mr: 'आपली अचूक जन्म पत्रिका, १२ भाव व एआय जीवन भविष्य जाणून घ्या! 🔮', hi: 'अपनी जन्म कुंडली एवं सटीक भविष्य जानिए! 🔮' } },
   { id: 'ashtavinayak', name: { en: 'Ashtavinayak 8 Ganesha Circuit', hi: 'अष्टविनायक यात्रा', mr: 'पावन अष्टविनायक यात्रा दर्शन' }, blessing: { en: 'May Vighnaharta Ganesha remove all obstacles! 🐘', mr: 'विघ्नहर्ता गणपती बाप्पा आपल्या जीवनातील सर्व संकटे दूर करोत! 🐘', hi: 'विघ्नहर्ता गणेश आपके सभी विघ्न दूर करें! 🐘' } },
   { id: 'jyotirlinga', name: { en: '5 Maharashtra Jyotirlingas', hi: 'महाराष्ट्र ५ ज्योतिर्लिंग', mr: 'महाराष्ट्रातील ५ पावन ज्योतिर्लिंगे' }, blessing: { en: 'Har Har Mahadev! Cosmic blessings of Lord Shiva! 🔱', mr: 'हर हर महादेव! त्र्यंबकेश्वर, भीमाशंकर व घृष्णेश्वर महादेवांचे आशीर्वाद! 🔱', hi: 'हर हर महादेव! भगवान शिव का पावन आशीर्वाद! 🔱' } },
   { id: 'meditation', name: { en: 'Om & Temple Bells Meditation', hi: 'ध्यान व ॐ नाद संगीत', mr: 'अखंड ॐ नाद व मंदिर घंटा ध्वनी' }, blessing: { en: 'Rest in blissful silence and inner peace! 🎧', mr: 'शांत चित्ताने ध्यान करा व मनाला विश्रांती द्या! 🎧', hi: 'शांत मन से ध्यान लगाएं व मानसिक शांति प्राप्त करें! 🎧' } },

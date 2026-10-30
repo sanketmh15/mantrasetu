@@ -46,6 +46,7 @@ import { StoriesForChildren } from './components/StoriesForChildren';
 import { DeitySymbolismExplorer } from './components/DeitySymbolismExplorer';
 import { LiveTempleDarshan } from './components/LiveTempleDarshan';
 import { RashiGuideCalculator } from './components/RashiGuideCalculator';
+import { AIKundaliPredictor } from './components/AIKundaliPredictor';
 import { AudioBhajanHub } from './components/AudioBhajanHub';
 import { DailyNotificationReminder } from './components/DailyNotificationReminder';
 import { SatvikDevotionalStore } from './components/SatvikDevotionalStore';
@@ -713,6 +714,15 @@ export function App() {
         {/* 33. RASHI & ISHTA DEVATA CALCULATOR TAB */}
         {activeTab === 'rashi' && (
           <RashiGuideCalculator
+            currentLang={currentLang}
+            onOpenJapaWithMantra={handleOpenJapaWithMantra}
+            onNavigateTab={setActiveTab}
+          />
+        )}
+
+        {/* 33.5. AI JANAM KUNDALI PREDICTOR TAB */}
+        {activeTab === 'kundali' && (
+          <AIKundaliPredictor
             currentLang={currentLang}
             onOpenJapaWithMantra={handleOpenJapaWithMantra}
             onNavigateTab={setActiveTab}

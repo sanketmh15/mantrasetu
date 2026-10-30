@@ -6,9 +6,8 @@ import {
   nakshatraDatabase,
   getTodaysNakshatra,
   getDailyRashiForecast,
-  calculateJanamKundali,
-  KundaliResult
 } from '../data/rashiGuideData';
+import { AIKundaliPredictor } from './AIKundaliPredictor';
 import { audioEngine } from '../utils/audioSynth';
 import {
   Compass,
@@ -18,8 +17,6 @@ import {
   Search,
   AlertTriangle,
   CheckCircle2,
-  ShieldCheck,
-  Layers,
   Flame,
   Star
 } from 'lucide-react';
@@ -42,22 +39,6 @@ export function RashiGuideCalculator({
   const [nameLetterQuery, setNameLetterQuery] = useState<string>('');
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
   const [nakshatraSearch, setNakshatraSearch] = useState<string>('');
-
-  // Kundali form state
-  const [kundaliForm, setKundaliForm] = useState({
-    name: '',
-    birthDate: '1998-05-15',
-    birthTime: '08:30',
-    birthPlace: 'पुणे, महाराष्ट्र',
-  });
-  const [kundaliResult, setKundaliResult] = useState<KundaliResult | null>(() => {
-    return calculateJanamKundali({
-      name: 'साधक',
-      birthDate: '1998-05-15',
-      birthTime: '08:30',
-      birthPlace: 'पुणे, महाराष्ट्र',
-    });
-  });
 
   const activeRashi: RashiInfo =
     rashiDatabase.find((r) => r.id === selectedRashiId) || rashiDatabase[0];
@@ -119,31 +100,6 @@ export function RashiGuideCalculator({
       navigator.clipboard.writeText(text);
       alert(currentLang === 'en' ? 'Daily forecast copied to clipboard!' : 'आजचे राशीभविष्य क्लिपबोर्डवर कॉपी झाले!');
     }
-  };
-
-  const handleGenerateKundali = (e: React.FormEvent) => {
-    e.preventDefault();
-    audioEngine.playTempleBell();
-    const result = calculateJanamKundali(kundaliForm);
-    setKundaliResult(result);
-  };
-
-  const handleShareKundali = () => {
-    if (!kundaliResult) return;
-    const text = `☸️ *सनातन अमृतधारा वैदिक जन्म कुंडली*\n` +
-      `👤 *नाव:* ${kundaliResult.name}\n` +
-      `📍 *जन्म:* ${kundaliResult.birthDate} | ${kundaliResult.birthTime} (${kundaliResult.birthPlace})\n` +
-      `🚩 *लग्न रास (Ascendant):* ${kundaliResult.lagnaSign.name.mr}\n` +
-      `🌙 *चंद्र रास (Moon Sign):* ${kundaliResult.moonSign.name.mr}\n` +
-      `🌟 *जन्म नक्षत्र:* ${kundaliResult.nakshatra.name.mr} (चरण ${kundaliResult.pada})\n` +
-      `🛡️ *गण:* ${kundaliResult.gana} | *नाडी:* ${kundaliResult.nadi}\n` +
-      `💎 *भाग्य रत्न:* ${kundaliResult.luckyGem}\n` +
-      `🪷 *इष्टदेवता:* ${kundaliResult.ishtadevata}\n` +
-      `🪐 *साडेसाती:* ${kundaliResult.sadeSatiStatus.phase}\n\n` +
-      `👉 आपली जन्म कुंडली व पत्रिका सनातन अमृतधारावर मोफत काढा:\nhttps://sanketmh15.github.io/mantrasetu/#rashi`;
-
-    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
   };
 
   // Filter rashis if searching by initial letter
@@ -210,7 +166,7 @@ export function RashiGuideCalculator({
             }`}
           >
             <span>☸️</span>
-            <span>{currentLang === 'en' ? 'Janam Kundali Calculator' : 'वैदिक जन्म कुंडली व पत्रिका'}</span>
+            <span>{currentLang === 'en' ? 'AI Janam Kundali Predictor' : 'एआय जन्म कुंडली व १२ भाव भविष्य'}</span>
           </button>
 
           <button
@@ -453,206 +409,11 @@ export function RashiGuideCalculator({
 
       {/* ================= TAB 2: VEDIC JANAM KUNDALI CALCULATOR ================= */}
       {activeTab === 'kundali' && (
-        <div className="space-y-8">
-          
-          {/* Kundali Form */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#141210] border border-amber-900/40 shadow-xl">
-            <div className="max-w-2xl mb-6">
-              <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">
-                वैदिक जन्म पत्रिका संगणन (Vedic Birth Chart)
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold font-serifDev text-white mt-1">
-                आपली जन्म कुंडली व १२ भाव विवरण
-              </h2>
-              <p className="text-xs text-stone-300 mt-1">
-                आपले नाव, अचूक जन्मतारीख, वेळ आणि जन्मस्थान प्रविष्ट करा. लग्न रास, चंद्र रास, नक्षत्र चरण व १२ स्थानांची वैदिक कुंडली तात्काळ तयार होईल.
-              </p>
-            </div>
-
-            <form onSubmit={handleGenerateKundali} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              <div>
-                <label className="text-xs font-semibold text-stone-300 block mb-1">आपले नाव (Name):</label>
-                <input
-                  type="text"
-                  required
-                  value={kundaliForm.name}
-                  onChange={(e) => setKundaliForm({ ...kundaliForm, name: e.target.value })}
-                  placeholder="उदा. राहुल शिंदे"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-stone-300 block mb-1">जन्मतारीख (Birth Date):</label>
-                <input
-                  type="date"
-                  required
-                  value={kundaliForm.birthDate}
-                  onChange={(e) => setKundaliForm({ ...kundaliForm, birthDate: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-stone-300 block mb-1">जन्मवेळ (Birth Time):</label>
-                <input
-                  type="time"
-                  required
-                  value={kundaliForm.birthTime}
-                  onChange={(e) => setKundaliForm({ ...kundaliForm, birthTime: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-stone-300 block mb-1">जन्मस्थान (Place):</label>
-                <input
-                  type="text"
-                  required
-                  value={kundaliForm.birthPlace}
-                  onChange={(e) => setKundaliForm({ ...kundaliForm, birthPlace: e.target.value })}
-                  placeholder="उदा. पुणे / मुंबई / नाशिक"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div className="sm:col-span-2 md:col-span-4 pt-2">
-                <button
-                  type="submit"
-                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-saffron-600 via-amber-600 to-amber-500 hover:from-saffron-500 hover:to-amber-400 text-white font-bold text-xs sm:text-sm shadow-lg transition-all flex items-center gap-2"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>वैदिक कुंडली काढा (Calculate Kundali)</span>
-                </button>
-              </div>
-            </form>
-          </div>
-
-          {/* Kundali Result Display */}
-          {kundaliResult && (
-            <div className="space-y-6">
-              
-              {/* Profile Card & Astrological Identity */}
-              <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#1c1815] via-[#141210] to-[#0d0c0a] border border-amber-800/60 shadow-2xl">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-800 pb-5 mb-6">
-                  <div>
-                    <span className="text-xs font-bold text-amber-400 uppercase font-mono block">
-                      श्री गणेशाय नमः • जन्म पत्रिका
-                    </span>
-                    <h3 className="text-2xl sm:text-3xl font-extrabold font-serifDev text-white mt-0.5">
-                      {kundaliResult.name}
-                    </h3>
-                    <p className="text-xs text-stone-400 mt-1">
-                      जन्म: {kundaliResult.birthDate} • वेळ: {kundaliResult.birthTime} • स्थान: {kundaliResult.birthPlace}
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={handleShareKundali}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-bold text-xs shadow-md transition-all shrink-0"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    <span>कुंडली व्हॉट्सॲपवर पाठवा</span>
-                  </button>
-                </div>
-
-                {/* 6 Key Astrological Pillars Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
-                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
-                    <span className="text-[10px] text-stone-400 block">लग्न रास (Lagna)</span>
-                    <p className="text-sm font-bold text-amber-300 mt-0.5">{kundaliResult.lagnaSign.name.mr}</p>
-                    <span className="text-[10px] text-stone-400">प्रथम भाव</span>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
-                    <span className="text-[10px] text-stone-400 block">चंद्र रास (Moon Sign)</span>
-                    <p className="text-sm font-bold text-saffron-400 mt-0.5">{kundaliResult.moonSign.name.mr}</p>
-                    <span className="text-[10px] text-stone-400">मन व स्वभाव</span>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
-                    <span className="text-[10px] text-stone-400 block">जन्म नक्षत्र</span>
-                    <p className="text-sm font-bold text-yellow-300 mt-0.5">{kundaliResult.nakshatra.name.mr}</p>
-                    <span className="text-[10px] text-stone-400">चरण {kundaliResult.pada}</span>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
-                    <span className="text-[10px] text-stone-400 block">गण</span>
-                    <p className="text-sm font-bold text-stone-200 mt-0.5">{kundaliResult.gana} गण</p>
-                    <span className="text-[10px] text-stone-400">प्रवृत्ती</span>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
-                    <span className="text-[10px] text-stone-400 block">नाडी</span>
-                    <p className="text-sm font-bold text-stone-200 mt-0.5">{kundaliResult.nadi} नाडी</p>
-                    <span className="text-[10px] text-stone-400">आरोग्य तत्त्व</span>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
-                    <span className="text-[10px] text-stone-400 block">भाग्य रत्न (Lucky Gem)</span>
-                    <p className="text-xs font-bold text-emerald-400 mt-0.5 truncate">{kundaliResult.luckyGem.split(' ')[0]}</p>
-                    <span className="text-[10px] text-stone-400">{kundaliResult.luckyDay}</span>
-                  </div>
-                </div>
-
-                {/* Sade Sati Analysis Card */}
-                <div className={`p-4 rounded-2xl border mb-6 flex items-start gap-3 ${
-                  kundaliResult.sadeSatiStatus.isActive
-                    ? 'bg-amber-950/40 border-amber-600/60 text-amber-200'
-                    : 'bg-stone-900/50 border-stone-800 text-stone-300'
-                }`}>
-                  <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider">
-                      शनि साडेसाती स्थिती: {kundaliResult.sadeSatiStatus.phase}
-                    </h4>
-                    <p className="text-xs text-stone-300 mt-0.5 leading-relaxed">
-                      {kundaliResult.sadeSatiStatus.description}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Traditional 12 Bhavas (Houses) Visual Grid */}
-                <div>
-                  <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <Layers className="w-4 h-4" />
-                    <span>कुंडलीतील सर्व १२ भावांचे विश्लेषण (12 Vedic Houses):</span>
-                  </h4>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {kundaliResult.houses.map((house) => (
-                      <div
-                        key={house.houseNumber}
-                        className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 space-y-1.5 shadow-sm"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="px-2 py-0.5 rounded-md bg-stone-950 text-amber-300 font-bold text-xs border border-stone-800">
-                            स्थान #{house.houseNumber}
-                          </span>
-                          <span className="text-xs text-stone-300 font-semibold">
-                            {house.signName}
-                          </span>
-                        </div>
-                        <p className="text-xs text-stone-300 font-medium">
-                          {house.significance}
-                        </p>
-                        <div className="flex items-center justify-between text-[11px] text-stone-400 pt-1 border-t border-stone-800">
-                          <span>स्वामी: {house.rulingPlanet}</span>
-                          <span className="text-amber-300 font-semibold">
-                            {house.planetsHere.length > 0 ? house.planetsHere.join(', ') : 'स्वच्छ'}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-          )}
-
-        </div>
+        <AIKundaliPredictor
+          currentLang={currentLang}
+          onNavigateTab={onNavigateTab}
+          onOpenJapaWithMantra={onOpenJapaWithMantra}
+        />
       )}
 
       {/* ================= TAB 3: ALL 27 NAKSHATRAS DIRECTORY ================= */}
