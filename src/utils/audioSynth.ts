@@ -546,7 +546,11 @@ class AudioEngine {
     'राम कृष्ण हरी, जय जय राम कृष्ण हरी! राम कृष्ण हरी, जय जय राम कृष्ण हरी!':
       'Ram Krishna Hari, Jai Jai Ram Krishna Hari! Ram Krishna Hari, Jai Jai Ram Krishna Hari!',
     'पुंडलिक वरदे हरी विठ्ठल, श्री ज्ञानदेव तुकाराम! पंढरीनाथ महाराज की जय!':
-      'Pundalik Varade Hari Vitthal, Shri Dnyanadev Tukaram! Pandharinath Maharaj Ki Jai!'
+      'Pundalik Varade Hari Vitthal, Shri Dnyanadev Tukaram! Pandharinath Maharaj Ki Jai!',
+    'दैनिक नक्षत्र पत्रिका, रास उपाय आणि जन्म कुंडली दालनात आपले स्वागत आहे.':
+      'Dainik Nakshatra patrika, rashi upaay aani janma kundali daalnaat aaple swaagat aahe.',
+    'सनातन अमृतधारा सात्विक भक्ती भांडारात आपले सहर्ष स्वागत आहे.':
+      'Sanatan Amrutdhara saatvik bhakti bhaandaaraat aaple saharsha swaagat aahe.'
   };
 
   /**

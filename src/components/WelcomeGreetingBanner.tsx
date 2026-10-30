@@ -110,6 +110,40 @@ export const WelcomeGreetingBanner: React.FC<WelcomeGreetingBannerProps> = ({
       };
     }
 
+    if (activeTab === 'rashi') {
+      return {
+        icon: '🔮',
+        title: {
+          en: 'Daily Nakshatra, Rashi & Janam Kundali Hub',
+          hi: 'दैनिक नक्षत्र, राशि एवं जन्म कुण्डली दालन',
+          mr: 'दैनिक नक्षत्र पत्रिका, रास उपाय व जन्म कुंडली',
+        },
+        subtitle: {
+          en: 'Discover today\'s active Nakshatra, lucky colors, 1-minute remedial mantras, and personalized 12-house Vedic birth chart.',
+          hi: 'आज का नक्षत्र, लकी कलर, १-मिनट बीजमंत्र उपाय और अपनी निःशुल्क जन्म कुंडली देखें।',
+          mr: 'आजचे नक्षत्र, भाग्यशाली रंग, १-मिनिटाचा बीजमंत्र उपाय आणि आपली मोफत १२ भावांची जन्म पत्रिका.',
+        },
+        speechText: 'दैनिक नक्षत्र पत्रिका, रास उपाय आणि जन्म कुंडली दालनात आपले स्वागत आहे.',
+      };
+    }
+
+    if (activeTab === 'store') {
+      return {
+        icon: '🛒',
+        title: {
+          en: 'Pure Satvik Devotional Store (भक्ती भांडार)',
+          hi: 'सात्विक भक्ति भण्डार एवं पूजा सामग्री',
+          mr: 'अस्सल सात्विक भक्ती भांडार व पूजा साहित्य',
+        },
+        subtitle: {
+          en: 'Authentic Vrindavan Tulsi malas, Nepali 5-Mukhi Rudraksha, brass temple bells, and sacred scriptures.',
+          hi: 'वृन्दावन तुलसी माला, नेपाली रुद्राक्ष, पीतल घंटी एवं पावन धर्मग्रन्थ घर बैठे प्राप्त करें।',
+          mr: 'वृंदावन तुळशी माळा, नेपाळी रुद्राक्ष, पितळी घंटा, ज्ञानेश्वरी आणि पावन पूजा साहित्य घरपोच मागवा.',
+        },
+        speechText: 'सनातन अमृतधारा सात्विक भक्ती भांडारात आपले सहर्ष स्वागत आहे.',
+      };
+    }
+
     if (activeTab === 'god-detail' && selectedGodName) {
       return {
         icon: '🪷',

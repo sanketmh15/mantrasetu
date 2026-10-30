@@ -1,16 +1,27 @@
 import { useState } from 'react';
 import { Language } from '../types';
-import { rashiDatabase, RashiInfo } from '../data/rashiGuideData';
+import {
+  rashiDatabase,
+  RashiInfo,
+  nakshatraDatabase,
+  getTodaysNakshatra,
+  getDailyRashiForecast,
+  calculateJanamKundali,
+  KundaliResult
+} from '../data/rashiGuideData';
 import { audioEngine } from '../utils/audioSynth';
 import {
   Compass,
   Volume2,
-  VolumeX,
   Sparkles,
   Share2,
   Search,
-  Calendar,
-  Heart,
+  AlertTriangle,
+  CheckCircle2,
+  ShieldCheck,
+  Layers,
+  Flame,
+  Star
 } from 'lucide-react';
 
 interface RashiGuideCalculatorProps {
@@ -19,17 +30,40 @@ interface RashiGuideCalculatorProps {
   onNavigateTab?: (tab: string) => void;
 }
 
+type MainTab = 'daily_nakshatra' | 'kundali' | 'all_nakshatras';
+
 export function RashiGuideCalculator({
   currentLang,
   onOpenJapaWithMantra,
   onNavigateTab,
 }: RashiGuideCalculatorProps) {
+  const [activeTab, setActiveTab] = useState<MainTab>('daily_nakshatra');
   const [selectedRashiId, setSelectedRashiId] = useState<string>('aries');
   const [nameLetterQuery, setNameLetterQuery] = useState<string>('');
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
+  const [nakshatraSearch, setNakshatraSearch] = useState<string>('');
+
+  // Kundali form state
+  const [kundaliForm, setKundaliForm] = useState({
+    name: '',
+    birthDate: '1998-05-15',
+    birthTime: '08:30',
+    birthPlace: 'पुणे, महाराष्ट्र',
+  });
+  const [kundaliResult, setKundaliResult] = useState<KundaliResult | null>(() => {
+    return calculateJanamKundali({
+      name: 'साधक',
+      birthDate: '1998-05-15',
+      birthTime: '08:30',
+      birthPlace: 'पुणे, महाराष्ट्र',
+    });
+  });
 
   const activeRashi: RashiInfo =
     rashiDatabase.find((r) => r.id === selectedRashiId) || rashiDatabase[0];
+
+  const todaysNakshatra = getTodaysNakshatra();
+  const dailyForecast = getDailyRashiForecast(activeRashi.id);
 
   const handleSelectRashi = (rashiId: string) => {
     audioEngine.stopSpeaking();
@@ -37,7 +71,7 @@ export function RashiGuideCalculator({
     setSelectedRashiId(rashiId);
   };
 
-  const handleAudioMantra = () => {
+  const handleAudioMantra = (mantraToSpeak: string) => {
     if (isPlayingAudio) {
       audioEngine.stopSpeaking();
       setIsPlayingAudio(false);
@@ -46,8 +80,7 @@ export function RashiGuideCalculator({
 
     setIsPlayingAudio(true);
     audioEngine.playTempleBell();
-    const text = activeRashi.beejMantra.sanskrit;
-    audioEngine.speakText(text, 'hi-IN', 0.78, () => {
+    audioEngine.speakText(mantraToSpeak, 'hi-IN', 0.88, () => {
       setIsPlayingAudio(false);
     });
   };
@@ -60,14 +93,57 @@ export function RashiGuideCalculator({
     }
   };
 
-  const handleShareRashi = () => {
-    const text = `♈ *माझी जन्मरास: ${activeRashi.name[currentLang] || activeRashi.name.mr}*\nस्वामी: ${activeRashi.rulingPlanet[currentLang] || activeRashi.rulingPlanet.mr}\nइष्टदेवता: ${activeRashi.ishtaDevata[currentLang] || activeRashi.ishtaDevata.mr}\nसिद्ध बीजमंत्र: ${activeRashi.beejMantra.sanskrit}\n\nसनातन अमृतधारावर आपली रास व इष्टदेवता मंत्र शोधा:\nhttps://sanketmh15.github.io/mantrasetu/`;
+  const handleShareDailyForecast = () => {
+    const todayStr = new Date().toLocaleDateString('mr-IN', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    const text = `🔮 *सनातन अमृतधारा दैनिक राशीभविष्य व नक्षत्र उपाय*\n` +
+      `📅 *दिनांक:* ${todayStr}\n` +
+      `🌟 *आजचे नक्षत्र:* ${todaysNakshatra.name.mr} (${todaysNakshatra.deity})\n` +
+      `♈ *रास:* ${activeRashi.name[currentLang] || activeRashi.name.mr}\n` +
+      `🎨 *आजचा शुभ रंग:* ${dailyForecast.luckyColor.mr}\n` +
+      `🔢 *आजचा शुभ अंक:* ${dailyForecast.luckyNumber}\n` +
+      `⚡ *ऊर्जा प्रमाण:* ${dailyForecast.energyPercent}%\n` +
+      `📜 *आजचा सल्ला:* ${dailyForecast.spiritualGuidance.mr}\n` +
+      `⚠️ *काळजी:* ${dailyForecast.cautionNotice.mr}\n` +
+      `📿 *१-मिनिटाचा बीजमंत्र उपाय:* ${dailyForecast.remedialMantra}\n\n` +
+      `👉 आपले राशीभविष्य व जन्मकुंडली येथे पहा:\nhttps://sanketmh15.github.io/mantrasetu/#rashi`;
+
     if (navigator.share) {
       navigator.share({ title: activeRashi.name.mr, text }).catch(() => {});
     } else {
       navigator.clipboard.writeText(text);
-      alert(currentLang === 'en' ? 'Rashi details copied!' : 'राशी माहिती क्लिपबोर्डवर कॉपी झाली!');
+      alert(currentLang === 'en' ? 'Daily forecast copied to clipboard!' : 'आजचे राशीभविष्य क्लिपबोर्डवर कॉपी झाले!');
     }
+  };
+
+  const handleGenerateKundali = (e: React.FormEvent) => {
+    e.preventDefault();
+    audioEngine.playTempleBell();
+    const result = calculateJanamKundali(kundaliForm);
+    setKundaliResult(result);
+  };
+
+  const handleShareKundali = () => {
+    if (!kundaliResult) return;
+    const text = `☸️ *सनातन अमृतधारा वैदिक जन्म कुंडली*\n` +
+      `👤 *नाव:* ${kundaliResult.name}\n` +
+      `📍 *जन्म:* ${kundaliResult.birthDate} | ${kundaliResult.birthTime} (${kundaliResult.birthPlace})\n` +
+      `🚩 *लग्न रास (Ascendant):* ${kundaliResult.lagnaSign.name.mr}\n` +
+      `🌙 *चंद्र रास (Moon Sign):* ${kundaliResult.moonSign.name.mr}\n` +
+      `🌟 *जन्म नक्षत्र:* ${kundaliResult.nakshatra.name.mr} (चरण ${kundaliResult.pada})\n` +
+      `🛡️ *गण:* ${kundaliResult.gana} | *नाडी:* ${kundaliResult.nadi}\n` +
+      `💎 *भाग्य रत्न:* ${kundaliResult.luckyGem}\n` +
+      `🪷 *इष्टदेवता:* ${kundaliResult.ishtadevata}\n` +
+      `🪐 *साडेसाती:* ${kundaliResult.sadeSatiStatus.phase}\n\n` +
+      `👉 आपली जन्म कुंडली व पत्रिका सनातन अमृतधारावर मोफत काढा:\nhttps://sanketmh15.github.io/mantrasetu/#rashi`;
+
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
   };
 
   // Filter rashis if searching by initial letter
@@ -77,268 +153,575 @@ export function RashiGuideCalculator({
       )
     : rashiDatabase;
 
+  const filteredNakshatras = nakshatraSearch.trim()
+    ? nakshatraDatabase.filter((n) =>
+        n.name.mr.includes(nakshatraSearch.trim()) ||
+        n.name.en.toLowerCase().includes(nakshatraSearch.trim().toLowerCase()) ||
+        n.rulingPlanet.includes(nakshatraSearch.trim())
+      )
+    : nakshatraDatabase;
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-      {/* Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-[#130d22] to-stone-950 border border-purple-500/30 p-6 sm:p-10 mb-8 shadow-2xl text-white">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-200 text-xs font-semibold uppercase tracking-wider mb-3">
-            <Compass className="w-4 h-4 text-purple-300" />
-            <span>
-              {currentLang === 'en'
-                ? 'Vedic Rashi & Ishta Devata Calculator'
-                : currentLang === 'hi'
-                ? 'वैदिक राशि एवं इष्टदेवता मन्त्र'
-                : 'वैदिक जन्मरास, इष्टदेवता व सिद्ध बीजमंत्र'}
-            </span>
-          </div>
-
-          <h1 className="text-2xl sm:text-4xl font-extrabold font-serifDev tracking-wide leading-tight">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      {/* 1. Header */}
+      <div className="text-center max-w-3xl mx-auto">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-950/70 border border-amber-800/60 text-amber-300 text-xs font-semibold mb-3 shadow-md">
+          <Sparkles className="w-4 h-4 text-amber-400 animate-spin" />
+          <span>
             {currentLang === 'en'
-              ? 'Find Your Ruling Planet, Ishta Devata & Beej Mantra'
-              : currentLang === 'hi'
-              ? 'अपनी जन्मराशि, स्वामी ग्रह, इष्टदेव एवं सिद्ध बीजमंत्र जानें'
-              : 'आपली जन्मरास, राशी स्वामी, इष्टदेवता व सिद्ध बीजमंत्र'}
-          </h1>
+              ? 'Vedic Astrology • Daily Nakshatras • Janam Kundali'
+              : 'वैदिक ज्योतिष • २७ नक्शत्रे • जन्म कुंडली व राशी उपाय'}
+          </span>
+        </div>
 
-          <p className="mt-3 text-sm sm:text-base text-purple-200/80 max-w-3xl leading-relaxed">
-            {currentLang === 'en'
-              ? 'According to Vedic Jyotish, every individual is blessed with an Ishta Devata and Beej Mantra governed by their Janma Rashi. Chanting this sacred mantra daily removes planetary doshas and bestows supreme peace and success.'
-              : currentLang === 'hi'
-              ? 'जन्मराशि के अनुसार अपने इष्टदेव की उपासना करने से नवग्रहों की अनुकूलता मिलती है और जीवन में सुख-शांति व सफलता की प्राप्ति होती है।'
-              : 'वैदिक शास्त्रानुसार प्रत्येकाच्या जन्मराशीवर एका विशिष्ट ग्रहाचे आणि इष्टदेवतेचे अधिष्ठान असते. स्वतःच्या राशीनुसार सिद्ध बीजमंत्राचा १०८ वेळा नित्य जप केल्यास मानसिक शांती, यश व ग्रहदोष निवारण होते.'}
-          </p>
+        <h1 className="text-3xl sm:text-4xl font-extrabold font-serifDev text-white tracking-tight">
+          {currentLang === 'en'
+            ? 'Daily Nakshatra, Rashi & Kundali Guide'
+            : 'आजची दैनिक नक्षत्र पत्रिका, रास उपाय व जन्म कुंडली'}
+        </h1>
+        
+        <p className="mt-2 text-stone-300 text-xs sm:text-base leading-relaxed">
+          {currentLang === 'en'
+            ? 'Discover today\'s active Nakshatra, lucky colors, 1-minute remedial mantras, and calculate your personalized Vedic Janam Kundali with 12 Bhavas.'
+            : 'आजचे चालू नक्षत्र, प्रत्येक राशीचा आजचा भाग्यशाली रंग व शुभ अंक, १-मिनिटाचा बीजमंत्र उपाय आणि आपली मोफत १२ भावांची जन्म कुंडली.'}
+        </p>
+
+        {/* 3 Main Mode Selector Tabs */}
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+          <button
+            onClick={() => setActiveTab('daily_nakshatra')}
+            className={`px-4 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 border shadow-md ${
+              activeTab === 'daily_nakshatra'
+                ? 'bg-gradient-to-r from-saffron-600 to-amber-600 text-white border-amber-300 shadow-amber-900/40 ring-2 ring-amber-400/30'
+                : 'bg-stone-900 text-stone-300 border-stone-800 hover:bg-stone-800'
+            }`}
+          >
+            <span>🔮</span>
+            <span>{currentLang === 'en' ? 'Today\'s Rashi & Nakshatra' : 'आजचे राशीभविष्य व नक्षत्र'}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('kundali')}
+            className={`px-4 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 border shadow-md ${
+              activeTab === 'kundali'
+                ? 'bg-gradient-to-r from-saffron-600 to-amber-600 text-white border-amber-300 shadow-amber-900/40 ring-2 ring-amber-400/30'
+                : 'bg-stone-900 text-stone-300 border-stone-800 hover:bg-stone-800'
+            }`}
+          >
+            <span>☸️</span>
+            <span>{currentLang === 'en' ? 'Janam Kundali Calculator' : 'वैदिक जन्म कुंडली व पत्रिका'}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('all_nakshatras')}
+            className={`px-4 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 border shadow-md ${
+              activeTab === 'all_nakshatras'
+                ? 'bg-gradient-to-r from-saffron-600 to-amber-600 text-white border-amber-300 shadow-amber-900/40 ring-2 ring-amber-400/30'
+                : 'bg-stone-900 text-stone-300 border-stone-800 hover:bg-stone-800'
+            }`}
+          >
+            <span>🌟</span>
+            <span>{currentLang === 'en' ? '27 Nakshatras Hub' : 'सर्व २७ नक्षत्रे दर्शन'}</span>
+          </button>
         </div>
       </div>
 
-      {/* Name Letter Quick Search Bar */}
-      <div className="bg-white dark:bg-[#1a1510] rounded-2xl border border-stone-200 dark:border-stone-800 p-4 sm:p-6 mb-8 shadow-md">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex-1">
-            <label className="text-xs font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1.5 mb-1.5">
-              <Search className="w-4 h-4 text-purple-500" />
-              <span>
-                {currentLang === 'en'
-                  ? 'Find Rashi by Name Letter (e.g. अ, स, र, म):'
-                  : 'नावच्या आद्याक्षरावरून रास शोधा (उदा. अ, क, म, स, र):'}
-              </span>
-            </label>
-            <input
-              type="text"
-              value={nameLetterQuery}
-              onChange={(e) => setNameLetterQuery(e.target.value)}
-              placeholder="उदा. 'स' टाकल्यास कुंभ रास दिसेल..."
-              className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-stone-800 dark:text-stone-100"
-            />
-          </div>
-
-          {nameLetterQuery && (
-            <button
-              onClick={() => setNameLetterQuery('')}
-              className="text-xs text-purple-600 dark:text-purple-400 font-semibold hover:underline self-end sm:self-center"
-            >
-              फिल्टर काढा
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* 12 Rashis Selector Grid */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 mb-8">
-        {matchedRashis.map((rashi) => {
-          const isSelected = rashi.id === activeRashi.id;
-
-          return (
-            <button
-              key={rashi.id}
-              onClick={() => handleSelectRashi(rashi.id)}
-              className={`p-3 sm:p-4 rounded-2xl border text-center transition-all ${
-                isSelected
-                  ? 'bg-purple-50 dark:bg-purple-950/40 border-purple-500 shadow-lg ring-2 ring-purple-500/30 scale-105'
-                  : 'bg-white dark:bg-[#16130f] border-stone-200 dark:border-stone-800 hover:border-purple-300'
-              }`}
-            >
-              <span className="text-3xl sm:text-4xl block mb-1">
-                {rashi.symbolIcon}
-              </span>
-              <h3 className="font-bold text-stone-900 dark:text-stone-100 font-serifDev text-xs sm:text-sm">
-                {rashi.name[currentLang] || rashi.name.mr}
-              </h3>
-              <p className="text-[10px] text-amber-700 dark:text-amber-400 mt-0.5 line-clamp-1">
-                {rashi.rulingPlanet[currentLang] || rashi.rulingPlanet.mr}
-              </p>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Active Rashi Spotlight Detail Card */}
-      <div className="bg-white dark:bg-[#16130f] rounded-3xl border border-purple-300 dark:border-purple-800/60 p-6 sm:p-10 shadow-2xl">
-        {/* Card Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-200 dark:border-stone-800 pb-6 mb-6">
-          <div className="flex items-center gap-4">
-            <span className="text-5xl p-3 rounded-2xl bg-purple-100 dark:bg-purple-950/50 border border-purple-300 dark:border-purple-800">
-              {activeRashi.symbolIcon}
-            </span>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300">
-                  {activeRashi.element[currentLang] || activeRashi.element.mr}
-                </span>
-                <span className="text-xs text-stone-500">
-                  {activeRashi.sanskritName}
-                </span>
+      {/* ================= TAB 1: DAILY NAKSHATRA & RASHI FORECAST ================= */}
+      {activeTab === 'daily_nakshatra' && (
+        <div className="space-y-8">
+          
+          {/* Today's Active Nakshatra Spotlight Banner */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#1e1915] via-[#161311] to-[#0e0d0c] border border-amber-800/60 shadow-2xl relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">
+                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                  <span>
+                    {currentLang === 'en' ? 'Today\'s Active Celestial Nakshatra' : 'आजचे चालू नक्षत्र (Live Cosmic Nakshatra)'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl sm:text-4xl">{todaysNakshatra.symbol.split(' ')[1] || '🌟'}</span>
+                  <div>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold font-serifDev text-white">
+                      {todaysNakshatra.name[currentLang] || todaysNakshatra.name.mr}
+                    </h2>
+                    <span className="text-xs text-stone-300">
+                      नक्षत्र क्र. {todaysNakshatra.number} / २७ • देवता: {todaysNakshatra.deity}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-xs sm:text-sm text-stone-300 mt-3 max-w-xl leading-relaxed">
+                  <span className="text-amber-300 font-semibold">नक्षत्र प्रभाव: </span>
+                  {todaysNakshatra.nature[currentLang] || todaysNakshatra.nature.mr} • स्वामी ग्रह: {todaysNakshatra.rulingPlanet} • गण: {todaysNakshatra.gana}
+                </p>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900 dark:text-stone-100 font-serifDev mt-1">
-                {activeRashi.name[currentLang] || activeRashi.name.mr}
-              </h2>
+
+              {/* Nakshatra Mantra Audio Chime */}
+              <div className="p-4 rounded-2xl bg-black/40 border border-amber-900/40 text-center shrink-0 space-y-2">
+                <span className="text-[11px] text-stone-400 uppercase tracking-wider font-mono block">
+                  आजचा नक्षत्र बीजमंत्र
+                </span>
+                <p className="text-sm font-bold text-amber-300 font-serifDev">
+                  {todaysNakshatra.mantra}
+                </p>
+                <button
+                  onClick={() => handleAudioMantra(todaysNakshatra.mantra)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-saffron-600 hover:from-amber-500 hover:to-saffron-500 text-white font-bold text-xs shadow-md transition-all"
+                >
+                  <Volume2 className="w-3.5 h-3.5" />
+                  <span>{isPlayingAudio ? 'मंत्र सुरू आहे...' : 'मंत्र ऐका व स्मरण करा'}</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleShareRashi}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-stone-200 dark:border-stone-800 hover:border-purple-400 text-xs font-bold text-stone-700 dark:text-stone-300 transition-all"
-            >
-              <Share2 className="w-4 h-4 text-purple-600" />
-              <span>{currentLang === 'en' ? 'Share Rashi' : 'शेअर करा'}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* 4 Core Pillars Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-          {/* Ruling Planet */}
-          <div className="p-4 rounded-2xl bg-amber-50/50 dark:bg-stone-900/50 border border-amber-200/60 dark:border-stone-800">
-            <span className="text-[11px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider block mb-1">
-              {currentLang === 'en' ? 'Ruling Planet' : 'राशी स्वामी ग्रह:'}
-            </span>
-            <p className="font-bold text-stone-900 dark:text-stone-100 font-serifDev text-base">
-              🪐 {activeRashi.rulingPlanet[currentLang] || activeRashi.rulingPlanet.mr}
-            </p>
-          </div>
-
-          {/* Ishta Devata */}
-          <div className="p-4 rounded-2xl bg-purple-50/50 dark:bg-stone-900/50 border border-purple-200/60 dark:border-stone-800">
-            <span className="text-[11px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider block mb-1">
-              {currentLang === 'en' ? 'Presiding Ishta Devata' : 'उपास्य इष्टदेवता:'}
-            </span>
-            <p className="font-bold text-purple-700 dark:text-purple-300 font-serifDev text-base">
-              🪷 {activeRashi.ishtaDevata[currentLang] || activeRashi.ishtaDevata.mr}
-            </p>
-          </div>
-
-          {/* Auspicious Day */}
-          <div className="p-4 rounded-2xl bg-stone-50 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-800">
-            <span className="text-[11px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider block mb-1">
-              {currentLang === 'en' ? 'Auspicious Day' : 'शुभ वार:'}
-            </span>
-            <p className="font-bold text-stone-900 dark:text-stone-100 font-serifDev text-base flex items-center gap-1.5">
-              <Calendar className="w-4 h-4 text-amber-500" />
-              <span>{activeRashi.auspiciousDay[currentLang] || activeRashi.auspiciousDay.mr}</span>
-            </p>
-          </div>
-
-          {/* Auspicious Color */}
-          <div className="p-4 rounded-2xl bg-stone-50 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-800">
-            <span className="text-[11px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider block mb-1">
-              {currentLang === 'en' ? 'Auspicious Color' : 'भाग्यशाली रंग:'}
-            </span>
-            <p className="font-bold text-stone-900 dark:text-stone-100 font-serifDev text-base">
-              🎨 {activeRashi.auspiciousColor[currentLang] || activeRashi.auspiciousColor.mr}
-            </p>
-          </div>
-        </div>
-
-        {/* Sacred Beej Mantra Sanctum */}
-        <div className="rounded-3xl bg-gradient-to-br from-purple-100/80 via-amber-50 to-purple-50 dark:from-purple-950/60 dark:via-stone-900 dark:to-purple-900/30 border-2 border-purple-400/80 p-6 sm:p-8 shadow-lg mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-purple-600" />
-              <span className="text-xs font-bold uppercase tracking-wider text-purple-800 dark:text-purple-300">
-                {currentLang === 'en'
-                  ? 'Your Sacred Vedic Beej Mantra'
-                  : 'तुमचा राशीनुसार सिद्ध बीजमंत्र:'}
+          {/* 12 Rashis Selector Bar */}
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">
+                {currentLang === 'en' ? 'Select Your Moon Sign (Rashi)' : 'आपली रास निवडा (१२ राशी):'}
               </span>
+
+              {/* Initial Letter Search Box */}
+              <div className="relative w-full sm:w-64">
+                <Search className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
+                <input
+                  type="text"
+                  value={nameLetterQuery}
+                  onChange={(e) => setNameLetterQuery(e.target.value)}
+                  placeholder={currentLang === 'en' ? 'Search by name initial...' : 'नावाच्या आद्याक्षरावरून शोधा...'}
+                  className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500"
+                />
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5">
+              {matchedRashis.map((rashi) => {
+                const isSelected = rashi.id === selectedRashiId;
+                return (
+                  <button
+                    key={rashi.id}
+                    onClick={() => handleSelectRashi(rashi.id)}
+                    className={`p-3 rounded-2xl border transition-all text-left flex items-center gap-2.5 ${
+                      isSelected
+                        ? 'bg-gradient-to-r from-amber-950/90 to-saffron-950/80 border-amber-500 text-white shadow-lg ring-1 ring-amber-400/40'
+                        : 'bg-stone-900/60 border-stone-800 text-stone-300 hover:bg-stone-800/60 hover:text-white'
+                    }`}
+                  >
+                    <span className="text-2xl shrink-0">{rashi.symbolIcon}</span>
+                    <div className="min-w-0">
+                      <h4 className="text-xs font-bold truncate">
+                        {rashi.name[currentLang] || rashi.name.mr}
+                      </h4>
+                      <span className="text-[10px] text-stone-400 block truncate">
+                        {rashi.rulingPlanet[currentLang] || rashi.rulingPlanet.mr}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Detailed Daily Rashi Spotlight Card */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#1b1714] via-[#13110f] to-[#0c0b0a] border border-amber-800/60 shadow-2xl relative">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-800 pb-5 mb-6">
+              <div className="flex items-center gap-3.5">
+                <span className="text-4xl p-3 rounded-2xl bg-stone-950 border border-stone-800 shadow-md">
+                  {activeRashi.symbolIcon}
+                </span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-2xl sm:text-3xl font-extrabold font-serifDev text-white">
+                      {activeRashi.name[currentLang] || activeRashi.name.mr}
+                    </h2>
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-950 border border-amber-700/60 text-amber-300">
+                      {activeRashi.element[currentLang] || activeRashi.element.mr}
+                    </span>
+                  </div>
+                  <p className="text-xs text-stone-400 mt-0.5">
+                    स्वामी ग्रह: {activeRashi.rulingPlanet[currentLang] || activeRashi.rulingPlanet.mr} • इष्टदेवता: {activeRashi.ishtaDevata[currentLang] || activeRashi.ishtaDevata.mr}
+                  </p>
+                </div>
+              </div>
+
+              {/* Energy Badge */}
+              <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-black/50 border border-stone-800">
+                <div className="text-right">
+                  <span className="text-[10px] text-stone-400 uppercase font-mono block">आजची ऊर्जा पातळी</span>
+                  <span className="text-base font-black text-amber-400 font-mono">{dailyForecast.energyPercent}% शुभ ऊर्जा</span>
+                </div>
+                <div className="w-10 h-10 rounded-full border-2 border-amber-500/40 flex items-center justify-center font-bold text-xs text-amber-300">
+                  ⚡
+                </div>
+              </div>
+            </div>
+
+            {/* Daily Metas: Lucky Color, Lucky Number, Best Muhurat */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+              <div className="p-4 rounded-2xl bg-stone-900/60 border border-stone-800 text-center">
+                <span className="text-xs text-stone-400 block mb-1">🎨 आजचा भाग्यशाली रंग (Lucky Color)</span>
+                <p className="text-sm font-bold text-amber-300">{dailyForecast.luckyColor.mr}</p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-stone-900/60 border border-stone-800 text-center">
+                <span className="text-xs text-stone-400 block mb-1">🔢 आजचा शुभ अंक (Lucky Number)</span>
+                <p className="text-base font-black text-emerald-400 font-mono">{dailyForecast.luckyNumber}</p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-stone-900/60 border border-stone-800 text-center">
+                <span className="text-xs text-stone-400 block mb-1">⏰ शुभ चौघडिया मुहूर्त काळ</span>
+                <p className="text-xs font-semibold text-stone-200">{dailyForecast.bestMuhuratTime}</p>
+              </div>
+            </div>
+
+            {/* Daily Spiritual Guidance & Caution Alert */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="p-4 sm:p-5 rounded-2xl bg-emerald-950/20 border border-emerald-800/40 space-y-1.5">
+                <div className="flex items-center gap-2 text-emerald-300 font-bold text-xs">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>आजचा शास्त्रोक्त सल्ला व मार्गदर्शन:</span>
+                </div>
+                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed">
+                  {dailyForecast.spiritualGuidance.mr}
+                </p>
+              </div>
+
+              <div className="p-4 sm:p-5 rounded-2xl bg-rose-950/20 border border-rose-800/40 space-y-1.5">
+                <div className="flex items-center gap-2 text-rose-300 font-bold text-xs">
+                  <AlertTriangle className="w-4 h-4 text-rose-400" />
+                  <span>आज काय काळजी घ्यावी? (Daily Caution):</span>
+                </div>
+                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed">
+                  {dailyForecast.cautionNotice.mr}
+                </p>
+              </div>
+            </div>
+
+            {/* 1-Minute Remedial Beej Mantra */}
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-950/70 via-stone-900 to-amber-950/70 border border-amber-600/60 mb-6 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <Flame className="w-4 h-4 text-amber-400" />
+                  <span>आजचा विशेष १-मिनिटाचा बीजमंत्र उपाय:</span>
+                </span>
+                <span className="text-[11px] text-stone-400 font-mono">२१ वेळा जप फलदायी</span>
+              </div>
+              <p className="text-base sm:text-lg font-bold text-white font-serifDev">
+                {dailyForecast.remedialMantra}
+              </p>
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <button
+                  onClick={() => handleAudioMantra(dailyForecast.remedialMantra)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md transition-all"
+                >
+                  <Volume2 className="w-3.5 h-3.5" />
+                  <span>{isPlayingAudio ? 'मंत्र पठण सुरू आहे...' : 'हा मंत्र ऑडिओमध्ये ऐका'}</span>
+                </button>
+
+                <button
+                  onClick={handleStartJapa}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-300 border border-stone-700 font-bold text-xs transition-all"
+                >
+                  <Compass className="w-3.5 h-3.5" />
+                  <span>१०८ जपमाळ उघडा</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Share Today's Forecast on WhatsApp */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-stone-800/80">
+              <span className="text-xs text-stone-400">
+                नावांची शुभ आद्याक्षरे: <strong className="text-stone-200">{activeRashi.nameInitials}</strong>
+              </span>
+
               <button
-                onClick={handleAudioMantra}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md ${
-                  isPlayingAudio
-                    ? 'bg-red-500 text-white animate-pulse'
-                    : 'bg-purple-600 hover:bg-purple-500 text-white'
-                }`}
+                onClick={handleShareDailyForecast}
+                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-bold text-xs shadow-md transition-all"
               >
-                {isPlayingAudio ? (
-                  <>
-                    <VolumeX className="w-4 h-4" />
-                    <span>थांबवा</span>
-                  </>
-                ) : (
-                  <>
-                    <Volume2 className="w-4 h-4" />
-                    <span>मंत्र उच्चार ऐका</span>
-                  </>
-                )}
+                <Share2 className="w-4 h-4" />
+                <span>आजचे राशीभविष्य व्हॉट्सॲपवर पाठवा</span>
               </button>
             </div>
+
           </div>
 
-          <div className="bg-white/90 dark:bg-black/60 rounded-2xl p-5 border border-purple-200 dark:border-purple-900/60 text-center">
-            <p className="text-xl sm:text-2xl font-extrabold text-stone-900 dark:text-purple-100 font-serifDev tracking-wide leading-relaxed">
-              {activeRashi.beejMantra.sanskrit}
-            </p>
-            <p className="text-xs text-stone-500 dark:text-stone-400 italic mt-2">
-              "{activeRashi.beejMantra.roman}"
-            </p>
+        </div>
+      )}
+
+      {/* ================= TAB 2: VEDIC JANAM KUNDALI CALCULATOR ================= */}
+      {activeTab === 'kundali' && (
+        <div className="space-y-8">
+          
+          {/* Kundali Form */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#141210] border border-amber-900/40 shadow-xl">
+            <div className="max-w-2xl mb-6">
+              <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">
+                वैदिक जन्म पत्रिका संगणन (Vedic Birth Chart)
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold font-serifDev text-white mt-1">
+                आपली जन्म कुंडली व १२ भाव विवरण
+              </h2>
+              <p className="text-xs text-stone-300 mt-1">
+                आपले नाव, अचूक जन्मतारीख, वेळ आणि जन्मस्थान प्रविष्ट करा. लग्न रास, चंद्र रास, नक्षत्र चरण व १२ स्थानांची वैदिक कुंडली तात्काळ तयार होईल.
+              </p>
+            </div>
+
+            <form onSubmit={handleGenerateKundali} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="text-xs font-semibold text-stone-300 block mb-1">आपले नाव (Name):</label>
+                <input
+                  type="text"
+                  required
+                  value={kundaliForm.name}
+                  onChange={(e) => setKundaliForm({ ...kundaliForm, name: e.target.value })}
+                  placeholder="उदा. राहुल शिंदे"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-stone-300 block mb-1">जन्मतारीख (Birth Date):</label>
+                <input
+                  type="date"
+                  required
+                  value={kundaliForm.birthDate}
+                  onChange={(e) => setKundaliForm({ ...kundaliForm, birthDate: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-stone-300 block mb-1">जन्मवेळ (Birth Time):</label>
+                <input
+                  type="time"
+                  required
+                  value={kundaliForm.birthTime}
+                  onChange={(e) => setKundaliForm({ ...kundaliForm, birthTime: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-stone-300 block mb-1">जन्मस्थान (Place):</label>
+                <input
+                  type="text"
+                  required
+                  value={kundaliForm.birthPlace}
+                  onChange={(e) => setKundaliForm({ ...kundaliForm, birthPlace: e.target.value })}
+                  placeholder="उदा. पुणे / मुंबई / नाशिक"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div className="sm:col-span-2 md:col-span-4 pt-2">
+                <button
+                  type="submit"
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-saffron-600 via-amber-600 to-amber-500 hover:from-saffron-500 hover:to-amber-400 text-white font-bold text-xs sm:text-sm shadow-lg transition-all flex items-center gap-2"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>वैदिक कुंडली काढा (Calculate Kundali)</span>
+                </button>
+              </div>
+            </form>
           </div>
 
-          <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 mt-4 leading-relaxed font-serifDev">
-            <strong className="text-purple-800 dark:text-purple-300 block mb-0.5">
-              मंत्र भावार्थ:
-            </strong>
-            {activeRashi.beejMantra.meaning[currentLang] || activeRashi.beejMantra.meaning.mr}
-          </p>
+          {/* Kundali Result Display */}
+          {kundaliResult && (
+            <div className="space-y-6">
+              
+              {/* Profile Card & Astrological Identity */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#1c1815] via-[#141210] to-[#0d0c0a] border border-amber-800/60 shadow-2xl">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-800 pb-5 mb-6">
+                  <div>
+                    <span className="text-xs font-bold text-amber-400 uppercase font-mono block">
+                      श्री गणेशाय नमः • जन्म पत्रिका
+                    </span>
+                    <h3 className="text-2xl sm:text-3xl font-extrabold font-serifDev text-white mt-0.5">
+                      {kundaliResult.name}
+                    </h3>
+                    <p className="text-xs text-stone-400 mt-1">
+                      जन्म: {kundaliResult.birthDate} • वेळ: {kundaliResult.birthTime} • स्थान: {kundaliResult.birthPlace}
+                    </p>
+                  </div>
 
-          <div className="mt-6 pt-4 border-t border-purple-200/80 dark:border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <span className="text-xs text-stone-600 dark:text-stone-400">
-              * नित्य सकाळी आंघोळीनंतर या मंत्राचा १०८ वेळा जप केल्यास विशेष लाभ होतो.
-            </span>
+                  <button
+                    onClick={handleShareKundali}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-bold text-xs shadow-md transition-all shrink-0"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    <span>कुंडली व्हॉट्सॲपवर पाठवा</span>
+                  </button>
+                </div>
 
-            <button
-              onClick={handleStartJapa}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-amber-600 to-purple-700 hover:from-purple-500 hover:to-amber-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2"
-            >
-              <Heart className="w-4 h-4 fill-current" />
-              <span>या मंत्राची १०८ जपमाळ सुरू करा →</span>
-            </button>
+                {/* 6 Key Astrological Pillars Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
+                    <span className="text-[10px] text-stone-400 block">लग्न रास (Lagna)</span>
+                    <p className="text-sm font-bold text-amber-300 mt-0.5">{kundaliResult.lagnaSign.name.mr}</p>
+                    <span className="text-[10px] text-stone-400">प्रथम भाव</span>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
+                    <span className="text-[10px] text-stone-400 block">चंद्र रास (Moon Sign)</span>
+                    <p className="text-sm font-bold text-saffron-400 mt-0.5">{kundaliResult.moonSign.name.mr}</p>
+                    <span className="text-[10px] text-stone-400">मन व स्वभाव</span>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
+                    <span className="text-[10px] text-stone-400 block">जन्म नक्षत्र</span>
+                    <p className="text-sm font-bold text-yellow-300 mt-0.5">{kundaliResult.nakshatra.name.mr}</p>
+                    <span className="text-[10px] text-stone-400">चरण {kundaliResult.pada}</span>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
+                    <span className="text-[10px] text-stone-400 block">गण</span>
+                    <p className="text-sm font-bold text-stone-200 mt-0.5">{kundaliResult.gana} गण</p>
+                    <span className="text-[10px] text-stone-400">प्रवृत्ती</span>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
+                    <span className="text-[10px] text-stone-400 block">नाडी</span>
+                    <p className="text-sm font-bold text-stone-200 mt-0.5">{kundaliResult.nadi} नाडी</p>
+                    <span className="text-[10px] text-stone-400">आरोग्य तत्त्व</span>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 text-center">
+                    <span className="text-[10px] text-stone-400 block">भाग्य रत्न (Lucky Gem)</span>
+                    <p className="text-xs font-bold text-emerald-400 mt-0.5 truncate">{kundaliResult.luckyGem.split(' ')[0]}</p>
+                    <span className="text-[10px] text-stone-400">{kundaliResult.luckyDay}</span>
+                  </div>
+                </div>
+
+                {/* Sade Sati Analysis Card */}
+                <div className={`p-4 rounded-2xl border mb-6 flex items-start gap-3 ${
+                  kundaliResult.sadeSatiStatus.isActive
+                    ? 'bg-amber-950/40 border-amber-600/60 text-amber-200'
+                    : 'bg-stone-900/50 border-stone-800 text-stone-300'
+                }`}>
+                  <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider">
+                      शनि साडेसाती स्थिती: {kundaliResult.sadeSatiStatus.phase}
+                    </h4>
+                    <p className="text-xs text-stone-300 mt-0.5 leading-relaxed">
+                      {kundaliResult.sadeSatiStatus.description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Traditional 12 Bhavas (Houses) Visual Grid */}
+                <div>
+                  <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <Layers className="w-4 h-4" />
+                    <span>कुंडलीतील सर्व १२ भावांचे विश्लेषण (12 Vedic Houses):</span>
+                  </h4>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {kundaliResult.houses.map((house) => (
+                      <div
+                        key={house.houseNumber}
+                        className="p-3.5 rounded-2xl bg-stone-900/70 border border-stone-800 space-y-1.5 shadow-sm"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="px-2 py-0.5 rounded-md bg-stone-950 text-amber-300 font-bold text-xs border border-stone-800">
+                            स्थान #{house.houseNumber}
+                          </span>
+                          <span className="text-xs text-stone-300 font-semibold">
+                            {house.signName}
+                          </span>
+                        </div>
+                        <p className="text-xs text-stone-300 font-medium">
+                          {house.significance}
+                        </p>
+                        <div className="flex items-center justify-between text-[11px] text-stone-400 pt-1 border-t border-stone-800">
+                          <span>स्वामी: {house.rulingPlanet}</span>
+                          <span className="text-amber-300 font-semibold">
+                            {house.planetsHere.length > 0 ? house.planetsHere.join(', ') : 'स्वच्छ'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          )}
+
+        </div>
+      )}
+
+      {/* ================= TAB 3: ALL 27 NAKSHATRAS DIRECTORY ================= */}
+      {activeTab === 'all_nakshatras' && (
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="text-xl sm:text-2xl font-bold font-serifDev text-white">
+                वैदिक २७ नक्षत्रे ज्ञानकोश (All 27 Nakshatras)
+              </h3>
+              <p className="text-xs text-stone-400">
+                प्रत्येक नक्षत्राची देवता, प्रतीक चिन्ह, स्वभाव आणि सिद्ध बीजमंत्र.
+              </p>
+            </div>
+
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
+              <input
+                type="text"
+                value={nakshatraSearch}
+                onChange={(e) => setNakshatraSearch(e.target.value)}
+                placeholder="नक्षत्र किंवा ग्रहाचे नाव शोधा..."
+                className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredNakshatras.map((nak) => (
+              <div
+                key={nak.number}
+                className="p-5 rounded-2xl bg-gradient-to-b from-[#181513] to-[#100e0d] border border-stone-800 hover:border-amber-600/50 transition-all space-y-2.5 shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl">{nak.symbol.split(' ')[1] || '⭐'}</span>
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-stone-950 text-amber-300 font-semibold border border-stone-800">
+                    नक्षत्र #{nak.number} • {nak.rulingPlanet}
+                  </span>
+                </div>
+
+                <div>
+                  <h4 className="text-base font-bold text-white font-serifDev">
+                    {nak.name[currentLang] || nak.name.mr}
+                  </h4>
+                  <p className="text-xs text-stone-400">
+                    देवता: <strong className="text-stone-200">{nak.deity}</strong> • गण: {nak.gana}
+                  </p>
+                </div>
+
+                <p className="text-xs text-stone-300 leading-relaxed bg-black/30 p-2.5 rounded-xl border border-stone-800/80">
+                  {nak.nature[currentLang] || nak.nature.mr}
+                </p>
+
+                <div className="flex items-center justify-between pt-1 text-xs">
+                  <span className="text-amber-400 font-serifDev truncate text-[11px]">{nak.mantra}</span>
+                  <button
+                    onClick={() => handleAudioMantra(nak.mantra)}
+                    className="p-1.5 rounded-lg bg-amber-950/80 text-amber-300 hover:bg-amber-900 border border-amber-700/60"
+                    title="Listen Mantra"
+                  >
+                    <Volume2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+      )}
 
-        {/* Initials & Personality Traits */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-5 rounded-2xl bg-stone-50 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-800">
-            <span className="text-xs font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider block mb-1">
-              नामाद्याक्षरे (Name Letters):
-            </span>
-            <p className="text-sm font-semibold text-stone-900 dark:text-stone-100 font-serifDev">
-              {activeRashi.nameInitials}
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-stone-50 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-800">
-            <span className="text-xs font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider block mb-1">
-              स्वभाव वैशिष्ट्ये (Characteristics):
-            </span>
-            <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 font-serifDev leading-relaxed">
-              {activeRashi.personalityTrait[currentLang] || activeRashi.personalityTrait.mr}
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

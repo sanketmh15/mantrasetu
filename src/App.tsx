@@ -48,6 +48,7 @@ import { LiveTempleDarshan } from './components/LiveTempleDarshan';
 import { RashiGuideCalculator } from './components/RashiGuideCalculator';
 import { AudioBhajanHub } from './components/AudioBhajanHub';
 import { DailyNotificationReminder } from './components/DailyNotificationReminder';
+import { SatvikDevotionalStore } from './components/SatvikDevotionalStore';
 import { UniversalGlobalSearch } from './components/UniversalGlobalSearch';
 import { Footer } from './components/Footer';
 import { fiftyGodsList } from './data/fiftyGods';
@@ -728,6 +729,11 @@ export function App() {
         {/* 35. DAILY NOTIFICATIONS & REMINDER TAB */}
         {activeTab === 'reminders' && (
           <DailyNotificationReminder currentLang={currentLang} />
+        )}
+
+        {/* 36. SATVIK DEVOTIONAL STORE TAB */}
+        {activeTab === 'store' && (
+          <SatvikDevotionalStore currentLang={currentLang} />
         )}
       </main>
 
