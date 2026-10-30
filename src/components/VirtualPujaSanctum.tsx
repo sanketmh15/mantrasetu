@@ -43,7 +43,7 @@ const pujaDeities: PujaDeity[] = [
     id: 'shiva',
     name: { en: 'Lord Shiva', hi: 'भगवान शिव', mr: 'देवाधिदेव महादेव' },
     symbol: '🕉️',
-    image: DEITY_IMAGE_REGISTRY['shiva']?.primary || 'https://upload.wikimedia.org/wikipedia/commons/4/4d/Shiva.jpg',
+    image: DEITY_IMAGE_REGISTRY['shiva']?.primary || 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Shiva_meditating_Rishikesh.jpg',
     mantra: 'ॐ नमः शिवाय • ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्',
     flowerType: { en: 'Bilvapatra (बेलपत्र) & Dhatura', hi: 'बेलपत्र एवं धतूरा', mr: 'त्रिदल पावन बेलपत्र व धोत्रा' },
     flowerEmoji: '🍃',

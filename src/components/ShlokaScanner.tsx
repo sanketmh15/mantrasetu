@@ -94,7 +94,7 @@ const sampleRecognizedShlokas: IdentifiedShloka[] = [
   // 3. Maha Mrityunjaya Mantra
   {
     id: 'maha_mrityunjaya',
-    devanagari: 'ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् । उर्वारुकमिव बन्धनान्मृत्यowner मुक्षीय मामृतात् ॥',
+    devanagari: 'ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् । उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात् ॥',
     roman: 'Om Tryambakaṁ Yajāmahe Sugandhiṁ Puṣṭivardhanam | Urvārukam-iva Bandhanān Mṛtyor-mukṣīya Māmṛtāt ||',
     sourceScripture: {
       en: 'Rigveda (Mandala 7, Sukta 59, Verse 12) & Shukla Yajurveda',

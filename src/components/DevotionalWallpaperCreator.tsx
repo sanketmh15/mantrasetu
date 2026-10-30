@@ -39,7 +39,7 @@ const wallpaperPresets: WallpaperPreset[] = [
     name: { en: 'Mahadev Kailash Blue', hi: 'देवाधिदेव महादेव', mr: 'कैलासपती महादेव' },
     deityName: '॥ ॐ नमः शिवाय ॥',
     symbol: '🔱',
-    shloka: 'ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् ।\nउर्वारुकमिव बन्धनान्मृत्यowner मुक्षीय मामृतात् ॥',
+    shloka: 'ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् ।\nउर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात् ॥',
     meaning: 'We meditate upon the Three-Eyed Lord who nourishes all beings and bestows immortality.',
     bgGradient: ['#0f172a', '#1e3a8a', '#020617']
   },

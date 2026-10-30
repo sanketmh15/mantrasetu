@@ -21,7 +21,7 @@ export const FESTIVAL_IMAGE_REGISTRY: Record<string, FestivalImageInfo> = {
     placeImageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Shree_Siddhivinayak_Temple_Mumbai.jpg/960px-Shree_Siddhivinayak_Temple_Mumbai.jpg'
   },
   'mahashivratri': {
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4d/Shiva.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Shiva_meditating_Rishikesh.jpg',
     festivalPlaceName: {
       en: '12 Jyotirlingas: Trimbakeshwar, Kashi, Somnath, Mahakaleshwar',
       hi: 'द्वादश ज्योतिर्लिंग: त्र्यंबकेश्वर, काशी, सोमनाथ, महाकालेश्वर',

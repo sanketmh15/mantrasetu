@@ -24,8 +24,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 2. Lord Shiva (कैलासपती महादेव)
   'shiva': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/4/4d/Shiva.jpg',
-    fallback: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Shiva_Parvati_Ganesha.jpg/960px-Shiva_Parvati_Ganesha.jpg',
+    primary: 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Shiva_meditating_Rishikesh.jpg',
+    fallback: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Shiva_Parvati_Ganesha.jpg',
     icon: '🕉️',
     beejMantra: 'ॐ नमः शिवाय',
     tilak: '⚪ त्रिपुंड्र'
@@ -33,8 +33,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 3. Mata Parvati (माता पार्वती)
   'parvati': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/7/77/Parvati.jpg',
-    fallback: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Shiva_Parvati_Ganesha.jpg/960px-Shiva_Parvati_Ganesha.jpg',
+    primary: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Gajagauri-2.jpg',
+    fallback: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Shiva_Parvati_Ganesha.jpg',
     icon: '🌺',
     beejMantra: 'ॐ उमाये नमः',
     tilak: '🔴 सिंदूर'
@@ -438,8 +438,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 48. Mata Ganga (गंगा माता)
   'ganga': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Ganga.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Ganga.jpg',
+    primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Ganga_Devi_Painting.jpg/960px-Ganga_Devi_Painting.jpg',
+    fallback: 'https://upload.wikimedia.org/wikipedia/commons/e/e4/Ganga_Devi_Painting.jpg',
     icon: '🌊',
     beejMantra: 'ॐ गंगे च यमुने चैव गोदावरि सरस्वति',
     tilak: '⚪ श्वेतचंदन'
