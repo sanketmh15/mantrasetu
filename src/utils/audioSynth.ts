@@ -16,6 +16,7 @@ class AudioEngine {
 
   // Real human audio element & streaming TTS tracking
   private currentHumanAudio: HTMLAudioElement | null = null;
+  private currentUtterance: SpeechSynthesisUtterance | null = null;
   private cachedVoices: SpeechSynthesisVoice[] = [];
   private persona: VoicePersona = 'amitabh_bachchan';
   private isTTSAborted = false;
@@ -23,6 +24,18 @@ class AudioEngine {
   constructor() {
     this.persona = getVoicePersona();
     this.initVoices();
+  }
+
+  /**
+   * Detects whether user is on a mobile device (Android, iOS) or small touch screen.
+   */
+  public isMobileDevice(): boolean {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+    const ua = navigator.userAgent || '';
+    const isTouch = typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 0;
+    const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+    const isSmallScreen = typeof window.innerWidth !== 'undefined' && window.innerWidth <= 820;
+    return isMobileUA || (isTouch && isSmallScreen);
   }
 
   private initVoices() {
@@ -138,7 +151,9 @@ class AudioEngine {
           const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${langCode}&client=tw-ob&q=${encodeURIComponent(chunkText)}`;
           const audio = new Audio();
           this.currentHumanAudio = audio;
-          audio.playbackRate = 0.90; // Calm, meditative sacred cadence
+          // Must be 1.0. playbackRate < 1.0 forces mobile hardware decoders into low-quality time-stretching,
+          // creating severe robotic wobbling and glitching!
+          audio.playbackRate = 1.0;
           audio.src = url;
 
           audio.onended = () => {
@@ -433,11 +448,11 @@ class AudioEngine {
 
 
   /**
-   * Discovers and selects the deepest, most resonant Indian Male Voice.
-   * Prioritizes low-register voices suitable for Amitabh Bachchan's heavy baritone.
-   * Strictly filters out robotic female voices.
+   * Discovers and selects the best native Indian voice.
+   * Prioritizes native Marathi & Hindi voices on mobile (Google मराठी, Google हिन्दी),
+   * and resonant deep voices on desktop.
    */
-  public getBestBrahmanVoice(): { voice: SpeechSynthesisVoice | null; isDevanagariCapable: boolean } {
+  public getBestBrahmanVoice(preferredLang?: string): { voice: SpeechSynthesisVoice | null; isDevanagariCapable: boolean } {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
       return { voice: null, isDevanagariCapable: false };
     }
@@ -450,46 +465,55 @@ class AudioEngine {
       return { voice: null, isDevanagariCapable: false };
     }
 
-    const femaleNames = [
-      'female', 'zira', 'heera', 'kalpana', 'hazel', 'susan', 'samantha',
-      'kavya', 'ananya', 'priya', 'veena', 'neerja', 'cortana', 'siri',
-      'aarohi', 'swara', 'geeta', 'shruti', 'sunita'
-    ];
+    const pref = (preferredLang || '').toLowerCase();
 
-    // Filter non-female voices
-    const maleVoices = voices.filter((v) => {
-      const nameLower = v.name.toLowerCase();
-      return !femaleNames.some((f) => nameLower.includes(f));
-    });
-
-    const candidatePool = maleVoices.length > 0 ? maleVoices : voices;
-
-    // 1. Native Hindi / Marathi male voices (Microsoft Hemant, Microsoft Madhav, Google Hindi)
-    const nativeIndianDevanagari = candidatePool.find((v) => {
-      const vl = v.lang.toLowerCase();
-      const vn = v.name.toLowerCase();
-      return (vl.startsWith('hi') || vl.startsWith('mr') || vn.includes('hindi') || vn.includes('marathi')) &&
-        (vn.includes('male') || !femaleNames.some((f) => vn.includes(f)));
-    });
-    if (nativeIndianDevanagari) {
-      return { voice: nativeIndianDevanagari, isDevanagariCapable: true };
+    // 1. Language-targeted match for Marathi (mr)
+    if (pref.startsWith('mr')) {
+      const marathiVoice = voices.find((v) => {
+        const vl = v.lang.toLowerCase();
+        const vn = v.name.toLowerCase();
+        return vl.startsWith('mr') || vn.includes('marathi');
+      });
+      if (marathiVoice) {
+        return { voice: marathiVoice, isDevanagariCapable: true };
+      }
     }
 
-    // 2. Indian English male voice (Microsoft Ravi - English India)
-    const indianEnglishMale = candidatePool.find((v) => {
-      const vl = v.lang.toLowerCase();
-      const vn = v.name.toLowerCase();
-      return (vl.includes('in') || vn.includes('ravi') || vn.includes('india')) &&
-        (vn.includes('male') || vn.includes('ravi') || !femaleNames.some((f) => vn.includes(f)));
-    });
-    if (indianEnglishMale) {
-      // Indian English voice handles Romanized phonetic text with perfect Indian accent
-      return { voice: indianEnglishMale, isDevanagariCapable: false };
+    // 2. Language-targeted match for Hindi / Sanskrit (hi / sa)
+    if (pref.startsWith('hi') || pref.startsWith('sa')) {
+      const hindiVoice = voices.find((v) => {
+        const vl = v.lang.toLowerCase();
+        const vn = v.name.toLowerCase();
+        return vl.startsWith('hi') || vn.includes('hindi');
+      });
+      if (hindiVoice) {
+        return { voice: hindiVoice, isDevanagariCapable: true };
+      }
     }
 
-    // 3. Any male voice in pool (David, George, Mark)
-    const anyMale = candidatePool.find((v) => v.name.toLowerCase().includes('male')) || candidatePool[0] || null;
-    return { voice: anyMale, isDevanagariCapable: false };
+    // 3. Any native Indian Devanagari voice (Google Hindi, Google Marathi, Microsoft Hemant/Madhav)
+    const anyDevanagari = voices.find((v) => {
+      const vl = v.lang.toLowerCase();
+      const vn = v.name.toLowerCase();
+      return vl.startsWith('mr') || vl.startsWith('hi') || vn.includes('marathi') || vn.includes('hindi');
+    });
+    if (anyDevanagari) {
+      return { voice: anyDevanagari, isDevanagariCapable: true };
+    }
+
+    // 4. Indian English voice (Microsoft Ravi, Google English India)
+    const indianEnglish = voices.find((v) => {
+      const vl = v.lang.toLowerCase();
+      const vn = v.name.toLowerCase();
+      return vl.includes('in') || vn.includes('india') || vn.includes('ravi');
+    });
+    if (indianEnglish) {
+      return { voice: indianEnglish, isDevanagariCapable: false };
+    }
+
+    // 5. Default voice
+    const defaultVoice = voices.find((v) => v.default) || voices[0] || null;
+    return { voice: defaultVoice, isDevanagariCapable: false };
   }
 
   /**
@@ -548,11 +572,10 @@ class AudioEngine {
 
   /**
    * Universal Sacred Voice Engine:
-   * 1. Primary Engine: Streams authentic, pristine native Indian audio (Google TTS engine).
-   *    Has 100% native support for Marathi ('mr') and Hindi ('hi') on all browsers,
-   *    bypassing Windows SAPI limitations and eliminating silent playback errors completely.
-   * 2. Fallback Engine: Uses Web Speech API (SpeechSynthesis) with phonetic transliteration
-   *    if offline.
+   * 1. Priority 1 on Mobile: Native mobile speech synthesis using local Google Marathi/Hindi voices,
+   *    pinned utterances (to avoid mobile GC), and normalized 1.0 pitch to eliminate wobbling completely.
+   * 2. Priority 2 on Desktop: Streams authentic native Indian audio (Google TTS engine) with 1.0 rate.
+   * 3. Fallback Engine: Uses Web Speech API with phonetic transliteration.
    */
   public async speakText(text: string, lang = 'hi-IN', rate?: number, onEnd?: () => void): Promise<void> {
     this.stopSpeaking();
@@ -562,22 +585,36 @@ class AudioEngine {
     const safeEnd = () => {
       if (!ended) {
         ended = true;
+        this.currentUtterance = null;
         onEnd?.();
       }
     };
 
-    // 1. Try high-fidelity streaming TTS engine (supports native Marathi & Hindi)
+    const isMobile = this.isMobileDevice();
+
+    // Priority 1 on Mobile:
+    // Mobile browsers (Android Chrome & iOS Safari) have native high-quality offline voices (Google मराठी / Google हिन्दी)
+    // using SpeechSynthesis, which NEVER fail over cellular networks, have 0 latency, and don't buffer!
+    if (isMobile) {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        this.speakSynthesisFallback(text, lang, rate, safeEnd);
+        return;
+      }
+    }
+
+    // Priority 2 on Desktop: Try Google TTS streaming first (with playbackRate: 1.0)
     const streamSuccess = await this.playGoogleTTS(text, lang, safeEnd);
     if (streamSuccess) {
       return;
     }
 
-    // 2. Fallback to Web Speech API
+    // Desktop fallback to Web Speech API
     this.speakSynthesisFallback(text, lang, rate, safeEnd);
   }
 
   /**
-   * Web Speech API fallback engine with unpause queue recovery and phonetic mapping
+   * Web Speech API fallback engine with unpause queue recovery and phonetic mapping.
+   * Completely eliminates wobbling and glitching on mobile by normalizing pitch to 1.0.
    */
   private speakSynthesisFallback(text: string, lang = 'hi-IN', rate?: number, onEnd?: () => void) {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -585,20 +622,24 @@ class AudioEngine {
       return;
     }
 
+    window.speechSynthesis.cancel(); // Clear any hung queue
     if (window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
     }
 
-    const hasDevanagari = /[\u0900-\u097F]/.test(text);
-    const { voice: bestVoice, isDevanagariCapable } = this.getBestBrahmanVoice();
+    const isMobile = this.isMobileDevice();
+    const { voice: bestVoice, isDevanagariCapable } = this.getBestBrahmanVoice(lang);
 
     let textToSpeak = text;
     let targetLang = lang;
 
+    const hasDevanagari = /[\u0900-\u097F]/.test(text);
+
     if (hasDevanagari) {
-      if (isDevanagariCapable && bestVoice) {
+      // If voice is capable or on mobile, preserve pure Devanagari!
+      if (isDevanagariCapable || isMobile) {
         textToSpeak = text;
-        targetLang = bestVoice.lang.toLowerCase().startsWith('mr') ? 'mr-IN' : 'hi-IN';
+        targetLang = bestVoice && bestVoice.lang.toLowerCase().startsWith('mr') ? 'mr-IN' : 'hi-IN';
       } else {
         textToSpeak = this.toPhoneticRoman(text);
         targetLang = bestVoice ? bestVoice.lang : 'en-IN';
@@ -608,16 +649,26 @@ class AudioEngine {
     }
 
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    this.currentUtterance = utterance; // Pin to class instance to prevent mobile GC destruction!
     utterance.lang = targetLang;
 
-    if (this.persona === 'amitabh_bachchan') {
-      utterance.pitch = 0.73;
-      utterance.rate = rate || 0.82;
+    if (isMobile) {
+      // On mobile (Android & iOS), pitch MUST be 1.0 (natural).
+      // Pitch < 0.9 causes severe robotic vibrato, wobbling, and distortion on mobile DSP chips!
+      utterance.pitch = 1.0;
+      utterance.rate = rate || 0.92;
       utterance.volume = 1.0;
     } else {
-      utterance.pitch = 0.82;
-      utterance.rate = rate || 0.84;
-      utterance.volume = 1.0;
+      // On desktop, slight baritone modulation is safe
+      if (this.persona === 'amitabh_bachchan') {
+        utterance.pitch = 0.82;
+        utterance.rate = rate || 0.86;
+        utterance.volume = 1.0;
+      } else {
+        utterance.pitch = 0.88;
+        utterance.rate = rate || 0.88;
+        utterance.volume = 1.0;
+      }
     }
 
     if (bestVoice) {
@@ -628,6 +679,7 @@ class AudioEngine {
     const safeEnd = () => {
       if (!isCompleted) {
         isCompleted = true;
+        this.currentUtterance = null;
         if (keepAliveTimer) clearInterval(keepAliveTimer);
         onEnd?.();
       }
@@ -636,20 +688,31 @@ class AudioEngine {
     utterance.onend = () => safeEnd();
     utterance.onerror = (e) => {
       console.warn('SpeechSynthesis error event:', e.error);
+      // If speech synthesis encountered an error on mobile, try Google TTS as backup
+      if (isMobile && !this.isTTSAborted) {
+        this.playGoogleTTS(text, lang, safeEnd).then((ok) => {
+          if (!ok) safeEnd();
+        });
+        return;
+      }
       safeEnd();
     };
 
-    const keepAliveTimer = setInterval(() => {
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        if (!window.speechSynthesis.speaking) {
-          clearInterval(keepAliveTimer);
-        } else if (window.speechSynthesis.paused) {
-          window.speechSynthesis.resume();
+    // On mobile, never run aggressive resume() loops while active as it causes stutter
+    let keepAliveTimer: any = null;
+    if (!isMobile) {
+      keepAliveTimer = setInterval(() => {
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+          if (!window.speechSynthesis.speaking) {
+            clearInterval(keepAliveTimer);
+          } else if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+          }
         }
-      }
-    }, 4000);
+      }, 5000);
+    }
 
-    const maxSafetyDuration = Math.max(8000, textToSpeak.length * 200 + 4000);
+    const maxSafetyDuration = Math.max(10000, textToSpeak.length * 200 + 5000);
     setTimeout(() => {
       if (!isCompleted && typeof window !== 'undefined' && 'speechSynthesis' in window && !window.speechSynthesis.speaking) {
         safeEnd();
@@ -658,9 +721,6 @@ class AudioEngine {
 
     try {
       window.speechSynthesis.speak(utterance);
-      if (window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
-      }
     } catch (err) {
       console.error('SpeechSynthesis.speak failed:', err);
       safeEnd();
@@ -713,6 +773,7 @@ class AudioEngine {
    */
   public stopSpeaking() {
     this.isTTSAborted = true;
+    this.currentUtterance = null;
     if (this.currentHumanAudio) {
       try {
         this.currentHumanAudio.pause();
@@ -743,9 +804,13 @@ class AudioEngine {
    * Checks if any speech or human audio is currently playing
    */
   public isSpeaking(): boolean {
-    const isSpeechActive = typeof window !== 'undefined' && 'speechSynthesis' in window && window.speechSynthesis.speaking;
+    const isSpeechActive = (typeof window !== 'undefined' && 'speechSynthesis' in window && window.speechSynthesis.speaking) || !!this.currentUtterance;
     const isHumanAudioActive = !!this.currentHumanAudio && !this.currentHumanAudio.paused;
     return isSpeechActive || isHumanAudioActive;
+  }
+
+  public getCurrentUtterance(): SpeechSynthesisUtterance | null {
+    return this.currentUtterance;
   }
 }
 

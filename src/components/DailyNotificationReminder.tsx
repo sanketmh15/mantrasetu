@@ -279,3 +279,4 @@ export function DailyNotificationReminder({ currentLang }: DailyNotificationRemi
     </div>
   );
 }
+
