@@ -56,6 +56,29 @@ export const VitthalHero: React.FC<VitthalHeroProps> = ({ currentLang, onNavigat
           </span>
         </div>
 
+        {/* Sacred Murti Darshan of Lord Vitthal */}
+        <div className="flex justify-center mb-5">
+          <div className="relative group">
+            <div className="absolute -inset-1.5 bg-gradient-to-r from-yellow-500 via-amber-400 to-orange-500 rounded-3xl blur-md opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse" />
+            <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border-2 border-amber-400/60 shadow-2xl bg-stone-900 flex flex-col items-center justify-center">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/1/1c/Vithoba.JPG"
+                alt="Lord Vitthal Pandharpur - Vithu Mauli"
+                className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/commons/1/11/Vitthal_-_Rakhumai.jpg';
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute bottom-2 left-2 right-2 text-center pointer-events-none">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-amber-950/90 border border-amber-500/50 text-[11px] font-bold text-amber-200 backdrop-blur-sm shadow-md font-serifDev">
+                  ॥ पुंडलिक वरदे हरी विठ्ठल ॥
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Holy Devanagari Title */}
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold font-devanagari text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-saffron-300 to-yellow-200 tracking-tight leading-tight">
           ॥ रामकृष्णहरि ॥

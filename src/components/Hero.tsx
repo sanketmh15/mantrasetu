@@ -37,11 +37,31 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onNavigate }) => {
           </div>
         </div>
 
-        {/* Deity Hero Title */}
+        {/* Deity Hero Title & Sacred Darshan */}
         <div className="text-center max-w-3xl mx-auto">
-          <div className="inline-block p-2 rounded-2xl bg-stone-900/80 border border-stone-800 mb-4 shadow-xl">
-            <span className="text-4xl sm:text-5xl">🚩</span>
+          {/* Sacred Murti Darshan of Lord Hanuman */}
+          <div className="flex justify-center mb-5">
+            <div className="relative group">
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-orange-600 via-amber-500 to-red-600 rounded-3xl blur-md opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse" />
+              <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border-2 border-orange-400/60 shadow-2xl bg-stone-900 flex flex-col items-center justify-center">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/0/01/HANUMAN_LIFTS_HILL.jpg"
+                  alt="Lord Hanuman - Sankat Mochan"
+                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/commons/4/46/Hanuman.jpg';
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-2 left-2 right-2 text-center pointer-events-none">
+                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-orange-950/90 border border-orange-500/50 text-[11px] font-bold text-orange-200 backdrop-blur-sm shadow-md font-serifDev">
+                    ॥ जय श्री राम • जय हनुमान ॥
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
+
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold font-serifDev text-white tracking-wide">
             {hanumanData.name[currentLang]}
           </h1>

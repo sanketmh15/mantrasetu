@@ -15,8 +15,8 @@ export interface DeityImageMeta {
 export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
   // 1. Lord Ganesha (विघ्नहर्ता गणेश)
   'ganesha': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Ganesha.jpg/960px-Ganesha.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/1/10/Ganesha.jpg',
+    primary: 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Ganapati1.jpg',
+    fallback: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Shree_Siddhivinayak_Temple_Mumbai.jpg/960px-Shree_Siddhivinayak_Temple_Mumbai.jpg',
     icon: '🐘',
     beejMantra: 'ॐ गं गणपतये नमः',
     tilak: '🔴 रक्तचंदन'
@@ -159,8 +159,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 17. Lord Dattatreya (श्री गुरुदेव दत्त)
   'dattatreya': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/8/83/Dattatreya.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Dattatrey%2C_Ravi_Varma_Press.jpg',
+    primary: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Dattatrey%2C_Ravi_Varma_Press.jpg',
+    fallback: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Dattatrey%2C_Ravi_Varma_Press.jpg/960px-Dattatrey%2C_Ravi_Varma_Press.jpg',
     icon: '📿',
     beejMantra: 'दिगंबरा दिगंबरा श्रीपाद वल्लभ दिगंबरा',
     tilak: '⚪ भस्म त्रिपुंड्र'

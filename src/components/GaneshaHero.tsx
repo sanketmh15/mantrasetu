@@ -34,11 +34,31 @@ export const GaneshaHero: React.FC<GaneshaHeroProps> = ({ currentLang, onNavigat
           </div>
         </div>
 
-        {/* Deity Hero Title */}
+        {/* Deity Hero Title & Sacred Darshan */}
         <div className="text-center max-w-3xl mx-auto">
-          <div className="inline-block p-2 rounded-2xl bg-stone-900/80 border border-amber-900/40 mb-4 shadow-xl">
-            <span className="text-4xl sm:text-5xl">🐘</span>
+          {/* Sacred Murti Darshan of Lord Ganesha */}
+          <div className="flex justify-center mb-5">
+            <div className="relative group">
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-orange-500 rounded-3xl blur-md opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse" />
+              <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border-2 border-amber-400/60 shadow-2xl bg-stone-900 flex flex-col items-center justify-center">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Ganapati1.jpg"
+                  alt="Lord Ganesha - Riddhi Siddhi Ganapati"
+                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Shree_Siddhivinayak_Temple_Mumbai.jpg/960px-Shree_Siddhivinayak_Temple_Mumbai.jpg';
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-2 left-2 right-2 text-center pointer-events-none">
+                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-amber-950/90 border border-amber-500/50 text-[11px] font-bold text-amber-200 backdrop-blur-sm shadow-md font-serifDev">
+                    ॥ ॐ गं गणपतये नमः ॥
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
+
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold font-serifDev text-white tracking-wide">
             {ganeshaData.name[currentLang]}
           </h1>
