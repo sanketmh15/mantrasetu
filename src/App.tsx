@@ -28,6 +28,7 @@ import { CulturalGlossary } from './components/CulturalGlossary';
 import { DevotionalBackground } from './components/DevotionalBackground';
 import { NamasteGreetingModal } from './components/NamasteGreetingModal';
 import { VirtualPujaSanctum } from './components/VirtualPujaSanctum';
+import { DivinePortalOrb } from './components/DivinePortalOrb';
 import { LiveMuhuratChoghadiya } from './components/LiveMuhuratChoghadiya';
 import { MeditationSleepSounds } from './components/MeditationSleepSounds';
 import { DevotionalStatusCard } from './components/DevotionalStatusCard';
@@ -81,6 +82,24 @@ export function App() {
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [theme, setTheme] = useState<ThemeMode>(getStoredTheme);
   const [textSize, setTextSize] = useState<TextSize>(getStoredTextSize);
+  const [isSoundEnabled, setIsSoundEnabled] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('sanatan_nav_sound_enabled') !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  const toggleSound = () => {
+    setIsSoundEnabled((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('sanatan_nav_sound_enabled', String(next));
+      } catch {}
+      if (next) audioEngine.playNavChime();
+      return next;
+    });
+  };
 
   // Sync authentication state changes across components
   useEffect(() => {
@@ -757,10 +776,19 @@ export function App() {
         onOpenGodDetail={handleOpenGodDetail}
       />
 
-      {/* Floating Divine AI Guide Trigger Button (Bottom Right) */}
+      {/* Floating Divine Sacred Speed Dial Orb (भक्ती चक्र - Quick Navigation) */}
+      <DivinePortalOrb
+        currentLang={currentLang}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        isSoundEnabled={isSoundEnabled}
+        onToggleSound={toggleSound}
+      />
+
+      {/* Floating Divine AI Guide Trigger Button (Desktop / Tablet) */}
       <button
         onClick={() => setIsChatbotOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-3 rounded-full bg-gradient-to-r from-saffron-600 via-amber-600 to-amber-500 hover:from-saffron-500 hover:to-amber-400 text-white font-bold text-xs sm:text-sm shadow-2xl shadow-saffron-950/60 border border-amber-300/40 hover:scale-105 transition-all group"
+        className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-40 hidden sm:flex items-center gap-2.5 px-4 py-3 rounded-full bg-gradient-to-r from-saffron-600 via-amber-600 to-amber-500 hover:from-saffron-500 hover:to-amber-400 text-white font-bold text-xs sm:text-sm shadow-2xl shadow-saffron-950/60 border border-amber-300/40 hover:scale-105 transition-all group"
         title="Ask Divine AI in 12 Languages with Voice Assistant"
       >
         <span className="text-xl group-hover:rotate-12 transition-transform">🤖</span>

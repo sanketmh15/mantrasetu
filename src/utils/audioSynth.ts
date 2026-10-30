@@ -439,6 +439,29 @@ class AudioEngine {
   }
 
   /**
+   * Plays a delicate, gentle sacred chime for smooth navigation transitions
+   */
+  public playNavChime() {
+    try {
+      const ctx = this.initCtx();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, now); // A5 high bell harmonic
+      osc.frequency.exponentialRampToValueAtTime(1320, now + 0.1);
+      gainNode.gain.setValueAtTime(0.06, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
+      osc.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.6);
+    } catch {
+      // AudioContext fallback
+    }
+  }
+
+  /**
    * Synthesizes authentic sacred conch shell (Shankhanaad) using Web Audio API
    */
   public playShankha() {

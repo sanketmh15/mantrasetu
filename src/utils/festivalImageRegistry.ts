@@ -106,3 +106,4 @@ export const FESTIVAL_IMAGE_REGISTRY: Record<string, FestivalImageInfo> = {
 export function getFestivalImage(festivalId: string): string {
   return FESTIVAL_IMAGE_REGISTRY[festivalId]?.imageUrl || 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Ganapati1.jpg';
 }
+

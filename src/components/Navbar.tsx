@@ -34,8 +34,14 @@ import {
   Menu,
   X,
   SlidersHorizontal,
+  Dices,
+  Volume2,
+  VolumeX,
+  History,
+  Keyboard,
   LucideIcon
 } from 'lucide-react';
+import { audioEngine } from '../utils/audioSynth';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -347,6 +353,18 @@ export const CATEGORIES_LIST = [
   { id: 'tools', label: { en: 'Devotional Tools', mr: '🎨 भक्ती साधने', hi: '🎨 भक्ति साधन' } }
 ] as const;
 
+export const SURPRISE_PORTAL_LIST = [
+  { id: 'puja', name: { en: 'Virtual Puja Sanctum', hi: 'डिजिटल पूजा दालन', mr: 'श्री व्हर्च्युअल पूजा दालन' }, blessing: { en: 'May your home be blessed with divine light! 🪔', mr: 'आपल्या घरात मंगल, शांती आणि समृद्धी नांदो! 🪔', hi: 'आपके घर में सुख, शांति का वास हो! 🪔' } },
+  { id: 'live-darshan', name: { en: 'Live Darshan & Aartis', hi: 'सीधा दर्शन व आरतियां', mr: 'पंढरपूर व शिर्डी थेट दर्शन' }, blessing: { en: 'Darshan of Pandharpur Vitthal and Shirdi Sai! 🔴', mr: 'विठू माऊली व साईबाबांचे थेट पावन दर्शन! 🔴', hi: 'विट्ठल भगवान एवं साईं बाबा का पावन दर्शन! 🔴' } },
+  { id: 'wari', name: { en: 'Pandharpur Wari 3D Route', hi: 'पंढरपुर वारी ३D', mr: 'संत ज्ञानेश्वर व तुकाराम महाराज पालखी ३D' }, blessing: { en: 'Experience the holy joy of Warkari pilgrims! 🚩', mr: 'ज्ञानोबा-तुकारामांच्या पावन पालखी सोहळ्याचा आनंद घ्या! 🚩', hi: 'वारकरी संतों की पावन यात्रा का आनंद लें! 🚩' } },
+  { id: 'japa', name: { en: '108 Sacred Mala Japa', hi: '१०८ जप माला', mr: '१०८ जप माळ व नामस्मरण' }, blessing: { en: 'Chant divine names with authentic bead resonance! 📿', mr: 'मन शांत करा आणि १०८ वेळा नामस्मरण पूर्ण करा! 📿', hi: 'मन को शांत कर १०८ बार पावन नाम जपें! 📿' } },
+  { id: 'rashi', name: { en: 'Daily Nakshatra & Lucky Remedies', hi: 'दैनिक नक्षत्र एवं उपाय', mr: 'आजची नक्षत्र पत्रिका व १-मिनिट उपाय' }, blessing: { en: 'Today’s auspicious color, lucky number & beej mantra! 🔮', mr: 'आजचा शुभ रंग, लकी नंबर आणि १-मिनिटाचा बीजमंत्र उपाय! 🔮', hi: 'आज का शुभ रंग, भाग्यशाली अंक व बीजमंत्र उपाय! 🔮' } },
+  { id: 'ashtavinayak', name: { en: 'Ashtavinayak 8 Ganesha Circuit', hi: 'अष्टविनायक यात्रा', mr: 'पावन अष्टविनायक यात्रा दर्शन' }, blessing: { en: 'May Vighnaharta Ganesha remove all obstacles! 🐘', mr: 'विघ्नहर्ता गणपती बाप्पा आपल्या जीवनातील सर्व संकटे दूर करोत! 🐘', hi: 'विघ्नहर्ता गणेश आपके सभी विघ्न दूर करें! 🐘' } },
+  { id: 'jyotirlinga', name: { en: '5 Maharashtra Jyotirlingas', hi: 'महाराष्ट्र ५ ज्योतिर्लिंग', mr: 'महाराष्ट्रातील ५ पावन ज्योतिर्लिंगे' }, blessing: { en: 'Har Har Mahadev! Cosmic blessings of Lord Shiva! 🔱', mr: 'हर हर महादेव! त्र्यंबकेश्वर, भीमाशंकर व घृष्णेश्वर महादेवांचे आशीर्वाद! 🔱', hi: 'हर हर महादेव! भगवान शिव का पावन आशीर्वाद! 🔱' } },
+  { id: 'meditation', name: { en: 'Om & Temple Bells Meditation', hi: 'ध्यान व ॐ नाद संगीत', mr: 'अखंड ॐ नाद व मंदिर घंटा ध्वनी' }, blessing: { en: 'Rest in blissful silence and inner peace! 🎧', mr: 'शांत चित्ताने ध्यान करा व मनाला विश्रांती द्या! 🎧', hi: 'शांत मन से ध्यान लगाएं व मानसिक शांति प्राप्त करें! 🎧' } },
+  { id: 'stories', name: { en: 'Kids Sanskara Stories', hi: 'बाल संस्कार कथाएँ', mr: 'बाल संस्कार व पौराणिक गोष्टी' }, blessing: { en: 'Inspiring virtues and stories for the whole family! 🧒', mr: 'मुलांसाठी प्रेरणादायी व संस्कारमय सुंदर कथा! 🧒', hi: 'बच्चों के लिए सुंदर संस्कार कथाएं! 🧒' } }
+];
+
 export const Navbar: React.FC<NavbarProps> = ({
   currentLang,
   onLanguageChange,
@@ -369,10 +387,113 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [megaSearchQuery, setMegaSearchQuery] = useState('');
   const [activeCategoryFilter, setActiveCategoryFilter] = useState<string>('all');
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+
+  // Sound chime state (persisted)
+  const [isSoundEnabled, setIsSoundEnabled] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('sanatan_nav_sound_enabled') !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  // Recent visited tabs history
+  const [recentTabIds, setRecentTabIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('sanatan_recent_tabs');
+      return saved ? JSON.parse(saved) : ['live-darshan', 'japa', 'puja', 'wari'];
+    } catch {
+      return ['live-darshan', 'japa', 'puja', 'wari'];
+    }
+  });
+
+  // Surprise Blessing Toast
+  const [surpriseToast, setSurpriseToast] = useState<{
+    name: string;
+    blessing: string;
+  } | null>(null);
 
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const moreDropdownRef = useRef<HTMLDivElement>(null);
   const tabsContainerRef = useRef<HTMLDivElement>(null);
+
+  const toggleSound = () => {
+    setIsSoundEnabled((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('sanatan_nav_sound_enabled', String(next));
+      } catch {}
+      if (next) audioEngine.playNavChime();
+      return next;
+    });
+  };
+
+  const updateRecentTabs = (tabId: string) => {
+    try {
+      const stored = localStorage.getItem('sanatan_recent_tabs');
+      let recents: string[] = stored ? JSON.parse(stored) : [];
+      recents = [tabId, ...recents.filter((id) => id !== tabId)].slice(0, 6);
+      localStorage.setItem('sanatan_recent_tabs', JSON.stringify(recents));
+      setRecentTabIds(recents);
+    } catch {}
+  };
+
+  const handleSurpriseMe = () => {
+    const randomItem = SURPRISE_PORTAL_LIST[Math.floor(Math.random() * SURPRISE_PORTAL_LIST.length)];
+    if (isSoundEnabled) {
+      audioEngine.playTempleBell(660);
+    }
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate([20, 30, 20]);
+    }
+
+    setSurpriseToast({
+      name: randomItem.name[currentLang],
+      blessing: randomItem.blessing[currentLang],
+    });
+
+    setTimeout(() => {
+      handleTabClick(randomItem.id);
+    }, 400);
+
+    setTimeout(() => {
+      setSurpriseToast(null);
+    }, 4500);
+  };
+
+  // Global hotkeys for keyboard navigation
+  useEffect(() => {
+    const handleGlobalHotkeys = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      if (e.key === '1') {
+        handleTabClick('home');
+      } else if (e.key === '2') {
+        handleTabClick('deities');
+      } else if (e.key === '3') {
+        handleTabClick('japa');
+      } else if (e.key === '4') {
+        handleTabClick('live-darshan');
+      } else if (e.key === '5') {
+        handleTabClick('puja');
+      } else if (e.key === 'w' || e.key === 'W') {
+        handleTabClick('wari');
+      } else if (e.key === 'r' || e.key === 'R') {
+        handleSurpriseMe();
+      } else if (e.key === 'm' || e.key === 'M') {
+        toggleSound();
+      } else if (e.key === '?') {
+        setIsShortcutsOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalHotkeys);
+    return () => window.removeEventListener('keydown', handleGlobalHotkeys);
+  }, [isSoundEnabled]);
 
   // Auto-scroll active tab into horizontal view
   useEffect(() => {
@@ -414,13 +535,14 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
   }, []);
 
-  // Keyboard shortcut: Escape closes mega menu
+  // Keyboard shortcut: Escape closes mega menu & shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsMegaMenuOpen(false);
         setIsMoreDropdownOpen(false);
         setIsProfileMenuOpen(false);
+        setIsShortcutsOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -457,6 +579,15 @@ export const Navbar: React.FC<NavbarProps> = ({
       onLogout?.();
       return;
     }
+
+    if (isSoundEnabled) {
+      audioEngine.playNavChime();
+    }
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
+
+    updateRecentTabs(tabId);
     onTabChange(tabId);
     setIsMegaMenuOpen(false);
     setIsMoreDropdownOpen(false);
@@ -838,6 +969,68 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
+        {/* Interactive Devotional Category Quick Switcher & Fun Controls */}
+        <div className="bg-stone-900/90 border-t border-stone-800/80 px-2 sm:px-4 py-1.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+          {/* Category Quick Filter Pills */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {CATEGORIES_LIST.map((cat) => {
+              const isSelected = activeCategoryFilter === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setActiveCategoryFilter(cat.id);
+                    if (isSoundEnabled) audioEngine.playNavChime();
+                  }}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition-all flex items-center gap-1 ${
+                    isSelected
+                      ? 'bg-gradient-to-r from-amber-500 to-saffron-500 text-stone-950 font-bold shadow-sm scale-105 ring-1 ring-amber-300/50'
+                      : 'bg-stone-950/80 text-stone-400 hover:text-stone-200 border border-stone-800 hover:border-stone-700'
+                  }`}
+                >
+                  <span>{cat.label[currentLang]}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right Action Icons: Surprise Me, Sound Chime, Keyboard Shortcuts */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {/* Surprise Me Magic Discovery Button */}
+            <button
+              onClick={handleSurpriseMe}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-gradient-to-r from-amber-600 via-saffron-600 to-amber-500 hover:from-amber-500 hover:to-saffron-500 text-white shadow-sm shadow-amber-950 transition-all hover:scale-105 border border-amber-300/40"
+              title={currentLang === 'en' ? 'Surprise Divine Portal (Press R)' : '🎲 आजचे दैवी दालन (R दाबा)'}
+            >
+              <Dices className="w-3.5 h-3.5 text-amber-200" />
+              <span className="hidden sm:inline">{currentLang === 'en' ? 'Surprise Me' : 'दैवी शोध'}</span>
+              <span className="sm:hidden">शोध</span>
+            </button>
+
+            {/* Sound Chime Toggle */}
+            <button
+              onClick={toggleSound}
+              className={`p-1.5 rounded-full border text-xs transition-colors ${
+                isSoundEnabled
+                  ? 'bg-amber-500/20 border-amber-400/50 text-amber-300 hover:bg-amber-500/30'
+                  : 'bg-stone-950 border-stone-800 text-stone-500 hover:text-stone-300'
+              }`}
+              title={isSoundEnabled ? 'मंदिर ध्वनी सुरू (Sound ON - Press M to mute)' : 'मंदिर ध्वनी बंद (Sound MUTED - Press M to unmute)'}
+            >
+              {isSoundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+            </button>
+
+            {/* Keyboard Shortcuts Guide Button */}
+            <button
+              onClick={() => setIsShortcutsOpen(true)}
+              className="hidden lg:flex items-center gap-1 p-1.5 rounded-full bg-stone-950 border border-stone-800 text-stone-400 hover:text-amber-300 hover:border-amber-500/40 text-[10px] transition-colors"
+              title="Keyboard Shortcuts (Press ?)"
+            >
+              <Keyboard className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
         {/* Enhanced Horizontal Scroll Navigation Bar with Left & Right Arrow Buttons */}
         <div className="relative border-t border-stone-800/80 bg-stone-950/95 w-full">
           <div className="max-w-7xl mx-auto flex items-center px-1 sm:px-3">
@@ -868,7 +1061,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="flex overflow-x-auto scroll-smooth py-2 px-1 gap-2 flex-grow items-center scrollbar-thin"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-              {ALL_SANATAN_TABS.map((tab) => {
+              {ALL_SANATAN_TABS.filter((tab) => {
+                if (activeCategoryFilter === 'all') return true;
+                return tab.category === activeCategoryFilter;
+              }).map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
                 return (
@@ -886,7 +1082,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <span>{tab.label[currentLang]}</span>
                     {tab.badge && (
                       <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-bold ${
-                        isActive ? 'bg-black/30 text-amber-200' : 'bg-amber-500/20 text-amber-300'
+                        isActive
+                          ? 'bg-black/30 text-amber-200'
+                          : tab.badge === 'LIVE'
+                          ? 'bg-red-600 text-white animate-pulse'
+                          : 'bg-amber-500/20 text-amber-300'
                       }`}>
                         {tab.badge}
                       </span>
@@ -894,6 +1094,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
                 );
               })}
+
+              {/* Show All Reset Button when category filtered */}
+              {activeCategoryFilter !== 'all' && (
+                <button
+                  onClick={() => {
+                    setActiveCategoryFilter('all');
+                    if (isSoundEnabled) audioEngine.playNavChime();
+                  }}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-stone-800 hover:bg-stone-700 text-amber-300 border border-amber-500/40 shrink-0 transition-all"
+                >
+                  <span>🌟 {currentLang === 'en' ? 'Show All Tabs (35+)' : 'सर्व ३५+ दालने दाखवा'}</span>
+                </button>
+              )}
 
               {/* Login / Logout action in scroll strip */}
               <button
@@ -997,7 +1210,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {CATEGORIES_LIST.map((cat) => (
                   <button
                     key={cat.id}
-                    onClick={() => setActiveCategoryFilter(cat.id)}
+                    onClick={() => {
+                      setActiveCategoryFilter(cat.id);
+                      if (isSoundEnabled) audioEngine.playNavChime();
+                    }}
                     className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                       activeCategoryFilter === cat.id
                         ? 'bg-gradient-to-r from-saffron-600 to-amber-600 text-white shadow-md'
@@ -1007,6 +1223,48 @@ export const Navbar: React.FC<NavbarProps> = ({
                     {cat.label[currentLang]}
                   </button>
                 ))}
+              </div>
+
+              {/* Recently Visited Portals Strip */}
+              {recentTabIds.length > 0 && (
+                <div className="pt-2.5 mt-2.5 border-t border-stone-800/60 flex items-center gap-2 overflow-x-auto no-scrollbar">
+                  <span className="text-[10px] font-bold text-amber-400 flex items-center gap-1 shrink-0">
+                    <History className="w-3 h-3 text-amber-400" />
+                    <span>{currentLang === 'en' ? 'Recently Visited:' : 'नुकतेच पाहिलेले:'}</span>
+                  </span>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {recentTabIds.map((tabId) => {
+                      const tabObj = ALL_SANATAN_TABS.find((t) => t.id === tabId);
+                      if (!tabObj) return null;
+                      const Icon = tabObj.icon;
+                      return (
+                        <button
+                          key={tabId}
+                          onClick={() => handleTabClick(tabId)}
+                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] bg-stone-950 hover:bg-stone-800 border border-stone-800 hover:border-amber-400/60 text-stone-300 hover:text-white transition-all shadow-sm"
+                        >
+                          <Icon className="w-3 h-3 text-amber-400" />
+                          <span>{tabObj.label[currentLang]}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Surprise Me Magic Discovery Banner */}
+              <div className="mt-2.5 pt-2 border-t border-stone-800/60 flex items-center justify-between gap-2">
+                <span className="text-[11px] text-amber-200/90 font-medium flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{currentLang === 'en' ? 'Discover something sacred today:' : 'नवीन पावन दालन अनुभवायचे आहे?'}</span>
+                </span>
+                <button
+                  onClick={handleSurpriseMe}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-gradient-to-r from-amber-600 to-saffron-600 hover:from-amber-500 hover:to-saffron-500 text-white font-bold text-xs shadow-md transition-all hover:scale-105"
+                >
+                  <Dices className="w-3.5 h-3.5 text-amber-200" />
+                  <span>{currentLang === 'en' ? 'Surprise Me' : '🎲 आजचे दैवी दालन'}</span>
+                </button>
               </div>
             </div>
 
@@ -1180,6 +1438,104 @@ export const Navbar: React.FC<NavbarProps> = ({
           <span>{currentLang === 'en' ? 'All (35+)' : 'सर्व दालने'}</span>
         </button>
       </nav>
+
+      {/* Floating Surprise Blessing Notification Toast */}
+      {surpriseToast && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-md p-4 rounded-3xl bg-gradient-to-r from-amber-950 via-[#211710] to-stone-950 border-2 border-amber-400 text-white shadow-2xl animate-bounce">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-saffron-600 to-amber-500 flex items-center justify-center text-xl shrink-0 shadow-md">
+              ✨
+            </div>
+            <div className="flex-1">
+              <span className="text-[10px] uppercase tracking-wider font-bold text-amber-300">
+                {currentLang === 'en' ? 'Divine Portal Discovered' : 'आजचे दैवी दालन उघडत आहे'}
+              </span>
+              <h4 className="text-sm font-bold font-serifDev text-white mt-0.5">
+                {surpriseToast.name}
+              </h4>
+              <p className="text-xs text-amber-200/90 mt-1 leading-relaxed">
+                {surpriseToast.blessing}
+              </p>
+            </div>
+            <button
+              onClick={() => setSurpriseToast(null)}
+              className="text-stone-400 hover:text-white text-xs p-1"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Keyboard Shortcuts Dialog Modal */}
+      {isShortcutsOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fadeIn">
+          <div className="w-full max-w-md rounded-3xl bg-[#171410] border border-amber-500/40 p-6 shadow-2xl text-white space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-stone-800">
+              <div className="flex items-center gap-2">
+                <Keyboard className="w-5 h-5 text-amber-400" />
+                <h3 className="font-bold font-serifDev text-base text-amber-300">
+                  {currentLang === 'en' ? 'Quick Keyboard Hotkeys' : 'कीबोर्ड शॉर्टकट्स'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsShortcutsOpen(false)}
+                className="w-7 h-7 rounded-lg bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-white flex items-center justify-center text-xs"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between p-2 rounded-xl bg-stone-900 border border-stone-800">
+                <span className="text-stone-300">Ctrl + K</span>
+                <span className="font-semibold text-amber-300">शोधा (Universal Search)</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-stone-900 border border-stone-800">
+                <span className="text-stone-300">1</span>
+                <span className="font-semibold text-amber-300">मुख्य दालन (Dashboard)</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-stone-900 border border-stone-800">
+                <span className="text-stone-300">2</span>
+                <span className="font-semibold text-amber-300">सर्व ५० देव-देवता</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-stone-900 border border-stone-800">
+                <span className="text-stone-300">3</span>
+                <span className="font-semibold text-amber-300">१०८ जप माळ</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-stone-900 border border-stone-800">
+                <span className="text-stone-300">4</span>
+                <span className="font-semibold text-amber-300">🔴 थेट दर्शन व आरत्या</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-stone-900 border border-stone-800">
+                <span className="text-stone-300">5</span>
+                <span className="font-semibold text-amber-300">🪔 व्हर्च्युअल पूजा दालन</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-stone-900 border border-stone-800">
+                <span className="text-stone-300">W</span>
+                <span className="font-semibold text-amber-300">🚩 पंढरपूर वारी ३D</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-stone-900 border border-stone-800">
+                <span className="text-stone-300">R</span>
+                <span className="font-semibold text-amber-300">🎲 आजचे दैवी दालन (Surprise Me)</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-stone-900 border border-stone-800">
+                <span className="text-stone-300">M</span>
+                <span className="font-semibold text-amber-300">🔔 मंदिर ध्वनी चालू/बंद</span>
+              </div>
+            </div>
+
+            <div className="pt-2 text-center">
+              <button
+                onClick={() => setIsShortcutsOpen(false)}
+                className="w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-500 font-bold text-xs transition-colors"
+              >
+                समजले (Got it)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
