@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { DEITY_IMAGE_REGISTRY } from '../utils/deityImageRegistry';
 
 interface DeityImageProps {
   src: string;
@@ -9,59 +10,6 @@ interface DeityImageProps {
   deityName?: string;
 }
 
-const deitySacredMeta: Record<string, { icon: string; beejMantra: string; tilak: string }> = {
-  'ganesha': { icon: '🐘', beejMantra: 'ॐ गं गणपतये नमः', tilak: '🔴 रक्तचंदन' },
-  'shiva': { icon: '🕉️', beejMantra: 'ॐ नमः शिवाय', tilak: '⚪ त्रिपुंड्र' },
-  'parvati': { icon: '🌺', beejMantra: 'ॐ उमाये नमः', tilak: '🔴 सिंदूर' },
-  'vishnu': { icon: '🪷', beejMantra: 'ॐ नमो नारायणाय', tilak: '🟡 ऊर्ध्वपुंड्र' },
-  'lakshmi': { icon: '🪙', beejMantra: 'ॐ श्रीं महालक्ष्म्यै नमः', tilak: '🔴 कुंकुम' },
-  'saraswati': { icon: '🪕', beejMantra: 'ॐ ऐं सरस्वत्यै नमः', tilak: '⚪ श्वेतचंदन' },
-  'hanuman': { icon: '🚩', beejMantra: 'ॐ हं हनुमते नमः', tilak: '🟠 शेंदूर' },
-  'rama': { icon: '🏹', beejMantra: 'श्री राम जय राम जय जय राम', tilak: '🟡 रामानंदी' },
-  'sita': { icon: '🌸', beejMantra: 'ॐ श्री सीतायै नमः', tilak: '🔴 सौभाग्य तिलक' },
-  'krishna': { icon: '🪈', beejMantra: 'ॐ नमो भगवते वासुदेवाय', tilak: '🟡 गोपीचंदन' },
-  'radha': { icon: '🪷', beejMantra: 'ॐ राधे राधे', tilak: '🟡 गोपीचंदन' },
-  'vitthal': { icon: '🪷', beejMantra: 'ॐ नमो भगवते विठ्ठलाय', tilak: '⚪ गोपीचंदन व तुळस' },
-  'rakhumai': { icon: '👑', beejMantra: 'ॐ श्री रुक्मिण्यै नमः', tilak: '🔴 कुंकुम' },
-  'khandoba': { icon: '⚔️', beejMantra: 'येळकोट येळकोट जय मल्हार', tilak: '🟡 भंडारा' },
-  'tulja-bhavani': { icon: '🔱', beejMantra: 'ॐ श्री तुलजा भवान्यै नमः', tilak: '🔴 अष्टगंध कुंकुम' },
-  'kolhapur-ambabai': { icon: '👑', beejMantra: 'ॐ श्री अंबाबाई नमः', tilak: '🔴 अष्टगंध' },
-  'dattatreya': { icon: '📿', beejMantra: 'दिगंबरा दिगंबरा श्रीपाद वल्लभ दिगंबरा', tilak: '⚪ भस्म त्रिपुंड्र' },
-  'swami-samarth': { icon: '🌸', beejMantra: 'भिऊ नकोस मी तुझ्या पाठीशी आहे', tilak: '🟡 चंदन अष्टगंध' },
-  'sai-baba': { icon: '✨', beejMantra: 'सबका मालिक एक • ॐ साई राम', tilak: '⚪ उदी तिलक' },
-  'gajanan-maharaj': { icon: '🌾', beejMantra: 'गण गण गणात बोते', tilak: '🟡 चंदन टिळा' },
-  'kartikeya': { icon: '🦚', beejMantra: 'ॐ षण्मुखाय नमः', tilak: '⚪ विभूती' },
-  'surya': { icon: '☀️', beejMantra: 'ॐ घृणिः सूर्याय नमः', tilak: '🔴 रक्तचंदन' },
-  'chandra': { icon: '🌙', beejMantra: 'ॐ सोमाय नमः', tilak: '⚪ श्वेतचंदन' },
-  'kalabhairava': { icon: '🐕', beejMantra: 'ॐ कालभैरवाय नमः', tilak: '⚪ भस्म' },
-  'narasimha': { icon: '🦁', beejMantra: 'ॐ उग्रं वीरं महाविष्णुं', tilak: '🟡 ऊर्ध्वपुंड्र' },
-  'varaha': { icon: '🐗', beejMantra: 'ॐ वराहाय नमः', tilak: '🟡 ऊर्ध्वपुंड्र' },
-  'kurma': { icon: '🐢', beejMantra: 'ॐ कूर्माय नमः', tilak: '🟡 ऊर्ध्वपुंड्र' },
-  'matsya': { icon: '🐟', beejMantra: 'ॐ मत्स्याय नमः', tilak: '🟡 ऊर्ध्वपुंड्र' },
-  'vamana': { icon: '☂️', beejMantra: 'ॐ वामनाय नमः', tilak: '🟡 ऊर्ध्वपुंड्र' },
-  'parashurama': { icon: '🪓', beejMantra: 'ॐ परशुरामाय नमः', tilak: '⚪ त्रिपुंड्र' },
-  'kalki': { icon: '🐎', beejMantra: 'ॐ कल्किने नमः', tilak: '🟡 ऊर्ध्वपुंड्र' },
-  'brahma': { icon: '🪷', beejMantra: 'ॐ ब्रह्मणे नमः', tilak: '🟡 चंदन' },
-  'gayatri': { icon: '☀️', beejMantra: 'ॐ भूर्भुवः स्वः', tilak: '🔴 कुंकुम' },
-  'durga': { icon: '🦁', beejMantra: 'ॐ दुं दुर्गायै नमः', tilak: '🔴 सिंदूर' },
-  'kali': { icon: '⚡', beejMantra: 'ॐ क्रीं कालिकायै नमः', tilak: '🔴 रक्त सिंदूर' },
-  'annapurna': { icon: '🍚', beejMantra: 'ॐ अन्नपूर्णायै नमः', tilak: '🔴 अष्टगंध' },
-  'jagannath': { icon: '☸️', beejMantra: 'जय जगन्नाथ बलभद्र सुभद्रा', tilak: '🟡 तिलक' },
-  'venkateswara': { icon: '💎', beejMantra: 'ॐ नमो वेङ्कटेशाय', tilak: '⚪ नामा तिरुपती' },
-  'ayyappa': { icon: '🔔', beejMantra: 'स्वामीये शरणं अय्यप्पा', tilak: '⚪ भस्म व चंदन' },
-  'shani-dev': { icon: '🪨', beejMantra: 'ॐ शं शनैश्चराय नमः', tilak: '🔵 तैल तिलक' },
-  'dhanvantari': { icon: '🏺', beejMantra: 'ॐ धन्वन्तरये नमः', tilak: '🟡 चंदन' },
-  'kubera': { icon: '💰', beejMantra: 'ॐ यक्षाय कुबेराय नमः', tilak: '🟡 अष्टगंध' },
-  'indra': { icon: '⚡', beejMantra: 'ॐ इन्द्राय नमः', tilak: '🟡 चंदन' },
-  'agni': { icon: '🔥', beejMantra: 'ॐ अग्नये नमः', tilak: '🔴 रक्तचंदन' },
-  'varuna': { icon: '🌊', beejMantra: 'ॐ वरुणाय नमः', tilak: '⚪ श्वेतचंदन' },
-  'vayu': { icon: '💨', beejMantra: 'ॐ वायवे नमः', tilak: '⚪ श्वेतचंदन' },
-  'yama': { icon: '🐃', beejMantra: 'ॐ यमाय धर्मराजाय नमः', tilak: '⚪ भस्म' },
-  'ganga': { icon: '💧', beejMantra: 'ॐ गंगे च यमुने चैव', tilak: '🔴 अष्टगंध' },
-  'yamuna': { icon: '🌊', beejMantra: 'जय यमुना मैया', tilak: '🔴 कुंकुम' },
-  'kamakhya': { icon: '🌺', beejMantra: 'ॐ कामाख्यायै नमः', tilak: '🔴 कामाख्या सिंदूर' }
-};
-
 export const DeityImage: React.FC<DeityImageProps> = ({
   src,
   fallbackSrc,
@@ -70,25 +18,51 @@ export const DeityImage: React.FC<DeityImageProps> = ({
   deityId = 'ganesha',
   deityName,
 }) => {
-  const [currentSrc, setCurrentSrc] = useState(src);
-  const [hasError, setHasError] = useState(false);
+  const regMeta = DEITY_IMAGE_REGISTRY[deityId];
+  const [currentSrc, setCurrentSrc] = useState<string>(src || regMeta?.primary || '');
+  const [attemptIndex, setAttemptIndex] = useState<number>(0);
+  const [hasError, setHasError] = useState<boolean>(false);
 
   useEffect(() => {
-    setCurrentSrc(src);
+    // When props change, reset attempt index and src
+    const initial = src || regMeta?.primary || '';
+    setCurrentSrc(initial);
+    setAttemptIndex(0);
     setHasError(false);
-  }, [src]);
+  }, [src, deityId, regMeta?.primary]);
 
   const handleError = () => {
-    if (fallbackSrc && currentSrc !== fallbackSrc) {
-      setCurrentSrc(fallbackSrc);
-    } else {
-      setHasError(true);
+    if (attemptIndex === 0) {
+      // First fallback: use explicit fallbackSrc or primary registry image
+      const nextSrc = (fallbackSrc && fallbackSrc !== currentSrc)
+        ? fallbackSrc
+        : (regMeta?.primary && regMeta.primary !== currentSrc ? regMeta.primary : regMeta?.fallback);
+      
+      if (nextSrc && nextSrc !== currentSrc) {
+        setAttemptIndex(1);
+        setCurrentSrc(nextSrc);
+        return;
+      }
     }
+
+    if (attemptIndex === 1 && regMeta?.fallback && regMeta.fallback !== currentSrc) {
+      // Second fallback: use secondary registry image
+      setAttemptIndex(2);
+      setCurrentSrc(regMeta.fallback);
+      return;
+    }
+
+    // If all web images fail, show the sacred consecrated altarpiece
+    setHasError(true);
   };
 
-  const meta = deitySacredMeta[deityId] || { icon: '🪷', beejMantra: '॥ ॐ नमः ॥', tilak: '🟡 अष्टगंध' };
+  const meta = regMeta || {
+    icon: '🪷',
+    beejMantra: '॥ ॐ नमः ॥',
+    tilak: '🟡 अष्टगंध'
+  };
 
-  if (hasError) {
+  if (hasError || !currentSrc) {
     // Consecrated, authentic Sacred Deity Sanctorum Altarpiece that renders offline
     return (
       <div className={`relative flex flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-[#1c140c] via-[#2c1d10] to-[#120e09] text-white p-4 select-none ${className}`}>
@@ -143,11 +117,8 @@ export const DeityImage: React.FC<DeityImageProps> = ({
       src={currentSrc}
       alt={alt}
       className={className}
-      referrerPolicy="no-referrer"
-      crossOrigin="anonymous"
       loading="lazy"
       onError={handleError}
     />
   );
 };
-

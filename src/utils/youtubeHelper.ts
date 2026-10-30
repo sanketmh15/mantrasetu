@@ -94,3 +94,4 @@ export function getYouTubeThumbnailUrl(urlOrId: string): string {
   }
   return '';
 }
+

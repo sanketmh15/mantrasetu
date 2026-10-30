@@ -80,8 +80,6 @@ export const PlaceImage: React.FC<PlaceImageProps> = ({
       src={currentSrc}
       alt={alt}
       className={className}
-      referrerPolicy="no-referrer"
-      crossOrigin="anonymous"
       loading="lazy"
       onError={handleError}
     />

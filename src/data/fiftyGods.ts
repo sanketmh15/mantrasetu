@@ -1,4 +1,5 @@
 import { MultilingualText } from '../types';
+import { DEITY_IMAGE_REGISTRY } from '../utils/deityImageRegistry';
 
 export interface GodEntry {
   serialNo: number;
@@ -21,7 +22,7 @@ export interface GodEntry {
   pujaOfferings: string[];
 }
 
-export const fiftyGodsList: GodEntry[] = [
+const rawFiftyGodsList: GodEntry[] = [
   // 1. Lord Ganesha
   {
     serialNo: 1,
@@ -1522,4 +1523,9 @@ export const fiftyGodsList: GodEntry[] = [
     pujaOfferings: ['Raktavastra (Red Silk Cloth)', 'Red Hibiscus', 'Kumkum', 'Sweet Payasam']
   }
 ];
+
+export const fiftyGodsList: GodEntry[] = rawFiftyGodsList.map((god) => ({
+  ...god,
+  image: DEITY_IMAGE_REGISTRY[god.id]?.primary || god.image
+}));
 
