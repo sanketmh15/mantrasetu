@@ -1,4 +1,10 @@
 import { AuthUser } from '../types';
+export {
+  registerUserAccount,
+  loginWithUserIdAndPassword,
+  getRegisteredUsersCount,
+  getDemoAccountsList,
+} from './realDatabase';
 
 const STORAGE_KEY = 'mantrasetu_auth_user';
 

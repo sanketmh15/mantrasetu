@@ -850,6 +850,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                               {currentUser.ishtaDevata || 'साधक'}
                             </span>
                           </div>
+                          {currentUser.userId && (
+                            <p className="text-[11px] font-mono text-saffron-400 font-bold">
+                              @{currentUser.userId}
+                            </p>
+                          )}
                           <p className="text-[11px] text-stone-400 font-mono truncate">
                             {currentUser.phone || currentUser.email || 'Devotee Account'}
                           </p>

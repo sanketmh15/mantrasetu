@@ -73,13 +73,14 @@ export type UserRole = 'user' | 'admin';
 
 export interface AuthUser {
   id: string;
+  userId?: string;
   name: string;
   email?: string;
   phone?: string;
   avatar?: string;
   role: UserRole;
   createdAt: string;
-  provider: 'phone' | 'google' | 'email';
+  provider: 'phone' | 'google' | 'email' | 'credentials';
   ishtaDevata?: string;
   district?: string;
   streakDays?: number;
