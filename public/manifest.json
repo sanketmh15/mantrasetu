@@ -1,0 +1,20 @@
+{
+  "name": "MantraSetu | मंत्रसेतु",
+  "short_name": "MantraSetu",
+  "description": "One-stop digital devotional guide to Hanuman, Ganesha, Shiva, Vitthal, 108 Japa, Pilgrimage Planner & Maharashtra Devotion.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbf9f4",
+  "theme_color": "#ea580c",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "education", "books"]
+}
+

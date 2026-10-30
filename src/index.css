@@ -1,0 +1,177 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ============================================================
+   LIGHT MODE: SERENE IVORY, CHANDAN & HIGH-CONTRAST TEXT
+   Designed specifically for senior citizens and elder readability
+   ============================================================ */
+
+html:not(.dark) {
+  color-scheme: light;
+}
+
+html:not(.dark) body {
+  background-color: #fbf9f4 !important;
+  color: #1c1917 !important;
+}
+
+/* Base background divs */
+html:not(.dark) .bg-\[\#0f0e0c\],
+html:not(.dark) .bg-\[\#0c0b09\] {
+  background-color: #fbf9f4 !important;
+  color: #1c1917 !important;
+}
+
+/* Navbars & Headers */
+html:not(.dark) .bg-\[\#14120f\]\/95 {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-bottom-color: #e8e2d4 !important;
+  box-shadow: 0 4px 20px -2px rgba(180, 83, 9, 0.08) !important;
+}
+
+/* Main Cards */
+html:not(.dark) .bg-\[\#171513\],
+html:not(.dark) .bg-\[\#1c1917\],
+html:not(.dark) .bg-\[\#1c1815\],
+html:not(.dark) .bg-\[\#12100e\] {
+  background: #ffffff !important;
+  border-color: #e8e2d4 !important;
+  box-shadow: 0 4px 18px -2px rgba(180, 83, 9, 0.07) !important;
+}
+
+/* Nested elements & inner panels */
+html:not(.dark) .bg-stone-900,
+html:not(.dark) .bg-stone-900\/60,
+html:not(.dark) .bg-stone-900\/70,
+html:not(.dark) .bg-stone-900\/80,
+html:not(.dark) .bg-stone-900\/90 {
+  background-color: #f7f4ec !important;
+  border-color: #e5dec9 !important;
+}
+
+html:not(.dark) .bg-stone-950,
+html:not(.dark) .bg-stone-950\/60,
+html:not(.dark) .bg-stone-950\/70,
+html:not(.dark) .bg-stone-950\/80,
+html:not(.dark) .bg-stone-950\/90 {
+  background-color: #efebe0 !important;
+  border-color: #ded6c2 !important;
+}
+
+/* Senior citizen high contrast text */
+html:not(.dark) .text-white {
+  color: #1c1917 !important;
+}
+
+html:not(.dark) .text-stone-100,
+html:not(.dark) .text-stone-200 {
+  color: #292524 !important;
+}
+
+html:not(.dark) .text-stone-300 {
+  color: #44403c !important;
+}
+
+html:not(.dark) .text-stone-400 {
+  color: #57534e !important;
+}
+
+html:not(.dark) .border-stone-800,
+html:not(.dark) .border-stone-700 {
+  border-color: #e5dec9 !important;
+}
+
+/* Badges & Accents in Light Mode */
+html:not(.dark) .bg-amber-950,
+html:not(.dark) .bg-amber-950\/60,
+html:not(.dark) .bg-amber-950\/70,
+html:not(.dark) .bg-amber-950\/80 {
+  background-color: #fef3c7 !important;
+  border-color: #fcd34d !important;
+  color: #92400e !important;
+}
+
+html:not(.dark) .bg-saffron-950,
+html:not(.dark) .bg-saffron-950\/60,
+html:not(.dark) .bg-saffron-950\/70 {
+  background-color: #ffedd5 !important;
+  border-color: #fdba74 !important;
+  color: #9a3412 !important;
+}
+
+html:not(.dark) .bg-blue-950,
+html:not(.dark) .bg-blue-950\/60,
+html:not(.dark) .bg-blue-950\/70 {
+  background-color: #dbeafe !important;
+  border-color: #93c5fd !important;
+  color: #1e40af !important;
+}
+
+html:not(.dark) .text-amber-300,
+html:not(.dark) .text-amber-200 {
+  color: #b45309 !important;
+}
+
+html:not(.dark) .text-saffron-300,
+html:not(.dark) .text-saffron-400 {
+  color: #c2410c !important;
+}
+
+/* Senior Citizen Accessibility Font Sizes */
+html.text-size-large {
+  font-size: 114%;
+}
+
+html.text-size-xlarge {
+  font-size: 125%;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+html:not(.dark) ::-webkit-scrollbar-track {
+  background: #f4efe4;
+}
+
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: #d4caa8;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #14120f;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #3e3834;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ea580c;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
+}
