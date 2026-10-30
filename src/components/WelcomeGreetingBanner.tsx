@@ -214,7 +214,7 @@ export const WelcomeGreetingBanner: React.FC<WelcomeGreetingBannerProps> = ({
               {isSpeaking && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-saffron-500/20 text-saffron-600 dark:text-saffron-400 text-[10px] font-bold animate-pulse">
                   <Volume2 className="w-3 h-3 animate-bounce" />
-                  {currentLang === 'en' ? 'Big B Speaking...' : 'अमिताभ बच्चन व्हॉईस सुरू आहे...'}
+                  {currentLang === 'en' ? 'Voice Chanting...' : 'मंत्रोच्चार व अभिवादन सुरू आहे...'}
                 </span>
               )}
             </div>

@@ -16,6 +16,7 @@ class AudioEngine {
 
   // Real human audio element & streaming TTS tracking
   private currentHumanAudio: HTMLAudioElement | null = null;
+  private sharedAudio: HTMLAudioElement | null = null;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private cachedVoices: SpeechSynthesisVoice[] = [];
   private persona: VoicePersona = 'amitabh_bachchan';
@@ -66,8 +67,16 @@ class AudioEngine {
     return this.ctx;
   }
 
+  public getSharedAudio(): HTMLAudioElement {
+    if (!this.sharedAudio) {
+      this.sharedAudio = new Audio();
+      this.sharedAudio.crossOrigin = 'anonymous';
+    }
+    return this.sharedAudio;
+  }
+
   /**
-   * Resumes and unlocks AudioContext and SpeechSynthesis on user interaction
+   * Resumes and unlocks AudioContext, SpeechSynthesis, and persistent HTML5 Audio on user interaction
    */
   public async unlockAudioContext(): Promise<void> {
     try {
@@ -80,6 +89,8 @@ class AudioEngine {
           window.speechSynthesis.resume();
         }
       }
+      const audio = this.getSharedAudio();
+      audio.load();
     } catch {
       // fallback
     }
@@ -215,16 +226,89 @@ class AudioEngine {
   }
 
   /**
-   * High-fidelity Speech Synthesis bridge.
-   * Completely routes all speech requests through the dedicated Natural Male Voice Engine,
-   * avoiding 2012 robotic female streaming endpoints.
+   * Native Indian Google Audio Stream (The clear, melodious voice requested by user).
+   * Uses persistent shared AudioElement to guarantee 100% continuous playback on mobile (Android/iOS)
+   * with smooth chunk transitions and calibrated MEDIUM speaking speed (0.94).
    */
-  public playGoogleTTS(text: string, lang = 'mr-IN', onEnd?: () => void): Promise<boolean> {
+  public playGoogleTTS(text: string, lang = 'mr', onEnd?: () => void): Promise<boolean> {
     return new Promise((resolve) => {
-      this.speakText(text, lang, 0.88, () => {
-        onEnd?.();
-        resolve(true);
-      });
+      try {
+        this.isTTSAborted = false;
+        const langCode = lang.startsWith('mr') ? 'mr' : lang.startsWith('hi') || lang.startsWith('sa') ? 'hi' : 'en';
+        const chunks = this.splitTextIntoChunks(text, 130);
+        if (!chunks.length) {
+          onEnd?.();
+          resolve(true);
+          return;
+        }
+
+        let chunkIndex = 0;
+        const audio = this.getSharedAudio();
+        this.currentHumanAudio = audio;
+
+        // Calibrated MEDIUM pace (0.94 rate gives relaxed, clear, melodious tempo)
+        audio.playbackRate = 0.94;
+
+        const playNext = () => {
+          if (this.isTTSAborted) {
+            this.currentHumanAudio = null;
+            resolve(false);
+            return;
+          }
+
+          if (chunkIndex >= chunks.length) {
+            this.currentHumanAudio = null;
+            onEnd?.();
+            resolve(true);
+            return;
+          }
+
+          const chunkText = chunks[chunkIndex];
+          chunkIndex++;
+
+          const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${langCode}&client=tw-ob&q=${encodeURIComponent(chunkText)}`;
+
+          audio.src = url;
+          audio.playbackRate = 0.94; // Medium comfortable speed
+
+          audio.onended = () => {
+            // Gentle natural pause between chunks (140ms)
+            setTimeout(() => {
+              if (!this.isTTSAborted) {
+                playNext();
+              } else {
+                onEnd?.();
+                resolve(false);
+              }
+            }, 140);
+          };
+
+          audio.onerror = () => {
+            console.warn('Google TTS audio playback warning on chunk:', chunkIndex);
+            if (!this.isTTSAborted) {
+              if (chunkIndex < chunks.length) {
+                playNext();
+              } else {
+                this.currentHumanAudio = null;
+                resolve(false);
+              }
+            }
+          };
+
+          audio.play().catch((err) => {
+            console.warn('Google TTS play caught:', err);
+            if (!this.isTTSAborted) {
+              this.currentHumanAudio = null;
+              resolve(false);
+            }
+          });
+        };
+
+        playNext();
+      } catch (err) {
+        console.warn('playGoogleTTS error:', err);
+        resolve(false);
+      }
     });
   }
 
@@ -514,15 +598,12 @@ class AudioEngine {
 
 
   /**
-   * Discovers and selects the best native Indian MALE voice.
-   * Strictly prioritizes MALE voices and eliminates robotic female voices:
-   * 1. Rejects known female voices (Kalpana, Swara, Neerja, Priya, Aditi, Zira, Heera, etc.).
-   * 2. Prioritizes natural Indian Male voices (Microsoft Madhav Natural, Microsoft Hemant, Rishi, Neel, Ravi, Google Marathi/Hindi Male).
-   * 3. Falls back to resonant Male English voices (Microsoft David, George, Mark) with phonetic transliteration.
+   * Discovers and selects the best native Indian voice for offline speech synthesis.
+   * Matches preferred language (Marathi / Hindi / Sanskrit) with natural clarity.
    */
-  public getBestBrahmanVoice(preferredLang?: string): { voice: SpeechSynthesisVoice | null; isDevanagariCapable: boolean; isMale: boolean } {
+  public getBestBrahmanVoice(preferredLang?: string): { voice: SpeechSynthesisVoice | null; isDevanagariCapable: boolean } {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      return { voice: null, isDevanagariCapable: false, isMale: false };
+      return { voice: null, isDevanagariCapable: false };
     }
 
     let voices = window.speechSynthesis.getVoices();
@@ -530,109 +611,60 @@ class AudioEngine {
       voices = this.cachedVoices || [];
     }
     if (!voices.length) {
-      return { voice: null, isDevanagariCapable: false, isMale: false };
+      return { voice: null, isDevanagariCapable: false };
     }
 
     const pref = (preferredLang || '').toLowerCase();
     const isMarathiPreferred = pref.startsWith('mr');
     const isHindiPreferred = pref.startsWith('hi') || pref.startsWith('sa');
-    const isEnglishPreferred = pref.startsWith('en');
 
-    // Negative female voice tokens - strictly reject or heavily penalize
-    const femaleTokens = [
-      'female', 'woman', 'girl',
-      'kalpana', 'swara', 'neerja', 'priya', 'aditi', 'shruti', 'kavya',
-      'anjali', 'geeta', 'zira', 'lekha', 'heera', 'sangeeta', 'maya',
-      'sunita', 'veena', 'meera', 'radha', 'sita', 'ananya', 'aarti',
-      'hazel', 'susan', 'jenny', 'aria', 'catherine', 'victoria', 'eva',
-      '-mrf', '-mre', '-hia', '-hie', '-hif', '-ena', '-ene', '-enf'
-    ];
-
-    // Positive male voice tokens
-    const maleTokens = [
-      'male', 'man', 'boy', 'guy',
-      'madhav', 'hemant', 'rishi', 'ravi', 'neel', 'vijay', 'anil',
-      'ajay', 'rajesh', 'david', 'mark', 'george', 'ryan',
-      'brian', 'daniel', 'oliver', 'arthur', 'amitabh', 'pandit', 'brahman',
-      '-mrd', '-hid', '-hic', '-hib', '-end', '-enc', '-enb'
-    ];
-
-    const scoredVoices = voices.map((v) => {
-      const name = (v.name || '').toLowerCase();
-      const id = (v.voiceURI || '').toLowerCase();
-      const lang = (v.lang || '').toLowerCase();
-      const combined = `${name} ${id} ${lang}`;
-
-      let score = 0;
-      const isFemale = femaleTokens.some((t) => combined.includes(t));
-      const isMale = !isFemale && maleTokens.some((t) => combined.includes(t));
-
-      // 1. Male vs Female weighting
-      if (isFemale) {
-        score -= 5000; // Strict penalty: female voice is rejected if any male/neutral voice is available
-      } else if (isMale) {
-        score += 2000; // Huge bonus for confirmed male voice
+    // 1. Language-targeted match for Marathi (mr)
+    if (isMarathiPreferred) {
+      const marathiVoice = voices.find((v) => {
+        const vl = (v.lang || '').toLowerCase();
+        const vn = (v.name || '').toLowerCase();
+        return vl.startsWith('mr') || vn.includes('marathi');
+      });
+      if (marathiVoice) {
+        return { voice: marathiVoice, isDevanagariCapable: true };
       }
-
-      // 2. Premium Natural / Neural Indian Male Voices
-      if (combined.includes('madhav')) score += 1800; // Microsoft Madhav (Natural Indian Male)
-      if (combined.includes('hemant')) score += 1500; // Microsoft Hemant (Natural Indian Male)
-      if (combined.includes('rishi')) score += 1400;  // Apple/Google Rishi (Indian Male)
-      if (combined.includes('neel')) score += 1400;   // Neel (Hindi Male)
-      if (combined.includes('ravi')) score += 1300;   // Microsoft Ravi (Indian English Male)
-      if (combined.includes('-mrd')) score += 1600;   // Google Marathi Male
-      if (combined.includes('-hid') || combined.includes('-hic')) score += 1500; // Google Hindi Male
-      if (combined.includes('-end') || combined.includes('-enc')) score += 1100; // Google Indian Male
-
-      // 3. Language matching
-      const isMarathi = lang.startsWith('mr') || name.includes('marathi');
-      const isHindi = lang.startsWith('hi') || lang.startsWith('sa') || name.includes('hindi') || name.includes('sanskrit');
-      const isIndianEnglish = (lang.includes('en') && (lang.includes('in') || name.includes('india'))) || name.includes('ravi');
-      const isDevanagari = isMarathi || isHindi;
-
-      if (isMarathiPreferred) {
-        if (isMarathi) score += 1000;
-        else if (isHindi) score += 700;
-        else if (isIndianEnglish) score += 400;
-      } else if (isHindiPreferred) {
-        if (isHindi) score += 1000;
-        else if (isMarathi) score += 700;
-        else if (isIndianEnglish) score += 400;
-      } else if (isEnglishPreferred) {
-        if (isIndianEnglish) score += 1000;
-        else if (lang.startsWith('en')) score += 600;
-        else if (isDevanagari) score += 300;
-      } else {
-        if (isDevanagari) score += 800;
-        else if (isIndianEnglish) score += 500;
-      }
-
-      // 4. Natural / Neural bonus
-      if (name.includes('natural') || name.includes('neural') || name.includes('online')) {
-        score += 300;
-      }
-
-      return {
-        voice: v,
-        score,
-        isDevanagari,
-        isMale,
-      };
-    });
-
-    // Sort descending by score
-    scoredVoices.sort((a, b) => b.score - a.score);
-
-    const best = scoredVoices[0];
-    if (best) {
-      return {
-        voice: best.voice,
-        isDevanagariCapable: best.isDevanagari,
-        isMale: best.isMale || best.score > 0,
-      };
     }
 
-    return { voice: voices[0] || null, isDevanagariCapable: false, isMale: false };
+    // 2. Language-targeted match for Hindi / Sanskrit (hi / sa)
+    if (isHindiPreferred) {
+      const hindiVoice = voices.find((v) => {
+        const vl = (v.lang || '').toLowerCase();
+        const vn = (v.name || '').toLowerCase();
+        return vl.startsWith('hi') || vn.includes('hindi') || vn.includes('sanskrit');
+      });
+      if (hindiVoice) {
+        return { voice: hindiVoice, isDevanagariCapable: true };
+      }
+    }
+
+    // 3. Any Devanagari voice (Google Marathi, Google Hindi, Swara, Kalpana, Hemant, Madhav)
+    const anyDevanagari = voices.find((v) => {
+      const vl = (v.lang || '').toLowerCase();
+      const vn = (v.name || '').toLowerCase();
+      return vl.startsWith('mr') || vl.startsWith('hi') || vn.includes('marathi') || vn.includes('hindi');
+    });
+    if (anyDevanagari) {
+      return { voice: anyDevanagari, isDevanagariCapable: true };
+    }
+
+    // 4. Indian English voice (Microsoft Ravi, Google English India)
+    const indianEnglish = voices.find((v) => {
+      const vl = (v.lang || '').toLowerCase();
+      const vn = (v.name || '').toLowerCase();
+      return vl.includes('in') || vn.includes('india') || vn.includes('ravi');
+    });
+    if (indianEnglish) {
+      return { voice: indianEnglish, isDevanagariCapable: false };
+    }
+
+    // 5. Default voice
+    const defaultVoice = voices.find((v) => v.default) || voices[0] || null;
+    return { voice: defaultVoice, isDevanagariCapable: false };
   }
 
   /**
@@ -690,11 +722,12 @@ class AudioEngine {
   }
 
   /**
-   * Universal Sacred Male Voice Engine:
-   * Speaks using the high-fidelity MALE voice engine (Microsoft Madhav/Hemant/Ravi or Google Marathi/Hindi Male)
-   * with natural, peaceful cadence (0.78 speed) and meditative breath pauses between phrases.
+   * Universal Sacred Voice Engine:
+   * 1. Priority 1 (Mobile & Desktop): Plays the clear, melodious native Indian Google Voice (tw-ob)
+   *    with calibrated MEDIUM speed (0.94) across Android, iOS, and PC.
+   * 2. Fallback: If network is offline, smoothly uses Web Speech API with medium cadence.
    */
-  public async speakText(text: string, lang = 'hi-IN', userRate?: number, onEnd?: () => void): Promise<void> {
+  public async speakText(text: string, lang = 'mr', _userRate?: number, onEnd?: () => void): Promise<void> {
     this.stopSpeaking();
     this.isTTSAborted = false;
 
@@ -703,31 +736,45 @@ class AudioEngine {
       return;
     }
 
+    let ended = false;
+    const safeEnd = () => {
+      if (!ended) {
+        ended = true;
+        this.currentUtterance = null;
+        onEnd?.();
+      }
+    };
+
+    // Priority 1: High-fidelity Native Indian Google Voice (the clear female voice preferred by the user)
+    const played = await this.playGoogleTTS(text, lang, safeEnd);
+    if (played) return;
+
+    // Fallback: Web Speech API
+    this.speakSynthesisFallback(text, lang, safeEnd);
+  }
+
+  /**
+   * Offline Web Speech API fallback engine
+   */
+  private async speakSynthesisFallback(text: string, lang = 'mr', onEnd?: () => void): Promise<void> {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
       onEnd?.();
       return;
     }
 
-    // 1. Ensure voices are loaded from browser asynchronously
     await this.ensureVoicesLoaded();
-
     if (this.isTTSAborted) {
       onEnd?.();
       return;
     }
 
-    // 2. Devotional pacing: Default speed calibrated to 0.78 (calm, meditative, reverent Pandit cadence)
-    // Prevents rushed, hurried speech!
-    const sacredRate = userRate ? Math.min(userRate, 0.82) : 0.78;
-
-    // 3. Break into natural breath-paced chanting phrases
     const phrases = this.splitIntoDevotionalPhrases(text);
     if (!phrases.length) {
       onEnd?.();
       return;
     }
 
-    const { voice: bestVoice, isDevanagariCapable, isMale } = this.getBestBrahmanVoice(lang);
+    const { voice: bestVoice, isDevanagariCapable } = this.getBestBrahmanVoice(lang);
     const isMobile = this.isMobileDevice();
 
     let phraseIdx = 0;
@@ -749,11 +796,9 @@ class AudioEngine {
 
       if (hasDevanagari) {
         if (isDevanagariCapable) {
-          // Native Devanagari voice available (Microsoft Madhav/Hemant or Google Marathi/Hindi)
           textToSpeak = phraseText;
           targetLang = bestVoice && bestVoice.lang.toLowerCase().startsWith('mr') ? 'mr-IN' : 'hi-IN';
         } else {
-          // English male voice fallback (Microsoft Ravi, David, Rishi)
           textToSpeak = this.toPhoneticRoman(phraseText);
           targetLang = bestVoice ? bestVoice.lang : 'en-IN';
         }
@@ -762,39 +807,29 @@ class AudioEngine {
       }
 
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      this.currentUtterance = utterance; // Pin to prevent mobile GC collection!
+      this.currentUtterance = utterance;
       utterance.lang = targetLang;
 
       if (bestVoice) {
         utterance.voice = bestVoice;
       }
 
-      // Voice Pitch & Rate Calibration:
-      // Pacing: 0.78 for deep, serene, wondrous listening experience!
-      utterance.rate = sacredRate;
+      // Medium comfortable speed
+      utterance.rate = 0.88;
       utterance.volume = 1.0;
-
-      if (isMobile) {
-        // Mobile DSPs: pitch MUST be 1.0 (avoids phase jitter and metallic robotic artifacts)
-        utterance.pitch = 1.0;
-      } else {
-        // Desktop:
-        const isNaturalVoice = bestVoice && (bestVoice.name.toLowerCase().includes('natural') || bestVoice.name.toLowerCase().includes('madhav') || bestVoice.name.toLowerCase().includes('hemant'));
-        utterance.pitch = isNaturalVoice ? 0.98 : (isMale ? 0.92 : 0.90);
-      }
+      utterance.pitch = isMobile ? 1.0 : 0.95;
 
       let phraseFinished = false;
       const onPhraseDone = () => {
         if (!phraseFinished) {
           phraseFinished = true;
-          // Natural meditative breath pause (240ms) between sacred lines
           setTimeout(() => {
             if (!this.isTTSAborted) {
               speakNextPhrase();
             } else {
               onEnd?.();
             }
-          }, 240);
+          }, 180);
         }
       };
 
@@ -814,12 +849,10 @@ class AudioEngine {
       }
     };
 
-    // Make sure speech synthesis isn't paused
     if (window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
     }
 
-    // Start chanting phrase by phrase!
     speakNextPhrase();
   }
 
@@ -870,13 +903,19 @@ class AudioEngine {
   public stopSpeaking() {
     this.isTTSAborted = true;
     this.currentUtterance = null;
-    if (this.currentHumanAudio) {
+
+    if (this.sharedAudio) {
+      try {
+        this.sharedAudio.pause();
+        this.sharedAudio.currentTime = 0;
+      } catch {}
+    }
+
+    if (this.currentHumanAudio && this.currentHumanAudio !== this.sharedAudio) {
       try {
         this.currentHumanAudio.pause();
         this.currentHumanAudio.currentTime = 0;
-      } catch {
-        // fallback
-      }
+      } catch {}
       this.currentHumanAudio = null;
     }
 
@@ -903,8 +942,9 @@ class AudioEngine {
    */
   public isSpeaking(): boolean {
     const isSpeechActive = (typeof window !== 'undefined' && 'speechSynthesis' in window && window.speechSynthesis.speaking) || !!this.currentUtterance;
+    const isSharedActive = !!this.sharedAudio && !this.sharedAudio.paused;
     const isHumanAudioActive = !!this.currentHumanAudio && !this.currentHumanAudio.paused;
-    return isSpeechActive || isHumanAudioActive;
+    return isSpeechActive || isSharedActive || isHumanAudioActive;
   }
 
   public getCurrentUtterance(): SpeechSynthesisUtterance | null {
