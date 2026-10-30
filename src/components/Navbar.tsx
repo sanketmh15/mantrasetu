@@ -75,6 +75,7 @@ interface NavbarProps {
   onOpenAuthModal?: () => void;
   currentUser?: AuthUser | null;
   onLogout?: () => void;
+  onGoBack?: () => void;
 }
 
 // Complete 35 functional tabs with verified IDs matching App.tsx
@@ -388,6 +389,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAuthModal,
   currentUser,
   onLogout,
+  onGoBack,
 }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
@@ -648,8 +650,24 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 w-full">
           <div className="flex items-center justify-between h-14 sm:h-20 gap-2">
             
-            {/* Brand Logo & All Sections Trigger */}
+            {/* Brand Logo & Back Button & All Sections Trigger */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              {/* Universal Back Button when inside any sub-tab */}
+              {activeTab !== 'home' && (
+                <button
+                  onClick={() => {
+                    if (isSoundEnabled) audioEngine.playNavChime();
+                    onGoBack ? onGoBack() : onTabChange('home');
+                  }}
+                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/50 text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 shrink-0"
+                  title={currentLang === 'en' ? 'Go back one step' : 'मागील पानावर जा (मागे जा)'}
+                  aria-label="Go Back"
+                >
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
+                  <span className="font-serifDev">{currentLang === 'en' ? 'Back' : 'मागे जा'}</span>
+                </button>
+              )}
+
               <div
                 className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shadow-lg ring-1 cursor-pointer transition-all bg-gradient-to-tr from-saffron-700 via-saffron-500 to-amber-400 shadow-saffron-900/30 ring-amber-300/40 hover:scale-105"
                 onClick={() => handleTabClick('home')}

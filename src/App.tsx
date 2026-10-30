@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ChevronLeft } from 'lucide-react';
 import { Language, DeityId, ThemeMode, TextSize, AuthUser } from './types';
 import { Navbar } from './components/Navbar';
 import { HomeDashboard } from './components/HomeDashboard';
@@ -63,12 +64,28 @@ import { getCurrentUser, logoutUser } from './utils/authService';
 import { AppActionHandlers } from './utils/aiCommandInterpreter';
 
 export function App() {
+  // Helper to parse current URL hash on startup & popstate
+  const parseCurrentHash = () => {
+    try {
+      const raw = window.location.hash.replace(/^#\/?/, '');
+      if (!raw) return { tab: 'home', godId: undefined };
+      const [tab, query] = raw.split('?');
+      const params = new URLSearchParams(query || '');
+      const godId = params.get('god') || undefined;
+      return { tab: tab || 'home', godId };
+    } catch {
+      return { tab: 'home', godId: undefined };
+    }
+  };
+
+  const initialHash = parseCurrentHash();
   const [currentLang, setCurrentLang] = useState<Language>('mr'); // Default to Marathi
   const [activeDeity, setActiveDeity] = useState<DeityId>('hanuman');
-  const [activeTab, setActiveTab] = useState<string>('home'); // Default to Home Dashboard
+  const [activeTab, setActiveTab] = useState<string>(initialHash.tab); // Default to URL Hash or Home Dashboard
   const [selectedMantraId, setSelectedMantraId] = useState<string>('om-hanumate-namah');
-  const [selectedGodId, setSelectedGodId] = useState<string>('hanuman');
+  const [selectedGodId, setSelectedGodId] = useState<string>(initialHash.godId || 'hanuman');
   const [previousTab, setPreviousTab] = useState<string>('home');
+  const [navHistory, setNavHistory] = useState<string[]>(() => [initialHash.tab || 'home']);
   const [isChatbotOpen, setIsChatbotOpen] = useState<boolean>(false);
   const [isGlossaryOpen, setIsGlossaryOpen] = useState<boolean>(false);
   const [isNamasteOpen, setIsNamasteOpen] = useState<boolean>(() => {
@@ -166,29 +183,166 @@ export function App() {
     }
   };
 
+  // Centralized Navigation with Browser History pushState
+  const navigateTo = (
+    targetTab: string,
+    options?: { godId?: string; deity?: DeityId; mantraId?: string; replace?: boolean }
+  ) => {
+    if (targetTab === activeTab && !options?.godId && !options?.deity && !options?.mantraId) {
+      return;
+    }
+
+    setPreviousTab(activeTab);
+    if (!options?.replace) {
+      setNavHistory((prev) => [...prev, targetTab]);
+    }
+
+    if (options?.mantraId) {
+      setSelectedMantraId(options.mantraId);
+    }
+    if (options?.godId) {
+      setSelectedGodId(options.godId);
+      if (['hanuman', 'ganesha', 'shiva', 'vitthal'].includes(options.godId)) {
+        setActiveDeity(options.godId as DeityId);
+      }
+    }
+    if (options?.deity) {
+      setActiveDeity(options.deity);
+    }
+
+    setActiveTab(targetTab);
+
+    const godParam = options?.godId || (targetTab === 'god-detail' ? (options?.godId || selectedGodId) : undefined);
+    const hash = '#' + targetTab + (godParam ? '?god=' + godParam : '');
+
+    try {
+      if (options?.replace) {
+        window.history.replaceState(
+          { tab: targetTab, godId: godParam, deity: options?.deity || activeDeity, previousTab: activeTab },
+          '',
+          hash
+        );
+      } else {
+        window.history.pushState(
+          { tab: targetTab, godId: godParam, deity: options?.deity || activeDeity, previousTab: activeTab },
+          '',
+          hash
+        );
+      }
+    } catch {}
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Universal Back Handler (1-step return without closing website)
+  const handleGoBack = () => {
+    // 1. If any modal is open, close modal first
+    if (isAuthModalOpen) {
+      setIsAuthModalOpen(false);
+      return;
+    }
+    if (isSearchOpen) {
+      setIsSearchOpen(false);
+      return;
+    }
+    if (isChatbotOpen) {
+      setIsChatbotOpen(false);
+      return;
+    }
+    if (isGlossaryOpen) {
+      setIsGlossaryOpen(false);
+      return;
+    }
+
+    // 2. If viewing a specific god detail, step back to 50 Deities or previousTab
+    if (activeTab === 'god-detail') {
+      navigateTo(previousTab && previousTab !== 'god-detail' ? previousTab : 'deities', { replace: true });
+      return;
+    }
+
+    // 3. If internal navigation history exists, pop to previous tab
+    if (navHistory.length > 1) {
+      const updatedHistory = [...navHistory];
+      updatedHistory.pop(); // Remove current tab
+      const previousTarget = updatedHistory[updatedHistory.length - 1] || 'home';
+      setNavHistory(updatedHistory);
+      navigateTo(previousTarget, { replace: true });
+      return;
+    }
+
+    // 4. Safe fallback: always return to 'home' without ever closing the site
+    if (activeTab !== 'home') {
+      navigateTo('home');
+      return;
+    }
+  };
+
+  // Browser History & Popstate synchronization (Mobile Back button, Browser Back button, Gesture Swipe)
+  useEffect(() => {
+    const initial = parseCurrentHash();
+    const currentHash = '#' + initial.tab + (initial.godId ? '?god=' + initial.godId : '');
+    try {
+      if (window.location.hash !== currentHash) {
+        window.history.replaceState(
+          { tab: initial.tab, godId: initial.godId, deity: activeDeity },
+          '',
+          currentHash
+        );
+      } else if (!window.history.state) {
+        window.history.replaceState(
+          { tab: initial.tab, godId: initial.godId, deity: activeDeity },
+          '',
+          currentHash
+        );
+      }
+    } catch {}
+
+    const handlePopState = (event: PopStateEvent) => {
+      // Close any open modals
+      if (isAuthModalOpen) setIsAuthModalOpen(false);
+      if (isSearchOpen) setIsSearchOpen(false);
+      if (isChatbotOpen) setIsChatbotOpen(false);
+      if (isGlossaryOpen) setIsGlossaryOpen(false);
+
+      const parsed = parseCurrentHash();
+      const stateTab = event.state?.tab || parsed.tab || 'home';
+      const stateGodId = event.state?.godId || parsed.godId;
+      const stateDeity = event.state?.deity;
+
+      if (stateGodId) {
+        setSelectedGodId(stateGodId);
+      }
+      if (stateDeity) {
+        setActiveDeity(stateDeity);
+      }
+      setActiveTab(stateTab);
+      setNavHistory((prev) => {
+        if (prev.length > 1 && prev[prev.length - 2] === stateTab) {
+          const updated = [...prev];
+          updated.pop();
+          return updated;
+        }
+        return [...prev, stateTab];
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isAuthModalOpen, isSearchOpen, isChatbotOpen, isGlossaryOpen, activeDeity]);
+
   const handleOpenGodDetail = (godId: string, fromTab: string = activeTab) => {
     setPreviousTab(fromTab);
-    setSelectedGodId(godId);
-    if (['hanuman', 'ganesha', 'shiva', 'vitthal'].includes(godId)) {
-      setActiveDeity(godId as DeityId);
-    }
-    setActiveTab('god-detail');
+    navigateTo('god-detail', { godId });
     audioEngine.playTempleBell();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSelectIntent = (targetTab: string, mantraId?: string) => {
-    if (mantraId) {
-      setSelectedMantraId(mantraId);
-    }
-    setActiveTab(targetTab);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigateTo(targetTab, { mantraId });
   };
 
   const handleOpenJapaWithMantra = (mantraId: string) => {
-    setSelectedMantraId(mantraId);
-    setActiveTab('japa');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigateTo('japa', { mantraId });
   };
 
   const currentMantrasList =
@@ -204,13 +358,10 @@ export function App() {
 
   const appActionHandlers: AppActionHandlers = {
     navigateTab: (tab: string) => {
-      setActiveTab(tab);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      navigateTo(tab);
     },
     openGodDetail: (godId: string) => {
-      setSelectedGodId(godId);
-      setActiveTab('god-detail');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      navigateTo('god-detail', { godId });
     },
     changeLanguage: (lang: Language) => {
       setCurrentLang(lang);
@@ -257,7 +408,7 @@ export function App() {
     logout: () => {
       logoutUser();
       if (activeTab === 'admin') {
-        setActiveTab('home');
+        navigateTo('home');
       }
     },
     getAppState: () => ({
@@ -281,9 +432,9 @@ export function App() {
           onLanguageChange={setCurrentLang}
           activeTab={activeTab}
           onTabChange={(tab) => {
-            setActiveTab(tab);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            navigateTo(tab);
           }}
+          onGoBack={handleGoBack}
           onOpenGlossary={() => setIsGlossaryOpen(true)}
           activeDeity={activeDeity}
           onDeityChange={handleDeityChange}
@@ -296,7 +447,7 @@ export function App() {
           currentUser={currentUser}
           onLogout={() => {
             logoutUser();
-            if (activeTab === 'admin') setActiveTab('home');
+            if (activeTab === 'admin') navigateTo('home');
           }}
         />
 
@@ -322,8 +473,7 @@ export function App() {
               handleOpenGodDetail(godId, 'home');
             }}
             onNavigateTab={(tab) => {
-              setActiveTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              navigateTo(tab);
             }}
             currentTheme={theme}
             onToggleTheme={handleToggleTheme}
@@ -353,13 +503,9 @@ export function App() {
           <GodDetailView
             godId={selectedGodId}
             currentLang={currentLang}
-            onBack={() => {
-              setActiveTab(previousTab || 'home');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onBack={handleGoBack}
             onNavigateTab={(tab) => {
-              setActiveTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              navigateTo(tab);
             }}
           />
         )}
@@ -369,7 +515,7 @@ export function App() {
           <>
             {activeDeity === 'hanuman' && (
               <>
-                <Hero currentLang={currentLang} onNavigate={setActiveTab} />
+                <Hero currentLang={currentLang} onNavigate={navigateTo} />
                 <IntentSelector currentLang={currentLang} onSelectIntent={handleSelectIntent} />
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -394,7 +540,7 @@ export function App() {
 
             {activeDeity === 'ganesha' && (
               <>
-                <GaneshaHero currentLang={currentLang} onNavigate={setActiveTab} />
+                <GaneshaHero currentLang={currentLang} onNavigate={navigateTo} />
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div>
@@ -416,7 +562,7 @@ export function App() {
                             : 'महाराष्ट्रातील आठ स्वयंभू गणपतींची पावन यात्रा, रस्ता, इतिहास आणि गुगल मॅप्स मार्गदर्शनासह एक्सप्लोर करा.'}
                         </p>
                         <button
-                          onClick={() => setActiveTab('ashtavinayak')}
+                          onClick={() => navigateTo('ashtavinayak')}
                           className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-saffron-600 hover:from-amber-500 hover:to-saffron-500 text-white font-semibold text-xs sm:text-sm shadow-md"
                         >
                           {currentLang === 'en' ? 'Open Full Ashtavinayak Guide' : 'संपूर्ण अष्टविनायक मार्गदर्शक पहा'}
@@ -430,7 +576,7 @@ export function App() {
 
             {activeDeity === 'shiva' && (
               <>
-                <ShivaHero currentLang={currentLang} onNavigate={setActiveTab} />
+                <ShivaHero currentLang={currentLang} onNavigate={navigateTo} />
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div>
@@ -456,7 +602,7 @@ export function App() {
                             : 'त्र्यंबकेश्वर, भीमाशंकर, घृष्णेश्वर, औंढा नागनाथ व परळी वैजनाथ या पाचही पावन ज्योतिर्लिंगांचे इतिहास, नद्या व गुगल मॅप्स दर्शनासह एक्सप्लोर करा.'}
                         </p>
                         <button
-                          onClick={() => setActiveTab('jyotirlinga')}
+                          onClick={() => navigateTo('jyotirlinga')}
                           className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm shadow-md"
                         >
                           {currentLang === 'en' ? 'Explore 5 Jyotirlingas' : '५ ज्योतिर्लिंग दर्शन यात्रा पहा'}
@@ -470,7 +616,7 @@ export function App() {
 
             {activeDeity === 'vitthal' && (
               <>
-                <VitthalHero currentLang={currentLang} onNavigate={setActiveTab} />
+                <VitthalHero currentLang={currentLang} onNavigate={navigateTo} />
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div>
@@ -496,7 +642,7 @@ export function App() {
                             : 'आळंदी ते पंढरपूर २५५ किमीचा माऊली पालखी सोहळा, दिवे घाट आणि विहंगम अश्व रिंगणांची पावन माहिती पहा.'}
                         </p>
                         <button
-                          onClick={() => setActiveTab('wari')}
+                          onClick={() => navigateTo('wari')}
                           className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-saffron-600 hover:from-amber-500 hover:to-saffron-500 text-white font-semibold text-xs sm:text-sm shadow-md"
                         >
                           {currentLang === 'en' ? 'Explore Wari Palkhi Marg' : 'संपूर्ण वारी पालखी मार्ग पहा'}
@@ -580,8 +726,7 @@ export function App() {
           <WorshipGuide
             currentLang={currentLang}
             onNavigateTab={(tab) => {
-              setActiveTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              navigateTo(tab);
             }}
             onSelectDeity={(godId) => {
               handleOpenGodDetail(godId, 'worship');
@@ -610,7 +755,7 @@ export function App() {
               सर्व भक्तांसाठी सनातन साधना, नित्य पूजा, थेट दर्शन व जपमाळ उपलब्ध आहे.
             </p>
             <button
-              onClick={() => setActiveTab('home')}
+              onClick={() => navigateTo('home')}
               className="mt-5 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white font-bold text-xs shadow-lg transition-all"
             >
               मुख्य पृष्ठावर जा (Go to Home)
@@ -620,7 +765,7 @@ export function App() {
 
         {/* 16. VIRTUAL E-PUJA & AARTI SANCTUM TAB */}
         {activeTab === 'puja' && (
-          <VirtualPujaSanctum currentLang={currentLang} onNavigateTab={setActiveTab} />
+          <VirtualPujaSanctum currentLang={currentLang} onNavigateTab={navigateTo} />
         )}
 
         {/* 17. LIVE CHOGHADIYA & MUHURAT TAB */}
@@ -667,7 +812,7 @@ export function App() {
         {activeTab === 'library' && (
           <PersonalDevotionalLibrary
             currentLang={currentLang}
-            onNavigateTab={setActiveTab}
+            onNavigateTab={navigateTo}
             onOpenGodDetail={handleOpenGodDetail}
           />
         )}
@@ -691,7 +836,7 @@ export function App() {
         {activeTab === 'digital-library' && (
           <DigitalDevotionalLibrary
             currentLang={currentLang}
-            onNavigateTab={setActiveTab}
+            onNavigateTab={navigateTo}
             onOpenGodDetail={handleOpenGodDetail}
           />
         )}
@@ -716,7 +861,7 @@ export function App() {
           <RashiGuideCalculator
             currentLang={currentLang}
             onOpenJapaWithMantra={handleOpenJapaWithMantra}
-            onNavigateTab={setActiveTab}
+            onNavigateTab={navigateTo}
           />
         )}
 
@@ -725,7 +870,7 @@ export function App() {
           <AIKundaliPredictor
             currentLang={currentLang}
             onOpenJapaWithMantra={handleOpenJapaWithMantra}
-            onNavigateTab={setActiveTab}
+            onNavigateTab={navigateTo}
           />
         )}
 
@@ -782,7 +927,7 @@ export function App() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         currentLang={currentLang}
-        onNavigateTab={setActiveTab}
+        onNavigateTab={navigateTo}
         onOpenGodDetail={handleOpenGodDetail}
       />
 
@@ -790,10 +935,28 @@ export function App() {
       <DivinePortalOrb
         currentLang={currentLang}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={navigateTo}
         isSoundEnabled={isSoundEnabled}
         onToggleSound={toggleSound}
       />
+
+      {/* Floating Bottom-Left Quick Back Button (Always accessible on Mobile & Desktop) */}
+      {activeTab !== 'home' && (
+        <button
+          onClick={() => {
+            if (isSoundEnabled) audioEngine.playNavChime();
+            handleGoBack();
+          }}
+          className="fixed bottom-20 left-3 sm:bottom-6 sm:left-6 z-40 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full bg-stone-900/90 hover:bg-stone-800 text-amber-300 border border-amber-400/50 shadow-2xl shadow-black/80 backdrop-blur-md transition-all active:scale-95 group font-medium text-xs sm:text-sm"
+          title={currentLang === 'en' ? 'Go back one step' : 'मागील पानावर जा (मागे जा)'}
+          aria-label="Go Back"
+        >
+          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 group-hover:-translate-x-0.5 transition-transform" />
+          <span className="font-serifDev font-bold">
+            {currentLang === 'en' ? 'Back' : 'मागे जा'}
+          </span>
+        </button>
+      )}
 
       {/* Floating Divine AI Guide Trigger Button (Desktop / Tablet) */}
       <button
@@ -815,7 +978,7 @@ export function App() {
           onOpenAuthModal={() => setIsAuthModalOpen(true)}
           onLogout={() => {
             logoutUser();
-            if (activeTab === 'admin') setActiveTab('home');
+            if (activeTab === 'admin') navigateTo('home');
           }}
         />
       </div>
