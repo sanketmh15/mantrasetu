@@ -4,6 +4,7 @@ export interface WeekdayPujaInfo {
   dayIndex: number; // 0 = Sunday, 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday
   id: string;
   dayName: MultilingualText;
+  canonicalSummary: MultilingualText;
   rulingPlanet: {
     name: MultilingualText;
     symbol: string;
@@ -40,6 +41,11 @@ export const weekdayPujaGuideData: WeekdayPujaInfo[] = [
       en: 'Sunday (Raviwar)',
       hi: 'रविवार (सूर्यवार)',
       mr: 'रविवार (आदित्यवार)',
+    },
+    canonicalSummary: {
+      en: 'Lord Surya and Lord Khandoba. On this day, water Arghya is offered to the Sun and Mallari Martanda (Khandoba) is worshipped with turmeric.',
+      hi: 'सूर्यदेव एवं खंडोबा। इस दिन भगवान सूर्य को अर्घ्य दिया जाता है और मल्हारी मार्तंड (खंडोबा) की भक्ति की जाती है।',
+      mr: 'सूर्यदेव आणि खंडोबा. या दिवशी सूर्याला अर्घ्य दिले जाते आणि मल्हारी मार्तंडाची (खंडोबा) भक्ती केली जाते.',
     },
     rulingPlanet: {
       name: { en: 'Sun (Surya)', hi: 'भगवान सूर्य (रवि)', mr: 'सूर्यनारायण (रवि)' },
@@ -99,6 +105,11 @@ export const weekdayPujaGuideData: WeekdayPujaInfo[] = [
       hi: 'सोमवार (शिववार)',
       mr: 'सोमवार (महादेव वार)',
     },
+    canonicalSummary: {
+      en: 'Lord Shiva (Mahadeva). This day is exceptionally sacred for Shiva worship, offering fresh Bilva (bael) leaves and raw milk.',
+      hi: 'भगवान शिव (महादेव)। यह दिन शंकर जी की उपासना हेतु अत्यंत पवित्र माना जाता है। इस दिन महादेव को बेलपत्र अर्पित किया जाता है।',
+      mr: 'भगवान शिव (महादेव). हा वार शंकराची उपासना करण्यासाठी अत्यंत पवित्र मानला जातो. या दिवशी महादेवाला बेल वाहिली जाते.',
+    },
     rulingPlanet: {
       name: { en: 'Moon (Chandra)', hi: 'चन्द्र देव', mr: 'चंद्र देव' },
       symbol: '🌙',
@@ -156,6 +167,11 @@ export const weekdayPujaGuideData: WeekdayPujaInfo[] = [
       en: 'Tuesday (Mangalwar)',
       hi: 'मंगलवार (हनुमानवार)',
       mr: 'मंगळवार (मारुती व गणेश वार)',
+    },
+    canonicalSummary: {
+      en: 'Lord Ganesha, Lord Hanuman, and Goddess Durga. Newly married women observe Mangalagauri puja on this day.',
+      hi: 'श्री गणपति, हनुमान जी एवं माता दुर्गा। नवविवाहित महिलाएं इस दिन मंगलागौरी की विशेष पूजा करती हैं।',
+      mr: 'श्री गणपती, हनुमान आणि देवी दुर्गा. तसेच नवविवाहित महिला या दिवशी मंगळागौरीची पूजा करतात.',
     },
     rulingPlanet: {
       name: { en: 'Mars (Mangala)', hi: 'मंगल देव', mr: 'मंगळ ग्रह' },
@@ -215,6 +231,11 @@ export const weekdayPujaGuideData: WeekdayPujaInfo[] = [
       hi: 'बुधवार (विट्ठल व गणेश वार)',
       mr: 'बुधवार (विठुराया व गणपती वार)',
     },
+    canonicalSummary: {
+      en: 'Lord Vitthal and planet Mercury (Budha). This day is dedicated to Vithoba, the beloved embodiment of Lord Vishnu.',
+      hi: 'भगवान विठ्ठल एवं बुध ग्रह। यह दिन भगवान विष्णु के पावन स्वरूप विठूमाऊली को समर्पित है।',
+      mr: 'विठ्ठल आणि बुध ग्रह. हा वार भगवान विष्णूंचे रूप असलेल्या विठुरायाला समर्पित आहे.',
+    },
     rulingPlanet: {
       name: { en: 'Mercury (Budha)', hi: 'बुध देव', mr: 'बुध ग्रह' },
       symbol: '💚',
@@ -272,6 +293,11 @@ export const weekdayPujaGuideData: WeekdayPujaInfo[] = [
       en: 'Thursday (Guruwar)',
       hi: 'गुरुवार (बृहस्पति व दत्त वार)',
       mr: 'गुरुवार (श्रीदत्तप्रभू व स्वामी समर्थ वार)',
+    },
+    canonicalSummary: {
+      en: 'Lord Dattatreya and Lord Vishnu. Reading of holy Guru Charitra and devoted worship of Swami Samarth or Sai Baba is performed.',
+      hi: 'दत्तगुरु एवं भगवान विष्णु। इस दिन श्री गुरुचरित्र का पठन तथा स्वामी समर्थ अथवा साईं बाबा की उपासना की जाती है।',
+      mr: 'दत्तगुरू आणि भगवान विष्णू. या दिवशी गुरुचरित्राचे वाचन आणि स्वामी समर्थ किंवा साईबाबांची उपासना केली जाते.',
     },
     rulingPlanet: {
       name: { en: 'Jupiter (Brihaspati / Guru)', hi: 'गुरु बृहस्पति', mr: 'बृहस्पति (गुरु ग्रह)' },
@@ -331,6 +357,11 @@ export const weekdayPujaGuideData: WeekdayPujaInfo[] = [
       hi: 'शुक्रवार (महालक्ष्मी व देवी वार)',
       mr: 'शुक्रवार (आई कुलस्वामिनी व महालक्ष्मी वार)',
     },
+    canonicalSummary: {
+      en: 'Goddess Mahalakshmi and Devi Ambabai. Revered for all Goddess Shakti worship and the sacred Vaibhav Lakshmi Vrat.',
+      hi: 'माता महालक्ष्मी एवं देवी अंबाबाई। यह दिन समस्त देवियों (शक्तियों) की पूजा और वैभव लक्ष्मी व्रत हेतु प्रसिद्ध है।',
+      mr: 'महालक्ष्मी आणि देवी अंबाबाई. हा वार सर्व देवींच्या (शक्ती) पूजेसाठी आणि वैभव लक्ष्मी व्रतासाठी ओळखला जातो.',
+    },
     rulingPlanet: {
       name: { en: 'Venus (Shukra)', hi: 'शुक्र देव', mr: 'शुक्र ग्रह' },
       symbol: '🤍',
@@ -388,6 +419,11 @@ export const weekdayPujaGuideData: WeekdayPujaInfo[] = [
       en: 'Saturday (Shaniwar)',
       hi: 'शनिवार (शनि व हनुमान वार)',
       mr: 'शनिवार (शनिदेव व मारुती वार)',
+    },
+    canonicalSummary: {
+      en: 'Lord Shani and Lord Hanuman. To alleviate Saturn afflictions, Hanuman Chalisa is recited and sesame/mustard oil is offered to Shani Dev.',
+      hi: 'शनिदेव एवं श्री हनुमान। शनि के कष्टों से मुक्ति हेतु इस दिन हनुमान चालीसा का पाठ किया जाता है और शनिदेव को तेल अर्पित किया जाता है।',
+      mr: 'शनिदेव आणि हनुमान. शनीचा कोप कमी करण्यासाठी या दिवशी हनुमान चालिसाचे वाचन केले जाते आणि शनिदेवाला तेल अर्पण केले जाते.',
     },
     rulingPlanet: {
       name: { en: 'Saturn (Shani)', hi: 'शनि देव', mr: 'शनि ग्रह' },

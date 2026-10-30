@@ -12,7 +12,9 @@ import {
   ChevronRight,
   Flame,
   Sun,
-  Shield
+  Shield,
+  Share2,
+  Sparkles
 } from 'lucide-react';
 
 interface DailyPujaGuideProps {
@@ -53,6 +55,20 @@ export const DailyPujaGuide: React.FC<DailyPujaGuideProps> = ({
     audioEngine.stopSpeaking();
     setIsPlayingMantra(false);
     setSelectedDayIndex(index);
+  };
+
+  const handleShareWeekdayPuja = (day = activeDay) => {
+    const text = `*सनातन अमृतधारा (Sanatan Amrutdhara)* 🪔✨\n\n` +
+      `📅 *वार:* ${day.dayName[currentLang]}\n` +
+      `🕉️ *उपास्य देवता:* ${day.deities.primary[currentLang]}\n` +
+      `📜 *शास्त्रोक्त विधी:* ${day.canonicalSummary[currentLang] || day.canonicalSummary.mr}\n` +
+      `🎨 *शुभ रंग:* ${day.holyColor.name[currentLang]}\n` +
+      `📿 *मंत्र:* ${day.mantraPractice.devanagari}\n\n` +
+      `संपूर्ण पूजा विधी व मंत्र ऐकण्यासाठी भेट द्या:\n` +
+      `https://sanketmh15.github.io/mantrasetu/`;
+
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
   };
 
   return (
@@ -212,6 +228,36 @@ export const DailyPujaGuide: React.FC<DailyPujaGuideProps> = ({
           )}
         </div>
 
+        {/* Canonical Weekday Puja Essence & Ritual Summary */}
+        <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 dark:from-amber-950/40 dark:via-stone-900 border-2 border-amber-500/40 shadow-sm relative">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-2.5">
+            <span className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+              <span>🪔</span>
+              <span>
+                {currentLang === 'en'
+                  ? 'Canonical Weekday Deity & Ritual Summary:'
+                  : currentLang === 'hi'
+                  ? 'शास्त्रोक्त वार महिमा एवं पूजा विधान सार:'
+                  : 'शास्त्रोक्त वार महिमा व उपासना सार:'}
+              </span>
+            </span>
+
+            {/* WhatsApp Share Button */}
+            <button
+              onClick={() => handleShareWeekdayPuja(activeDay)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow transition-all active:scale-95"
+              title="WhatsApp वर शेअर करा"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span>{currentLang === 'en' ? 'Share on WhatsApp' : currentLang === 'hi' ? 'व्हाट्सएप पर भेजें' : 'व्हॉट्सॲपवर पाठवा'}</span>
+            </button>
+          </div>
+
+          <p className="text-sm sm:text-base font-serifDev text-stone-900 dark:text-stone-100 font-bold leading-relaxed">
+            {activeDay.canonicalSummary[currentLang] || activeDay.canonicalSummary.mr}
+          </p>
+        </div>
+
         {/* 4. Sacred Mantra & 1-Click Audio Player */}
         <div className="rounded-2xl p-5 sm:p-6 bg-stone-900/90 dark:bg-stone-950 border border-amber-500/40 text-white shadow-inner mb-6">
           <div className="flex items-center justify-between mb-3">
@@ -311,6 +357,112 @@ export const DailyPujaGuide: React.FC<DailyPujaGuideProps> = ({
 
         </div>
 
+      </div>
+
+      {/* 6. Comprehensive 7-Day Guide Overview (आठवड्यातील प्रत्येक वार आणि त्या दिवशीच्या देवतेची पूजा) */}
+      <div className="mt-10 pt-8 border-t border-amber-200 dark:border-stone-800">
+        <div className="text-center max-w-2xl mx-auto mb-6">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-saffron-500/10 border border-saffron-500/30 text-saffron-700 dark:text-saffron-300 text-xs font-bold mb-2">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>
+              {currentLang === 'en'
+                ? 'Complete Weekly Devotional Reference'
+                : currentLang === 'hi'
+                ? 'साप्ताहिक समस्त ७ वार एवं देव उपासना दर्शन'
+                : 'आठवड्यातील सर्व ७ वार व देव उपासना संपूर्ण माहिती'}
+            </span>
+          </div>
+          <h3 className="text-xl sm:text-2xl font-bold font-serifDev text-stone-900 dark:text-white">
+            {currentLang === 'en'
+              ? 'Which Deity is Worshipped on Which Day?'
+              : currentLang === 'hi'
+              ? 'सप्ताह के किस वार को किस देवता की पूजा करें?'
+              : 'कोणत्या वारी कोणत्या देवतेची पूजा करावी? (संपूर्ण माहिती)'}
+          </h3>
+          <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+            {currentLang === 'en'
+              ? 'Click any day to instantly view its auspicious rituals, holy colors, and listen to authentic chanting.'
+              : currentLang === 'hi'
+              ? 'किसी भी वार पर क्लिक कर उसके विशेष मंत्र, शुभ रंग एवं अभिषेक विधि की जानकारी लें।'
+              : 'खालील कोणत्याही वारावर क्लिक करून त्या वाराचे विशेष मंत्र, शुभ रंग व पूजा विधी पाहा.'}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          {weekdayPujaGuideData.map((day) => {
+            const isSelected = day.dayIndex === selectedDayIndex;
+            const isRealToday = day.dayIndex === todayInfo.dayIndex;
+
+            return (
+              <div
+                key={day.id}
+                className={`rounded-2xl p-4 sm:p-4.5 border transition-all relative ${
+                  isSelected
+                    ? 'bg-gradient-to-r from-amber-500/15 via-saffron-500/10 to-transparent dark:from-saffron-950/40 dark:via-stone-900 border-saffron-500 ring-2 ring-saffron-500/30 shadow-md'
+                    : 'bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-700 shadow-sm'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">{day.icon}</span>
+                    <div>
+                      <h4 className="text-sm sm:text-base font-bold font-serifDev text-stone-900 dark:text-white flex items-center gap-2">
+                        <span>{day.dayName[currentLang]}</span>
+                        {isRealToday && (
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-red-600 text-white">
+                            {currentLang === 'en' ? 'Today' : 'आजचा वार'}
+                          </span>
+                        )}
+                      </h4>
+                      <p className="text-[11px] font-semibold text-amber-700 dark:text-amber-400">
+                        {day.deities.primary[currentLang]}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span
+                      className="w-4 h-4 rounded-full border border-stone-300 dark:border-stone-700 shadow-xs"
+                      style={{ backgroundColor: day.holyColor.hex }}
+                      title={day.holyColor.name[currentLang]}
+                    />
+                    <button
+                      onClick={() => handleShareWeekdayPuja(day)}
+                      className="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 transition-colors"
+                      title="WhatsApp वर पाठवा"
+                    >
+                      <Share2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                <p className="text-xs font-serifDev text-stone-700 dark:text-stone-300 leading-relaxed pl-1 border-l-2 border-amber-400 dark:border-amber-600 my-2.5">
+                  {day.canonicalSummary[currentLang] || day.canonicalSummary.mr}
+                </p>
+
+                <div className="flex items-center justify-between pt-2 border-t border-stone-100 dark:border-stone-800 text-xs">
+                  <span className="text-[10px] text-stone-500 dark:text-stone-400 font-mono">
+                    🎨 {day.holyColor.name[currentLang]}
+                  </span>
+                  <button
+                    onClick={() => {
+                      handleDayChange(day.dayIndex);
+                      window.scrollTo({ top: 350, behavior: 'smooth' });
+                    }}
+                    className={`font-bold inline-flex items-center gap-1 transition-all ${
+                      isSelected
+                        ? 'text-saffron-700 dark:text-saffron-300'
+                        : 'text-stone-600 hover:text-amber-600 dark:text-stone-400 dark:hover:text-amber-300'
+                    }`}
+                  >
+                    <span>{isSelected ? (currentLang === 'en' ? 'Viewing' : 'निवडलेला वार') : (currentLang === 'en' ? 'View Details' : 'पूजा विधी पाहा')}</span>
+                    <ChevronRight className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
