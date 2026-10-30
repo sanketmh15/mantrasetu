@@ -253,8 +253,8 @@ export function App() {
       {/* Live Animated Devotional Background */}
       <DevotionalBackground activeDeity={activeDeity} activeTab={activeTab} />
 
-      {/* Main Content Area */}
-      <div className="relative z-10 flex flex-col flex-grow w-full max-w-full overflow-x-hidden">
+      {/* Main Content Area (pb-16 on mobile for bottom navigation dock) */}
+      <div className="relative z-10 flex flex-col flex-grow w-full max-w-full overflow-x-hidden pb-16 md:pb-0">
         {/* Top Navigation */}
         <Navbar
           currentLang={currentLang}
