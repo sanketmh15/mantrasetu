@@ -189,31 +189,31 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#14120f]/95 backdrop-blur-md border-b border-stone-800 shadow-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+    <header className="sticky top-0 z-50 bg-[#14120f]/95 backdrop-blur-md border-b border-stone-800 shadow-xl w-full max-w-full overflow-hidden">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 w-full">
+        <div className="flex items-center justify-between h-14 sm:h-20 gap-2">
           
           {/* Brand Logo */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <div
-              className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shadow-lg ring-1 cursor-pointer transition-all bg-gradient-to-tr from-saffron-700 via-saffron-500 to-amber-400 shadow-saffron-900/30 ring-amber-300/40"
+              className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shadow-lg ring-1 cursor-pointer transition-all bg-gradient-to-tr from-saffron-700 via-saffron-500 to-amber-400 shadow-saffron-900/30 ring-amber-300/40"
               onClick={() => onTabChange('home')}
             >
-              <span className="text-xl sm:text-2xl select-none">🕉️</span>
+              <span className="text-lg sm:text-2xl select-none">🕉️</span>
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <span
-                  className="text-lg sm:text-xl font-bold tracking-tight text-white font-serifDev cursor-pointer"
+                  className="text-base sm:text-xl font-bold tracking-tight text-white font-serifDev cursor-pointer"
                   onClick={() => onTabChange('home')}
                 >
                   MantraSetu
                 </span>
 
-                {/* 50 Deities Quick Shortcut Pill */}
+                {/* 50 Deities Quick Shortcut Pill (Desktop only - mobile has horizontal bar below) */}
                 <button
                   onClick={() => onTabChange('deities')}
-                  className={`px-2.5 py-0.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 border ${
+                  className={`hidden md:inline-flex px-2.5 py-0.5 rounded-lg text-xs font-bold transition-all items-center gap-1 border ${
                     activeTab === 'deities' || activeTab === 'god-detail'
                       ? 'bg-gradient-to-r from-saffron-600 to-amber-600 text-white border-amber-300 shadow-sm'
                       : 'bg-stone-900 text-amber-300 border-amber-500/40 hover:bg-stone-800'
@@ -227,7 +227,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {currentUser?.role === 'admin' && (
                   <button
                     onClick={() => onTabChange('admin')}
-                    className={`px-2.5 py-0.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 border animate-pulse ${
+                    className={`px-2 py-0.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1 border animate-pulse ${
                       activeTab === 'admin'
                         ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-black border-yellow-200 shadow-md font-bold'
                         : 'bg-amber-950/80 text-amber-300 border-amber-400/60 hover:bg-amber-900'
@@ -235,7 +235,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     title="Open Creator Admin Command Center"
                   >
                     <span>👑</span>
-                    <span>Admin</span>
+                    <span className="hidden sm:inline">Admin</span>
                   </button>
                 )}
               </div>
@@ -286,11 +286,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {/* Namaste Hands Greeting Video Modal Trigger */}
+            {/* Namaste Hands Greeting Video Modal Trigger (Desktop/Tablet) */}
             {onOpenNamaste && (
               <button
                 onClick={onOpenNamaste}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold text-amber-200 bg-stone-900/90 hover:bg-stone-800 border border-amber-500/40 shadow-sm transition-all transform hover:scale-105"
+                className="hidden md:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold text-amber-200 bg-stone-900/90 hover:bg-stone-800 border border-amber-500/40 shadow-sm transition-all transform hover:scale-105"
                 title={currentLang === 'en' ? 'Watch Namaste Greeting' : 'पावन नमस्ते स्वागत पहा'}
               >
                 <span className="text-sm">🙏</span>
@@ -399,11 +399,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {/* Theme Toggle Button */}
+            {/* Theme Toggle Button (Desktop/Tablet - on mobile available on Home & Profile) */}
             <button
               onClick={onToggleTheme}
               title={currentTheme === 'light' ? 'Switch to Dark Mode (रात्री ध्यान)' : 'Switch to Light Mode (प्रकाशमय)'}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 dark:bg-stone-900 border border-stone-300 dark:border-stone-800 text-stone-800 dark:text-stone-200 hover:border-amber-500 transition-all shadow-sm"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 dark:bg-stone-900 border border-stone-300 dark:border-stone-800 text-stone-800 dark:text-stone-200 hover:border-amber-500 transition-all shadow-sm"
             >
               {currentTheme === 'light' ? (
                 <>
@@ -418,11 +418,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </button>
 
-            {/* Install App Button */}
+            {/* Install App Button (Desktop only - mobile has profile option) */}
             <button
               onClick={handleInstallClick}
               title="Install App on Phone / Desktop"
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 shadow-md shadow-saffron-950 transition-all ${
+              className={`hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 shadow-md shadow-saffron-950 transition-all ${
                 isInstallable ? 'animate-pulse ring-1 ring-amber-300' : ''
               }`}
             >
@@ -432,11 +432,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </button>
 
-            {/* Cultural Explainer Button */}
+            {/* Cultural Explainer Button (Desktop only) */}
             <button
               onClick={onOpenGlossary}
               title="What is this? Cultural term explainer"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-amber-200 bg-amber-950/40 border border-amber-800/50 hover:bg-amber-900/40 transition-colors"
+              className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-amber-200 bg-amber-950/40 border border-amber-800/50 hover:bg-amber-900/40 transition-colors"
             >
               <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
               <span className="hidden lg:inline">
@@ -444,11 +444,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </button>
 
-            {/* Language Switcher */}
-            <div className="flex items-center bg-stone-900 rounded-lg p-0.5 border border-stone-800">
+            {/* Compact Language Switcher */}
+            <div className="flex items-center bg-stone-900 rounded-lg p-0.5 border border-stone-800 shrink-0">
               <button
                 onClick={() => onLanguageChange('en')}
-                className={`px-2 py-1 text-xs rounded-md font-medium transition-all ${
+                className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-[11px] sm:text-xs rounded-md font-medium transition-all ${
                   currentLang === 'en'
                     ? 'bg-saffron-600 text-white shadow-sm font-semibold'
                     : 'text-stone-400 hover:text-stone-200'
@@ -458,7 +458,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
               <button
                 onClick={() => onLanguageChange('hi')}
-                className={`px-2 py-1 text-xs rounded-md font-medium transition-all ${
+                className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-[11px] sm:text-xs rounded-md font-medium transition-all ${
                   currentLang === 'hi'
                     ? 'bg-saffron-600 text-white shadow-sm font-semibold'
                     : 'text-stone-400 hover:text-stone-200'
@@ -468,7 +468,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
               <button
                 onClick={() => onLanguageChange('mr')}
-                className={`px-2 py-1 text-xs rounded-md font-medium transition-all ${
+                className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-[11px] sm:text-xs rounded-md font-medium transition-all ${
                   currentLang === 'mr'
                     ? 'bg-saffron-600 text-white shadow-sm font-semibold'
                     : 'text-stone-400 hover:text-stone-200'

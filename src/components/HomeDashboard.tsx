@@ -459,10 +459,10 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
   ];
 
   return (
-    <div className="py-6 sm:py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-3 sm:py-10 max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 w-full">
       
       {/* 1. Welcoming Top Greeting & Senior Citizen Accessibility Bar */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-amber-500/10 via-saffron-500/10 to-amber-500/10 border border-amber-600/30 shadow-lg mb-8">
+      <div className="p-4 sm:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-amber-500/10 via-saffron-500/10 to-amber-500/10 border border-amber-600/30 shadow-lg mb-6 sm:mb-8 w-full">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           
           <div>
@@ -586,7 +586,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       </div>
 
       {/* 1.25. Legendary Amitabh Bachchan Devotional Voiceover Showcase */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-stone-900 via-amber-950/80 to-stone-900 border border-amber-500/50 shadow-xl mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-white">
+      <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-stone-900 via-amber-950/80 to-stone-900 border border-amber-500/50 shadow-xl mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4 text-white w-full">
         <div className="flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 to-saffron-500 flex items-center justify-center text-2xl shadow-lg ring-2 ring-amber-300/40 shrink-0">
             🎙️
@@ -634,7 +634,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
 
       {/* 1.5 Devotee Account, Login & Logout Hub */}
       {currentUser ? (
-        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/15 via-stone-900/60 to-amber-500/10 border border-amber-500/40 shadow-lg mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fadeIn">
+        <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-amber-500/15 via-stone-900/60 to-amber-500/10 border border-amber-500/40 shadow-lg mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 animate-fadeIn w-full">
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-600 to-saffron-600 text-white flex items-center justify-center text-xl shadow-md ring-1 ring-amber-300/40">
               {currentUser.avatar || (currentUser.role === 'admin' ? '👑' : '🙏')}
@@ -676,7 +676,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           </div>
         </div>
       ) : (
-        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-saffron-500/10 via-amber-500/15 to-orange-500/10 border border-saffron-500/30 shadow-md mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fadeIn">
+        <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-saffron-500/10 via-amber-500/15 to-orange-500/10 border border-saffron-500/30 shadow-md mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 animate-fadeIn w-full">
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-saffron-600 to-amber-600 text-white flex items-center justify-center text-xl shadow-md ring-1 ring-amber-300/40">
               <span>👤</span>
@@ -734,7 +734,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           </button>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 w-full">
           {deitiesList.map((deity) => {
             const isSelected = deity.id === activeDeity;
 
@@ -844,7 +844,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-5 w-full">
           {userInterestCards.map((item) => (
             <div
               key={item.id}
@@ -878,7 +878,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       </div>
 
       {/* 4. Daily Sadhana & Chanting Progress Widget */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#171513] border border-stone-200 dark:border-stone-800 shadow-lg mb-12">
+      <div className="p-4 sm:p-8 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#171513] border border-stone-200 dark:border-stone-800 shadow-lg mb-8 sm:mb-12 w-full">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200 dark:border-stone-800">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-saffron-600 dark:text-saffron-400">
@@ -935,7 +935,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       />
 
       {/* 5. Sant Thought of the Day (संत विचार) */}
-      <div className="p-6 rounded-3xl bg-amber-50 dark:bg-stone-900/60 border border-amber-200 dark:border-stone-800 text-center">
+      <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-amber-50 dark:bg-stone-900/60 border border-amber-200 dark:border-stone-800 text-center w-full">
         <span className="text-xs uppercase tracking-widest text-amber-700 dark:text-amber-400 font-bold block mb-2">
           {currentLang === 'en' ? 'Daily Sant Thought' : 'आजचे पावन संत वचन'}
         </span>

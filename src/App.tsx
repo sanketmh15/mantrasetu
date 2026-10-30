@@ -249,12 +249,12 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent text-stone-900 dark:text-stone-100 selection:bg-saffron-600 selection:text-white relative transition-colors duration-200">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col bg-transparent text-stone-900 dark:text-stone-100 selection:bg-saffron-600 selection:text-white relative transition-colors duration-200">
       {/* Live Animated Devotional Background */}
       <DevotionalBackground activeDeity={activeDeity} activeTab={activeTab} />
 
       {/* Main Content Area */}
-      <div className="relative z-10 flex flex-col flex-grow">
+      <div className="relative z-10 flex flex-col flex-grow w-full max-w-full overflow-x-hidden">
         {/* Top Navigation */}
         <Navbar
           currentLang={currentLang}
@@ -289,7 +289,7 @@ export function App() {
       />
 
       {/* Main Dynamic View Area */}
-      <main className="flex-grow">
+      <main className="flex-grow w-full max-w-full overflow-x-hidden">
         {/* 1. DEFAULT OPENING PAGE: PERSONALIZED DEVOTIONAL HOME DASHBOARD */}
         {activeTab === 'home' && (
           <HomeDashboard

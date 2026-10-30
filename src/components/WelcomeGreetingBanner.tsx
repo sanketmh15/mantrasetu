@@ -195,8 +195,8 @@ export const WelcomeGreetingBanner: React.FC<WelcomeGreetingBannerProps> = ({
   if (!greeting || !isVisible) return null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
-      <div className="relative rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-amber-500/15 via-saffron-500/15 to-amber-600/10 dark:from-amber-950/40 dark:via-stone-900/60 dark:to-amber-950/30 border border-amber-300/60 dark:border-amber-700/50 backdrop-blur-md shadow-sm flex items-start sm:items-center justify-between gap-4 transition-all animate-fadeIn">
+    <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-2 w-full">
+      <div className="relative rounded-2xl p-3 sm:p-5 bg-gradient-to-r from-amber-500/15 via-saffron-500/15 to-amber-600/10 dark:from-amber-950/40 dark:via-stone-900/60 dark:to-amber-950/30 border border-amber-300/60 dark:border-amber-700/50 backdrop-blur-md shadow-sm flex items-start sm:items-center justify-between gap-3 sm:gap-4 transition-all animate-fadeIn w-full">
         
         <div className="flex items-start sm:items-center gap-3.5">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-saffron-600 to-amber-500 text-white flex items-center justify-center text-xl shrink-0 shadow-md">

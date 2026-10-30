@@ -56,7 +56,7 @@ export const DailyPujaGuide: React.FC<DailyPujaGuideProps> = ({
   };
 
   return (
-    <section className="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-6 sm:py-10 max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 w-full">
       {/* 1. Header with Sacred Aura */}
       <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-bold mb-3 shadow-sm">

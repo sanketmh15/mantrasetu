@@ -82,7 +82,7 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
   };
 
   return (
-    <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-4 sm:py-8 max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 w-full">
       {/* Grand Sacred Header */}
       <div className="text-center max-w-3xl mx-auto mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-saffron-100 dark:bg-saffron-950/70 border border-saffron-300 dark:border-saffron-800/60 text-saffron-800 dark:text-saffron-300 text-xs font-semibold mb-3 shadow-sm">
@@ -159,7 +159,7 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
       </div>
 
       {/* Grid of 50 Gods Serial-Wise */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-6 w-full">
         {filteredGods.map((god) => {
           const isAudioPlaying = playingAudioId === god.id;
 
