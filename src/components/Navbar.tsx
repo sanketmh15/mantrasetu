@@ -146,7 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'digital-library', label: { en: 'Scriptures Library', hi: 'संत साहित्य ग्रन्थालय', mr: '📜 संत साहित्य व गीता' }, icon: BookOpen },
     { id: 'stories', label: { en: 'Stories for Kids', hi: 'बाल संस्कार कथाएँ', mr: '🧒 बाल संस्कार गोष्टी' }, icon: Smile },
     { id: 'symbolism', label: { en: 'Deity Symbols', hi: 'प्रतीक मीमांसा', mr: '🔱 देव प्रतीक रहस्य' }, icon: Shield },
-    { id: 'live-darshan', label: { en: 'Live Darshan', hi: 'सीधा मन्दिर दर्शन', mr: '🔴 थेट मंदिर दर्शन' }, icon: Radio },
+    { id: 'live-darshan', label: { en: 'Live Darshan & Aartis', hi: 'सीधा दर्शन व आरतियां', mr: '🔴 थेट दर्शन व आरत्या' }, icon: Radio },
     { id: 'rashi', label: { en: 'Rashi & Kundali', hi: 'राशि व कुण्डली', mr: '🔮 रास व कुंडली' }, icon: Compass },
     { id: 'bhajan', label: { en: 'Bhajan & Bhupali', hi: 'भजन व भूपाळी', mr: '🎵 भजन व भूपाळी' }, icon: Music },
     { id: 'reminders', label: { en: 'Daily Reminders', hi: 'दैनिक स्मरण', mr: '🔔 दैनिक स्मरण' }, icon: Bell },

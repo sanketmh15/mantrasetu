@@ -76,6 +76,7 @@ const pujaDeities: PujaDeity[] = [
 export const VirtualPujaSanctum: React.FC<VirtualPujaSanctumProps> = ({
   currentLang,
   initialDeityId = 'ganesha',
+  onNavigateTab,
 }) => {
   const [selectedDeityId, setSelectedDeityId] = useState<DeityId>(initialDeityId);
   const activeDeity = pujaDeities.find((d) => d.id === selectedDeityId) || pujaDeities[0];
@@ -492,6 +493,16 @@ export const VirtualPujaSanctum: React.FC<VirtualPujaSanctumProps> = ({
             >
               {currentLang === 'en' ? 'Reset Puja' : 'पूजा रीसेट करा'}
             </button>
+
+            {onNavigateTab && (
+              <button
+                onClick={() => onNavigateTab('live-darshan')}
+                className="px-4 py-3 rounded-2xl bg-gradient-to-r from-red-600/30 to-amber-600/30 hover:from-red-600/40 hover:to-amber-600/40 text-amber-300 border border-amber-500/50 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+              >
+                <span>🔴</span>
+                <span>{currentLang === 'en' ? 'Aarti Video & Live Darshan' : 'थेट आरती व्हिडिओ व दर्शन'}</span>
+              </button>
+            )}
           </div>
         </div>
 

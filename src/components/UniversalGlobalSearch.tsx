@@ -13,7 +13,7 @@ import { temple3DDatabase } from '../data/temple3DData';
 import { digitalLibraryDatabase } from '../data/digitalLibraryData';
 import { childrenStoriesDatabase } from '../data/childrenStoriesData';
 import { deitySymbolismDatabase } from '../data/deitySymbolismData';
-import { liveDarshanDatabase } from '../data/liveDarshanData';
+import { liveDarshanDatabase, specificAartisDatabase } from '../data/liveDarshanData';
 import { rashiDatabase } from '../data/rashiGuideData';
 import { bhajanDatabase } from '../data/bhajanHubData';
 import {
@@ -293,6 +293,24 @@ export function UniversalGlobalSearch({
           subtitle: d.location,
           badge: currentLang === 'en' ? 'Live Stream' : 'थेट दर्शन',
           icon: '🔴',
+          tab: 'live-darshan',
+        });
+      }
+    });
+
+    // 11b. Search Specific Aartis
+    specificAartisDatabase.forEach((a) => {
+      const titleEn = a.title.en.toLowerCase();
+      const titleMr = a.title.mr.toLowerCase();
+      const deityMr = a.deity.mr.toLowerCase();
+      if (titleEn.includes(q) || titleMr.includes(q) || deityMr.includes(q) || q.includes('आरती') || q.includes('aarti')) {
+        list.push({
+          id: `aarti_${a.id}`,
+          category: 'mantra',
+          title: a.title[currentLang] || a.title.mr,
+          subtitle: `${a.deity[currentLang] || a.deity.mr} • ${a.singer}`,
+          badge: currentLang === 'en' ? 'Aarti Video' : 'पावन आरती',
+          icon: '🪔',
           tab: 'live-darshan',
         });
       }

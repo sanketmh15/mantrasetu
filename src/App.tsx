@@ -621,7 +621,7 @@ export function App() {
 
         {/* 16. VIRTUAL E-PUJA & AARTI SANCTUM TAB */}
         {activeTab === 'puja' && (
-          <VirtualPujaSanctum currentLang={currentLang} />
+          <VirtualPujaSanctum currentLang={currentLang} onNavigateTab={setActiveTab} />
         )}
 
         {/* 17. LIVE CHOGHADIYA & MUHURAT TAB */}
