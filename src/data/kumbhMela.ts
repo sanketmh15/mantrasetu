@@ -394,7 +394,7 @@ export const holyGhatsOfNashik: HolyGhat[] = [
       hi: 'पवित्र नदी में साबुन अथवा शैम्पू का प्रयोग पूर्णतः वर्जित है।',
       mr: 'नदीत साबण किंवा शॅम्पू वापरण्यास सक्त मनाई आहे. पात्रात कचरा टाकू नये.',
     },
-    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Ramkund_Nashik.jpg?width=800',
+    image: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Ramkund_Nashik.jpg/960px-Ramkund_Nashik.jpg',
   },
   {
     name: { en: 'Kushavarta Teerth Kunda', hi: 'कुशावर्त तीर्थ कुण्ड', mr: 'कुशावर्त तीर्थ कुंड' },
@@ -410,7 +410,7 @@ export const holyGhatsOfNashik: HolyGhat[] = [
       hi: 'पारंपरिक वस्त्र अनिवार्य। कुण्ड में सीधे छलांग लगाना वर्जित है।',
       mr: 'सोवळे किंवा पारंपरिक पोषाख अनिवार्य. कुंडाच्या पायऱ्यांवरून सावधपणे स्नान करावे.',
     },
-    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Kushawart,_Trimbakeshwar_in_Maharashtra_state,_India.jpg?width=800',
+    image: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b5/Kumbhmela_Nashik_2015_-_the_copper_flag_in_Kushavarta%2C_Trimbakeshwar.JPG/960px-Kumbhmela_Nashik_2015_-_the_copper_flag_in_Kushavarta%2C_Trimbakeshwar.JPG',
   },
   {
     name: { en: 'Tapovan & Lakshmana Kund', hi: 'तपोवन एवं लक्ष्मण कुण्ड', mr: 'तपोवन व लक्ष्मण कुंड' },
@@ -426,7 +426,7 @@ export const holyGhatsOfNashik: HolyGhat[] = [
       hi: 'शांत एवं ध्यान योग्य क्षेत्र। जप एवं परिक्रमा हेतु उत्तम।',
       mr: 'अत्यंत शांत परिसर; नामस्मरण, जप व साधनेसाठी अतिशय योग्य.',
     },
-    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Tapovan_nashik.jpg?width=800',
+    image: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Tapovan_Nashik.jpg/960px-Tapovan_Nashik.jpg',
   },
   {
     name: { en: 'Kapaleshwar Mahadev (No Nandi)', hi: 'कपालेश्वर महादेव', mr: 'कपालेश्वर महादेव मंदिर' },
@@ -442,7 +442,7 @@ export const holyGhatsOfNashik: HolyGhat[] = [
       hi: 'सीढ़ियां चढ़कर दर्शन। बिल्वपत्र अर्पण।',
       mr: 'पायऱ्या चढून दर्शन. थेट शिवलिंगाला जल व बेलपत्र अर्पण.',
     },
-    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Panchavati-Ramkund.jpg?width=800',
+    image: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/Trimbakeshwar_Temple%2C_Nashik.jpg/960px-Trimbakeshwar_Temple%2C_Nashik.jpg',
   },
 ];
 

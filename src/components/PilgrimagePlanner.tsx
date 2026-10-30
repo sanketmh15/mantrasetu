@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Language } from '../types';
 import { pilgrimageCircuits, PilgrimageCircuit } from '../data/pilgrimageCircuits';
+import { SACRED_PLACE_REGISTRY } from '../utils/sacredPlaceImageRegistry';
 import {
   Compass,
   MapPin,
@@ -16,6 +17,15 @@ import {
   Moon,
   Sun
 } from 'lucide-react';
+
+const CIRCUIT_IMAGE_MAP: Record<string, string> = {
+  'jyotirlinga-5': SACRED_PLACE_REGISTRY['trimbakeshwar']?.imageUrl || '',
+  'ashtavinayak': SACRED_PLACE_REGISTRY['morgaon']?.imageUrl || '',
+  'pandharpur-warkari': SACRED_PLACE_REGISTRY['pandharpur']?.imageUrl || '',
+  'shaktipeeth-3-half': SACRED_PLACE_REGISTRY['tuljapur']?.imageUrl || '',
+  'datta-parikrama': SACRED_PLACE_REGISTRY['akkalkot']?.imageUrl || '',
+  'nashik-kumbha-panchavati': SACRED_PLACE_REGISTRY['ramkund']?.imageUrl || '',
+};
 
 interface PilgrimagePlannerProps {
   currentLang: Language;
@@ -74,17 +84,24 @@ export const PilgrimagePlanner: React.FC<PilgrimagePlannerProps> = ({ currentLan
       <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
         {pilgrimageCircuits.map((circuit) => {
           const isSelected = circuit.id === activeCircuit.id;
+          const circuitThumb = CIRCUIT_IMAGE_MAP[circuit.id];
           return (
             <button
               key={circuit.id}
               onClick={() => handleCircuitChange(circuit.id)}
-              className={`flex items-center gap-2.5 px-4 sm:px-5 py-3 rounded-2xl font-semibold text-xs sm:text-sm transition-all shadow-md ${
+              className={`flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-2xl font-semibold text-xs sm:text-sm transition-all shadow-md ${
                 isSelected
                   ? 'bg-gradient-to-r from-saffron-600 to-amber-600 text-white shadow-saffron-950/50 ring-2 ring-amber-300/60'
                   : 'bg-stone-900/80 text-stone-300 border border-stone-800 hover:bg-stone-800/80 hover:text-white'
               }`}
             >
-              <span className="text-lg">{circuit.icon}</span>
+              {circuitThumb ? (
+                <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-amber-400/50">
+                  <img src={circuitThumb} alt="" className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <span className="text-lg">{circuit.icon}</span>
+              )}
               <span>{circuit.name[currentLang]}</span>
             </button>
           );
@@ -95,8 +112,8 @@ export const PilgrimagePlanner: React.FC<PilgrimagePlannerProps> = ({ currentLan
       <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#1c1815] via-[#14120f] to-[#1a1714] border border-stone-800/80 shadow-2xl mb-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-          <div>
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+          <div className="flex-1">
             <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-amber-950/70 text-amber-300 border border-amber-800/50 mb-2">
               {activeCircuit.badge[currentLang]}
             </div>
@@ -109,7 +126,7 @@ export const PilgrimagePlanner: React.FC<PilgrimagePlannerProps> = ({ currentLan
             </p>
 
             {/* Quick Metrics */}
-            <div className="flex flex-wrap items-center gap-4 mt-4 text-xs text-stone-400">
+            <div className="flex flex-wrap items-center gap-3 mt-4 text-xs text-stone-400">
               <div className="flex items-center gap-1.5 bg-stone-900/90 px-3 py-1.5 rounded-lg border border-stone-800">
                 <Car className="w-4 h-4 text-saffron-400" />
                 <span>{activeCircuit.totalDistanceKm} km {currentLang === 'en' ? 'Total Route' : 'एकूण मार्ग'}</span>
@@ -136,25 +153,41 @@ export const PilgrimagePlanner: React.FC<PilgrimagePlannerProps> = ({ currentLan
             </div>
           </div>
 
-          {/* Action CTAs: Google Maps Multi-Stop & Print */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <a
-              href={activeCircuit.googleMapsRouteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-saffron-950 transition-all transform hover:scale-[1.02]"
-            >
-              <ExternalLink className="w-4 h-4" />
-              <span>{currentLang === 'en' ? 'Open in Google Maps' : 'गुगल मॅप्सवर मार्ग पहा'}</span>
-            </a>
+          {/* Authentic Temple Hero Thumbnail & Actions */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0">
+            {CIRCUIT_IMAGE_MAP[activeCircuit.id] && (
+              <div className="w-full sm:w-56 h-32 rounded-2xl overflow-hidden border border-amber-600/40 shadow-xl relative group">
+                <img
+                  src={CIRCUIT_IMAGE_MAP[activeCircuit.id]}
+                  alt={activeCircuit.name[currentLang]}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent" />
+                <span className="absolute bottom-2 left-2 text-[10px] font-bold text-amber-300 bg-black/60 px-2 py-0.5 rounded backdrop-blur-sm">
+                  🏛️ {currentLang === 'en' ? 'Sacred Dham' : 'पावन तीर्थ दर्शन'}
+                </span>
+              </div>
+            )}
 
-            <button
-              onClick={handlePrint}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-700 font-semibold text-xs sm:text-sm transition-all"
-            >
-              <Printer className="w-4 h-4 text-stone-400" />
-              <span>{currentLang === 'en' ? 'Print Itinerary' : 'मार्गपत्रिका प्रिंट करा'}</span>
-            </button>
+            <div className="flex flex-col w-full sm:w-auto gap-2.5">
+              <a
+                href={activeCircuit.googleMapsRouteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-saffron-950 transition-all transform hover:scale-[1.02]"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span>{currentLang === 'en' ? 'Open in Google Maps' : 'गुगल मॅप्सवर मार्ग पहा'}</span>
+              </a>
+
+              <button
+                onClick={handlePrint}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-700 font-semibold text-xs sm:text-sm transition-all"
+              >
+                <Printer className="w-4 h-4 text-stone-400" />
+                <span>{currentLang === 'en' ? 'Print Itinerary' : 'मार्गपत्रिका प्रिंट करा'}</span>
+              </button>
+            </div>
           </div>
         </div>
 

@@ -681,8 +681,8 @@ export function LiveTempleDarshan({ currentLang }: LiveTempleDarshanProps) {
                       alt={aarti.title.mr}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"
                       onError={(e) => {
-                        // Fallback placeholder if youtube thumbnail is not available
-                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1545128485-c400e7702796?auto=format&fit=crop&w=600&q=80';
+                        // Fallback placeholder with authentic sacred temple image
+                        (e.target as HTMLImageElement).src = 'https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Pandurang_vitthal_Temple%2C_Pandharpur%2C_Maharashtra_04.jpg/960px-Pandurang_vitthal_Temple%2C_Pandharpur%2C_Maharashtra_04.jpg';
                       }}
                     />
                     

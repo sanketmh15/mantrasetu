@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Language } from '../types';
 import { maharashtraJyotirlingas } from '../data/jyotirlingaCircuit';
 import { audioEngine } from '../utils/audioSynth';
+import { SACRED_PLACE_REGISTRY } from '../utils/sacredPlaceImageRegistry';
 import { Navigation, Clock, ExternalLink, Compass, Volume2, Info } from 'lucide-react';
 
 interface JyotirlingaCircuitProps {
@@ -138,9 +139,25 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
             </div>
           </div>
 
-          {/* Right Action Column */}
-          <div className="w-full lg:w-72 p-5 rounded-2xl bg-stone-950 border border-stone-800/80 flex flex-col justify-between text-center">
+          {/* Right Action Column with Temple Photo */}
+          <div className="w-full lg:w-80 p-5 rounded-2xl bg-stone-950 border border-stone-800/80 flex flex-col justify-between text-center">
             <div>
+              {/* Authentic Temple Photo */}
+              {SACRED_PLACE_REGISTRY[activeTemple.imageTag]?.imageUrl && (
+                <div className="relative h-44 w-full rounded-xl overflow-hidden border border-blue-500/40 shadow-lg mb-4 bg-stone-900 group">
+                  <img
+                    src={SACRED_PLACE_REGISTRY[activeTemple.imageTag].imageUrl}
+                    alt={activeTemple.name[currentLang]}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] font-bold text-blue-300 bg-stone-950/80 px-2 py-0.5 rounded-md border border-blue-500/30">
+                    🔱 {activeTemple.city}
+                  </span>
+                </div>
+              )}
+
               <span className="text-xs uppercase tracking-wider text-stone-500 font-semibold block mb-1">
                 {currentLang === 'en' ? 'Sanctum Timings' : 'दर्शन वेळ'}
               </span>
@@ -180,40 +197,56 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
         <span>{currentLang === 'en' ? 'All 5 Maharashtra Jyotirlingas' : 'महाराष्ट्रातील सर्व ५ ज्योतिर्लिंगे'}</span>
       </h3>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-        {maharashtraJyotirlingas.map((temple) => (
-          <div
-            key={temple.id}
-            onClick={() => {
-              setSelectedTempleId(temple.id);
-              window.scrollTo({ top: 300, behavior: 'smooth' });
-            }}
-            className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
-              temple.id === selectedTempleId
-                ? 'bg-blue-950/40 border-blue-500 shadow-md ring-1 ring-blue-500/50'
-                : 'bg-stone-900/60 border-stone-800 hover:border-stone-700'
-            }`}
-          >
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="w-6 h-6 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center">
-                  {temple.sequence}
-                </span>
-                <span className="text-[10px] text-stone-500">{temple.district}</span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {maharashtraJyotirlingas.map((temple) => {
+          const placeImg = SACRED_PLACE_REGISTRY[temple.imageTag]?.imageUrl;
+          return (
+            <div
+              key={temple.id}
+              onClick={() => {
+                setSelectedTempleId(temple.id);
+                window.scrollTo({ top: 300, behavior: 'smooth' });
+              }}
+              className={`rounded-2xl border overflow-hidden transition-all cursor-pointer flex flex-col justify-between ${
+                temple.id === selectedTempleId
+                  ? 'bg-blue-950/40 border-blue-500 shadow-md ring-1 ring-blue-500/50'
+                  : 'bg-stone-900/60 border-stone-800 hover:border-stone-700'
+              }`}
+            >
+              {placeImg && (
+                <div className="relative h-36 w-full overflow-hidden bg-stone-950 group">
+                  <img
+                    src={placeImg}
+                    alt={temple.name[currentLang]}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-transparent" />
+                  <span className="absolute top-2 left-2 w-6 h-6 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-md">
+                    {temple.sequence}
+                  </span>
+                  <span className="absolute bottom-1.5 right-2 text-[10px] text-blue-300 font-medium bg-black/60 px-1.5 py-0.5 rounded backdrop-blur-sm">
+                    {temple.district}
+                  </span>
+                </div>
+              )}
+              <div className="p-3 sm:p-4 flex flex-col justify-between flex-grow">
+                <div>
+                  <h4 className="font-bold text-white text-sm font-serifDev mb-1">
+                    {temple.name[currentLang]}
+                  </h4>
+                  <p className="text-xs text-stone-400 line-clamp-2">
+                    {temple.significance[currentLang]}
+                  </p>
+                </div>
+                <div className="mt-3 pt-2 border-t border-stone-800/80 flex items-center justify-between text-[11px] text-blue-400 font-medium">
+                  <span>{currentLang === 'en' ? 'View Details' : 'तपशील पहा'}</span>
+                  <span>→</span>
+                </div>
               </div>
-              <h4 className="font-bold text-white text-sm font-serifDev mb-1">
-                {temple.name[currentLang]}
-              </h4>
-              <p className="text-xs text-stone-400 line-clamp-2">
-                {temple.significance[currentLang]}
-              </p>
             </div>
-            <div className="mt-3 pt-2 border-t border-stone-800/80 flex items-center justify-between text-[11px] text-blue-400 font-medium">
-              <span>{currentLang === 'en' ? 'View Details' : 'तपशील पहा'}</span>
-              <span>→</span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
     </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Language, DeityId } from '../types';
 import { audioEngine } from '../utils/audioSynth';
 import { getMantraBrahmanAudioUrl } from '../utils/brahmanAudioService';
+import { DEITY_IMAGE_REGISTRY } from '../utils/deityImageRegistry';
 import {
   Sparkles,
   Volume2,
@@ -31,7 +32,7 @@ const pujaDeities: PujaDeity[] = [
     id: 'ganesha',
     name: { en: 'Shri Ganesha', hi: 'श्री गणेश', mr: 'श्री गणेश (विघ्नहर्ता)' },
     symbol: '🐘',
-    image: 'https://images.unsplash.com/photo-1567591370504-209224856426?auto=format&fit=crop&q=80&w=800',
+    image: DEITY_IMAGE_REGISTRY['ganesha']?.primary || 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Ganapati1.jpg',
     mantra: 'ॐ गं गणपतये नमः • सुखकर्ता दुखहर्ता वार्ता विघ्नाची',
     flowerType: { en: 'Red Hibiscus (जास्वंद) & Durva', hi: 'लाल जासवंद एवं दूर्वा', mr: 'लाल जास्वंद व २१ दुर्वांची जुडी' },
     flowerEmoji: '🌺',
@@ -42,7 +43,7 @@ const pujaDeities: PujaDeity[] = [
     id: 'shiva',
     name: { en: 'Lord Shiva', hi: 'भगवान शिव', mr: 'देवाधिदेव महादेव' },
     symbol: '🕉️',
-    image: 'https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&q=80&w=800',
+    image: DEITY_IMAGE_REGISTRY['shiva']?.primary || 'https://upload.wikimedia.org/wikipedia/commons/4/4d/Shiva.jpg',
     mantra: 'ॐ नमः शिवाय • ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्',
     flowerType: { en: 'Bilvapatra (बेलपत्र) & Dhatura', hi: 'बेलपत्र एवं धतूरा', mr: 'त्रिदल पावन बेलपत्र व धोत्रा' },
     flowerEmoji: '🍃',
@@ -53,7 +54,7 @@ const pujaDeities: PujaDeity[] = [
     id: 'vitthal',
     name: { en: 'Lord Vitthal-Rakhumai', hi: 'श्री विट्ठल-रुक्मिणी', mr: 'विठू माऊली व रखुमाई' },
     symbol: '🪷',
-    image: 'https://images.unsplash.com/photo-1590076215667-873d32098b95?auto=format&fit=crop&q=80&w=800',
+    image: DEITY_IMAGE_REGISTRY['vitthal']?.primary || 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Vithoba.JPG',
     mantra: 'राम कृष्ण हरी • पुंडलिक वरदे हरी विठ्ठल श्री ज्ञानदेव तुकाराम',
     flowerType: { en: 'Sacred Tulsi Mala (तुळशी माळ)', hi: 'तुलसी माला एवं मंजिरी', mr: 'सुगंधी तुळशी माळ व मंजिरी' },
     flowerEmoji: '🌿',
@@ -64,7 +65,7 @@ const pujaDeities: PujaDeity[] = [
     id: 'hanuman',
     name: { en: 'Shri Hanuman', hi: 'श्री हनुमान', mr: 'संकटमोचन श्री हनुमान' },
     symbol: '🚩',
-    image: 'https://images.unsplash.com/photo-1608649399878-a669ff8c9ef1?auto=format&fit=crop&q=80&w=800',
+    image: DEITY_IMAGE_REGISTRY['hanuman']?.primary || 'https://upload.wikimedia.org/wikipedia/commons/0/01/HANUMAN_LIFTS_HILL.jpg',
     mantra: 'ॐ हं हनुमते नमः • जय जय जय हनुमान गोसाईं कृपा करहु गुरुदेव की नाईं',
     flowerType: { en: 'Rui Leaves & Sindoor Mala', hi: 'आक (रुई) के पत्ते व सिंदूर', mr: 'रुईच्या पानांची माळ व शेंदूर' },
     flowerEmoji: '🏵️',

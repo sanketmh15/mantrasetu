@@ -5,6 +5,7 @@ import {
   FestivalPrep,
 } from '../data/festivalPrepData';
 import { audioEngine } from '../utils/audioSynth';
+import { FESTIVAL_IMAGE_REGISTRY } from '../utils/festivalImageRegistry';
 import {
   Sparkles,
   Home,
@@ -14,6 +15,7 @@ import {
   VolumeX,
   Heart,
   BookOpen,
+  MapPin,
 } from 'lucide-react';
 
 interface FestivalPrepGuideProps {
@@ -76,10 +78,11 @@ export function FestivalPrepGuide({ currentLang }: FestivalPrepGuideProps) {
         </p>
       </div>
 
-      {/* Festival Selection Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
+      {/* Festival Selection Bar with Authentic Images */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-10">
         {festivalPrepDatabase.map((fest) => {
           const isSelected = fest.id === selectedFestivalId;
+          const festImgInfo = FESTIVAL_IMAGE_REGISTRY[fest.id];
           return (
             <button
               key={fest.id}
@@ -90,18 +93,30 @@ export function FestivalPrepGuide({ currentLang }: FestivalPrepGuideProps) {
                   setIsSpeaking(false);
                 }
               }}
-              className={`p-4 rounded-2xl text-left transition-all border ${
+              className={`p-3 rounded-2xl text-left transition-all border flex items-center gap-3 ${
                 isSelected
-                  ? 'bg-gradient-to-r from-amber-500/15 via-saffron-500/10 to-transparent dark:from-amber-950/50 dark:via-stone-900 border-amber-500 shadow-md ring-2 ring-amber-400/30'
+                  ? 'bg-gradient-to-r from-amber-500/20 via-saffron-500/10 to-transparent dark:from-amber-950/60 dark:via-stone-900 border-amber-500 shadow-md ring-2 ring-amber-400/30'
                   : 'bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/60'
               }`}
             >
-              <span className="text-xs font-semibold text-amber-700 dark:text-amber-400 block mb-1">
-                {fest.tithiAndMonth[currentLang]}
-              </span>
-              <h3 className="font-bold text-sm sm:text-base text-stone-900 dark:text-white font-serifDev line-clamp-1">
-                {fest.name[currentLang]}
-              </h3>
+              {festImgInfo?.imageUrl && (
+                <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-amber-500/40 shadow-sm bg-stone-950">
+                  <img
+                    src={festImgInfo.imageUrl}
+                    alt={fest.name[currentLang]}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 block truncate">
+                  {fest.tithiAndMonth[currentLang]}
+                </span>
+                <h3 className="font-bold text-xs sm:text-sm text-stone-900 dark:text-white font-serifDev truncate">
+                  {fest.name[currentLang]}
+                </h3>
+              </div>
             </button>
           );
         })}
@@ -109,41 +124,83 @@ export function FestivalPrepGuide({ currentLang }: FestivalPrepGuideProps) {
 
       {/* Active Festival Detailed Dashboard */}
       <div className="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-6 sm:p-8 shadow-xl mb-12">
-        {/* Banner with Speech Button */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-200 dark:border-stone-800 pb-6 mb-8">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-amber-700 dark:text-amber-400 mb-1">
-              <Calendar className="w-4 h-4" />
-              <span>{activeFestival.tithiAndMonth[currentLang]}</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold font-serifDev text-stone-900 dark:text-white">
-              {activeFestival.name[currentLang]}
-            </h2>
-            <span className="text-xs sm:text-sm font-semibold text-amber-800 dark:text-amber-300 block mt-1">
-              🚩 {currentLang === 'en' ? 'Presiding Deity' : 'आराध्य देवता'}: {activeFestival.deity[currentLang]}
-            </span>
-          </div>
+        {/* Hero Visual Banner with Deity & Sacred Pilgrimage Shrines */}
+        {(() => {
+          const activeImgInfo = FESTIVAL_IMAGE_REGISTRY[activeFestival.id];
+          return (
+            <div className="rounded-2xl overflow-hidden bg-gradient-to-r from-stone-950 via-[#1e1713] to-stone-950 border border-amber-900/40 p-4 sm:p-6 mb-8 text-white relative shadow-lg">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                {/* Deity Sacred Image */}
+                <div className="flex items-center gap-4 sm:gap-5 w-full md:w-auto">
+                  {activeImgInfo?.imageUrl && (
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-xl shrink-0 bg-stone-900 ring-2 ring-amber-500/30">
+                      <img
+                        src={activeImgInfo.imageUrl}
+                        alt={activeFestival.name[currentLang]}
+                        className="w-full h-full object-cover object-top"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <div className="flex items-center gap-2 text-xs font-bold text-amber-400 mb-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>{activeFestival.tithiAndMonth[currentLang]}</span>
+                    </div>
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold font-serifDev text-white">
+                      {activeFestival.name[currentLang]}
+                    </h2>
+                    <span className="text-xs sm:text-sm font-semibold text-amber-200 block mt-1">
+                      🚩 {currentLang === 'en' ? 'Presiding Deity' : 'आराध्य देवता'}: {activeFestival.deity[currentLang]}
+                    </span>
+                  </div>
+                </div>
 
-          <button
-            onClick={handleSpeakFestival}
-            className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all shrink-0 ${
-              isSpeaking
-                ? 'bg-rose-600 hover:bg-rose-500 text-white'
-                : 'bg-amber-600 hover:bg-amber-500 text-white'
-            }`}
-          >
-            {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-            <span>
-              {isSpeaking
-                ? currentLang === 'en'
-                  ? 'Stop Voice'
-                  : 'आवाज थांबवा'
-                : currentLang === 'en'
-                ? 'Listen Festival Guide'
-                : 'तयारी मार्गदर्शक ऐका'}
-            </span>
-          </button>
-        </div>
+                {/* Associated Sacred Pilgrimage / Temple Place */}
+                {activeImgInfo?.festivalPlaceName && activeImgInfo?.placeImageUrl && (
+                  <div className="w-full md:w-72 bg-black/40 backdrop-blur-sm border border-amber-700/40 rounded-2xl p-3 flex items-center gap-3">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden border border-amber-400/50 shrink-0 bg-stone-900">
+                      <img
+                        src={activeImgInfo.placeImageUrl}
+                        alt={activeImgInfo.festivalPlaceName[currentLang]}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="flex items-center gap-1 text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-0.5">
+                        <MapPin className="w-3 h-3 text-amber-400" />
+                        <span>{currentLang === 'en' ? 'Sacred Teerth' : 'प्रमुख उत्सव तीर्थ'}</span>
+                      </span>
+                      <p className="text-xs font-bold text-white line-clamp-2">
+                        {activeImgInfo.festivalPlaceName[currentLang]}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Voice Narration Button */}
+                <button
+                  onClick={handleSpeakFestival}
+                  className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all shrink-0 ${
+                    isSpeaking
+                      ? 'bg-rose-600 hover:bg-rose-500 text-white'
+                      : 'bg-amber-600 hover:bg-amber-500 text-white'
+                  }`}
+                >
+                  {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  <span>
+                    {isSpeaking
+                      ? currentLang === 'en'
+                        ? 'Stop Voice'
+                        : 'आवाज थांबवा'
+                      : currentLang === 'en'
+                      ? 'Listen Festival Guide'
+                      : 'तयारी मार्गदर्शक ऐका'}
+                  </span>
+                </button>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* 3 Core Pillar Columns */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">

@@ -3,6 +3,9 @@ export interface FestivalPrep {
   name: { en: string; hi: string; mr: string };
   tithiAndMonth: { en: string; hi: string; mr: string };
   deity: { en: string; hi: string; mr: string };
+  image?: string;
+  placeImage?: string;
+  placeName?: { en: string; hi: string; mr: string };
   homePreparation: { en: string; hi: string; mr: string }[];
   templeItemsToBring: { en: string; hi: string; mr: string }[];
   observanceSteps: { en: string; hi: string; mr: string }[];

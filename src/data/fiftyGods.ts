@@ -1,5 +1,6 @@
 import { MultilingualText } from '../types';
 import { DEITY_IMAGE_REGISTRY } from '../utils/deityImageRegistry';
+import { SACRED_PLACE_REGISTRY } from '../utils/sacredPlaceImageRegistry';
 
 export interface GodEntry {
   serialNo: number;
@@ -1524,8 +1525,72 @@ const rawFiftyGodsList: GodEntry[] = [
   }
 ];
 
-export const fiftyGodsList: GodEntry[] = rawFiftyGodsList.map((god) => ({
-  ...god,
-  image: DEITY_IMAGE_REGISTRY[god.id]?.primary || god.image
-}));
+const GOD_PLACE_MAP: Record<string, string> = {
+  ganesha: 'siddhivinayak_mumbai',
+  shiva: 'trimbakeshwar',
+  parvati: 'madurai',
+  vishnu: 'badrinath',
+  lakshmi: 'kolhapur',
+  saraswati: 'kashi',
+  hanuman: 'trimbakeshwar',
+  rama: 'ayodhya',
+  sita: 'ayodhya',
+  krishna: 'dwarka',
+  radha: 'dwarka',
+  vitthal: 'pandharpur',
+  rakhumai: 'pandharpur',
+  khandoba: 'jejuri',
+  bhavani: 'tuljapur',
+  ambabai: 'kolhapur',
+  renuka: 'kolhapur',
+  swami_samarth: 'akkalkot',
+  sai_baba: 'shirdi',
+  gajanan_maharaj: 'shegaon',
+  dattatreya: 'akkalkot',
+  kartikeya: 'madurai',
+  surya: 'ramkund',
+  somnath: 'trimbakeshwar',
+  kashi_vishwanath: 'kashi',
+  narasimha: 'pandharpur',
+  venkateswara: 'pandharpur',
+  jagannath: 'puri',
+  ayyappa: 'madurai',
+  shani: 'shirdi',
+  dhanvantari: 'kashi',
+  kali: 'tuljapur',
+  ganga: 'kashi',
+  yamuna: 'ayodhya',
+  kamakhya: 'tuljapur',
+  varaha: 'badrinath',
+  matsya: 'badrinath',
+  kurma: 'badrinath',
+  vamana: 'ayodhya',
+  parashurama: 'pandharpur',
+  balarama: 'puri',
+  kalki: 'ayodhya',
+  brahma: 'kashi',
+  gayatri: 'kashi',
+  annapurna: 'kashi',
+  shitala: 'tuljapur',
+  chandi: 'tuljapur',
+  bhairava: 'kashi',
+  shani_dev: 'shirdi',
+  indra: 'kashi',
+  chandra: 'ramkund',
+  agni: 'kashi',
+  vayu: 'trimbakeshwar',
+};
+
+export const fiftyGodsList: GodEntry[] = rawFiftyGodsList.map((god) => {
+  const placeKey = GOD_PLACE_MAP[god.id];
+  const verifiedPlaceUrl = placeKey && SACRED_PLACE_REGISTRY[placeKey]
+    ? SACRED_PLACE_REGISTRY[placeKey].imageUrl
+    : SACRED_PLACE_REGISTRY['pandharpur'].imageUrl;
+
+  return {
+    ...god,
+    image: DEITY_IMAGE_REGISTRY[god.id]?.primary || god.image,
+    placeImage: verifiedPlaceUrl,
+  };
+});
 
