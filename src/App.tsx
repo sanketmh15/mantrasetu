@@ -7,7 +7,6 @@ import { GodDetailView } from './components/GodDetailView';
 import { OverpoweredChatbot } from './components/OverpoweredChatbot';
 import { WelcomeGreetingBanner } from './components/WelcomeGreetingBanner';
 import { AuthModal } from './components/AuthModal';
-import { AdminPanel } from './components/AdminPanel';
 import { Hero } from './components/Hero';
 import { GaneshaHero } from './components/GaneshaHero';
 import { ShivaHero } from './components/ShivaHero';
@@ -580,43 +579,23 @@ export function App() {
           <KumbhMelaGuide currentLang={currentLang} />
         )}
 
-        {/* 15. ADMIN PORTAL TAB (RESTRICTED ONLY FOR CREATOR / ME) */}
+        {/* 15. DEVOTEE WELCOME (FORMER ADMIN TAB REDIRECT) */}
         {activeTab === 'admin' && (
-          currentUser?.role === 'admin' ? (
-            <AdminPanel
-              currentLang={currentLang}
-              currentUser={currentUser}
-              onLogout={() => {
-                logoutUser();
-                setActiveTab('home');
-              }}
-              onNavigateTab={(tab) => {
-                setActiveTab(tab);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              onOpenGodDetail={(godId) => {
-                setSelectedGodId(godId);
-                setActiveTab('god-detail');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            />
-          ) : (
-            <div className="max-w-md mx-auto my-16 p-8 text-center bg-white dark:bg-[#16130f] rounded-3xl border border-red-300 dark:border-red-900 shadow-2xl">
-              <span className="text-4xl">🔒</span>
-              <h3 className="text-lg font-bold text-red-600 dark:text-red-400 mt-3 font-serifDev">
-                अ‍ॅडमिन प्रवेश निषिद्ध (Access Restricted)
-              </h3>
-              <p className="text-xs text-stone-500 mt-2 leading-relaxed">
-                हे दालन केवळ ॲप मालक / अ‍ॅडमिनसाठी राखीव आहे. कृपया आपल्या अधिकृत मोबाईल नंबरवर ओटीपी मागवून लॉगिन करा.
-              </p>
-              <button
-                onClick={() => setIsAuthModalOpen(true)}
-                className="mt-5 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-600 via-saffron-600 to-amber-700 hover:from-amber-500 hover:to-saffron-500 text-white font-bold text-xs shadow-lg transition-all"
-              >
-                अ‍ॅडमिन ओटीपी लॉगिन करा
-              </button>
-            </div>
-          )
+          <div className="max-w-md mx-auto my-16 p-8 text-center bg-white dark:bg-[#16130f] rounded-3xl border border-amber-300 dark:border-amber-900 shadow-2xl">
+            <span className="text-4xl">🙏</span>
+            <h3 className="text-lg font-bold text-stone-900 dark:text-white mt-3 font-serifDev">
+              सनातन अमृतधारा - साधक कक्ष
+            </h3>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-2 leading-relaxed">
+              सर्व भक्तांसाठी सनातन साधना, नित्य पूजा, थेट दर्शन व जपमाळ उपलब्ध आहे.
+            </p>
+            <button
+              onClick={() => setActiveTab('home')}
+              className="mt-5 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white font-bold text-xs shadow-lg transition-all"
+            >
+              मुख्य पृष्ठावर जा (Go to Home)
+            </button>
+          </div>
         )}
 
         {/* 16. VIRTUAL E-PUJA & AARTI SANCTUM TAB */}
@@ -744,16 +723,13 @@ export function App() {
         currentLang={currentLang}
       />
 
-      {/* User & Admin Login Modal (Phone OTP & Google Gmail) */}
+      {/* Real Devotee User Login Modal (Phone OTP, Google 1-Click & Email) */}
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         currentLang={currentLang}
         onAuthSuccess={(user) => {
           setCurrentUser(user);
-          if (user.role === 'admin') {
-            setActiveTab('admin');
-          }
         }}
       />
 

@@ -16,10 +16,8 @@ import {
   Flame,
   Bot,
   User,
-  Crown,
   LogOut,
   ChevronDown,
-  ShieldCheck,
   Search,
   ShoppingBag,
   Bookmark,
@@ -153,31 +151,20 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'store', label: { en: 'Satvik Store', hi: 'सात्विक भण्डार', mr: '🛒 सात्विक भांडार' }, icon: ShoppingBag },
   ];
 
-  // If Admin is logged in, append Admin Panel tab
-  const adminTab = currentUser?.role === 'admin'
-    ? [
-        {
-          id: 'admin',
-          label: { en: 'Admin Panel', hi: 'प्रशासक कक्ष', mr: '👑 ॲडमिन कक्ष' },
-          icon: Crown,
-        },
-      ]
-    : [];
-
   // Dedicated Login / Logout tab button for direct visibility across all screens
   const authTab = currentUser
     ? {
         id: 'auth_logout_action',
-        label: { en: 'Logout', hi: 'लॉगआउट', mr: `🚪 लॉगआउट (${currentUser.role === 'admin' ? 'Admin' : currentUser.name.split(' ')[0]})` },
+        label: { en: 'Logout', hi: 'लॉगआउट', mr: `🚪 लॉगआउट (${currentUser.name.split(' ')[0]})` },
         icon: LogOut,
       }
     : {
         id: 'auth_login_action',
-        label: { en: 'Login / Sign In', hi: 'लॉगिन / प्रवेश', mr: '👤 लॉगिन करा' },
+        label: { en: 'Login / Sign In', hi: 'भक्त प्रवेश', mr: '👤 भक्त लॉगिन' },
         icon: User,
       };
 
-  const unifiedTabs = [...baseTabs, ...adminTab, authTab];
+  const unifiedTabs = [...baseTabs, authTab];
 
   const handleTabClick = (tabId: string) => {
     if (tabId === 'auth_login_action') {
@@ -225,22 +212,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span>🪷</span>
                   <span>{currentLang === 'en' ? '50 Deities Tab' : '५० देव-देवता'}</span>
                 </button>
-
-                {/* Special Admin Indicator Pill if logged in as Admin */}
-                {currentUser?.role === 'admin' && (
-                  <button
-                    onClick={() => onTabChange('admin')}
-                    className={`px-2 py-0.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1 border animate-pulse ${
-                      activeTab === 'admin'
-                        ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-black border-yellow-200 shadow-md font-bold'
-                        : 'bg-amber-950/80 text-amber-300 border-amber-400/60 hover:bg-amber-900'
-                    }`}
-                    title="Open Creator Admin Command Center"
-                  >
-                    <span>👑</span>
-                    <span className="hidden sm:inline">Admin</span>
-                  </button>
-                )}
               </div>
               <p className="text-[11px] text-stone-400 hidden sm:block">
                 {currentLang === 'en' ? 'Complete 50 Deities & Simhastha Kumbh Portal' : 'सर्व ५० देव-देवता व सिंहस्थ कुंभमेळा महादालन'}
@@ -327,9 +298,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-stone-900 border border-stone-700 hover:border-amber-400 text-stone-200 transition-all shadow-sm"
                     title="Profile & Settings"
                   >
-                    <span className="text-sm">{currentUser.avatar || (currentUser.role === 'admin' ? '👑' : '🙏')}</span>
+                    <span className="text-sm">{currentUser.avatar || '🙏'}</span>
                     <span className="max-w-[70px] sm:max-w-[90px] truncate font-medium">
-                      {currentUser.role === 'admin' ? 'Admin' : currentUser.name.split(' ')[0]}
+                      {currentUser.name.split(' ')[0]}
                     </span>
                     <ChevronDown className="w-3 h-3 text-stone-400" />
                   </button>
@@ -340,31 +311,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <div className="p-2.5 rounded-xl bg-black/40 border border-stone-800 space-y-1">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-amber-300 flex items-center gap-1">
-                            {currentUser.role === 'admin' ? <Crown className="w-3.5 h-3.5 text-amber-400" /> : <User className="w-3.5 h-3.5" />}
+                            <User className="w-3.5 h-3.5" />
                             {currentUser.name}
                           </span>
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-300">
-                            {currentUser.role}
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">
+                            {currentUser.ishtaDevata || 'भक्त'}
                           </span>
                         </div>
                         <p className="text-[11px] text-stone-400 font-mono truncate">
                           {currentUser.phone || currentUser.email || 'Devotee Account'}
                         </p>
+                        {currentUser.district && (
+                          <p className="text-[10px] text-amber-400/80">
+                            📍 {currentUser.district}
+                          </p>
+                        )}
                       </div>
-
-                      {/* Admin Panel Direct Link */}
-                      {currentUser.role === 'admin' && (
-                        <button
-                          onClick={() => {
-                            onTabChange('admin');
-                            setIsProfileMenuOpen(false);
-                          }}
-                          className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
-                        >
-                          <ShieldCheck className="w-4 h-4 text-amber-200" />
-                          <span>अ‍ॅडमिन कमांड सेंटर उघडा</span>
-                        </button>
-                      )}
 
                       {/* Logout Button inside dropdown */}
                       <button
@@ -372,7 +334,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           onLogout?.();
                           setIsProfileMenuOpen(false);
                         }}
-                        className="w-full py-1.5 px-3 rounded-xl bg-stone-800 hover:bg-red-950/60 hover:text-red-300 text-stone-300 text-xs font-semibold flex items-center gap-2 transition-colors"
+                        className="w-full py-2 px-3 rounded-xl bg-stone-800 hover:bg-red-950/60 hover:text-red-300 text-stone-300 text-xs font-semibold flex items-center gap-2 transition-colors"
                       >
                         <LogOut className="w-3.5 h-3.5 text-red-400" />
                         <span>लॉगआउट करा (Sign Out)</span>
@@ -395,10 +357,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={onOpenAuthModal}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-saffron-600 via-amber-600 to-amber-500 hover:from-saffron-500 hover:to-amber-400 shadow-md border border-amber-300 ring-2 ring-amber-400/40 transition-all hover:scale-105"
-                title="Sadhaka Login (Phone OTP / Google) or Admin Login"
+                title="भक्त व साधक लॉगिन (User Login)"
               >
                 <User className="w-3.5 h-3.5 text-amber-200" />
-                <span>{currentLang === 'en' ? 'Login' : 'लॉगिन करा'}</span>
+                <span>{currentLang === 'en' ? 'Devotee Login' : 'भक्त प्रवेश'}</span>
               </button>
             )}
 

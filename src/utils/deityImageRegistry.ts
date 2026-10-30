@@ -462,3 +462,4 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
     tilak: '🔴 कामाख्या सिंदूर'
   }
 };
+

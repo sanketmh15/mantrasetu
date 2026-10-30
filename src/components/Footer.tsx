@@ -89,8 +89,8 @@ export const Footer: React.FC<FooterProps> = ({
           <span>🕉️</span>
           <span className="text-stone-300 font-medium">
             {currentUser
-              ? `लॉगिन स्टेटस: ${currentUser.name} (${currentUser.role === 'admin' ? '👑 अ‍ॅडमिन' : '📿 साधक'})`
-              : 'साधक लॉगिन: आपले नामस्मरण व संकल्प सुरक्षित ठेवा'}
+              ? `लॉगिन स्टेटस: ${currentUser.name} (📿 पावन साधक)`
+              : 'भक्त व साधक लॉगिन: आपले नामस्मरण, जप व संकल्प सुरक्षित ठेवा'}
           </span>
         </div>
 
@@ -109,7 +109,7 @@ export const Footer: React.FC<FooterProps> = ({
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white font-bold transition-all shadow-md"
             >
               <User className="w-3.5 h-3.5" />
-              <span>साधक / अ‍ॅडमिन लॉगिन करा (Login)</span>
+              <span>भक्त व साधक लॉगिन (User Login)</span>
             </button>
           )}
         </div>

@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
-import { Language, AuthUser, UserRole } from '../types';
+import { Language, AuthUser } from '../types';
 import {
   requestOtp,
   verifyOtp,
   loginWithGoogle,
-  getAdminPhones,
+  loginWithEmail,
 } from '../utils/authService';
 import { audioEngine } from '../utils/audioSynth';
 import {
   X,
   Smartphone,
-  ShieldCheck,
+  CheckCircle2,
+  AlertCircle,
   ArrowRight,
   User,
-  Crown,
-  KeyRound,
-  CheckCircle2,
-  AlertCircle
+  Sparkles,
+  Mail,
+  Lock,
+  RotateCcw
 } from 'lucide-react';
 
 interface AuthModalProps {
@@ -26,50 +27,94 @@ interface AuthModalProps {
   onAuthSuccess?: (user: AuthUser) => void;
 }
 
+type LoginMethod = 'phone' | 'google' | 'email';
+
+const MAHARASHTRA_DISTRICTS = [
+  'पुणे (Pune)',
+  'मुंबई (Mumbai)',
+  'नाशिक (Nashik)',
+  'सोलापूर (Solapur / पंढरपूर)',
+  'कोल्हापूर (Kolhapur)',
+  'छत्रपती संभाजीनगर (Aurangabad)',
+  'ठाणे (Thane)',
+  'सातारा (Satara)',
+  'सांगली (Sangli)',
+  'अहमदनगर / अहिल्यानगर (शिर्डी)',
+  'नागपूर (Nagpur)',
+  'जळगाव (Jalgaon)',
+  'धाराशिव / उस्मानाबाद (तुळजापूर)',
+  'अमरावती (Amravati)',
+  'नांदेड (Nanded)',
+  'इतर / Other State'
+];
+
+const ISHTA_DEVATAS = [
+  { name: 'श्री विघ्नहर्ता गणेश', icon: '🐘' },
+  { name: 'देवाधिदेव महादेव शिव', icon: '🕉️' },
+  { name: 'विठू माऊली व रखुमाई (पंढरपूर)', icon: '🪷' },
+  { name: 'संकटमोचन मारुतीराया', icon: '🚩' },
+  { name: 'आई कुलस्वामिनी तुळजाभवानी', icon: '🔱' },
+  { name: 'करवीर निवासिनी महालक्ष्मी अंबाबाई', icon: '👑' },
+  { name: 'श्री स्वामी समर्थ महाराज (अक्कलकोट)', icon: '🌸' },
+  { name: 'सद्गुरू साईबाबा (शिर्डी)', icon: '✨' },
+  { name: 'श्री गुरुदेव दत्त', icon: '🌿' },
+  { name: 'मल्हारी मार्तंड खंडोबा (जेजुरी)', icon: '⚔️' },
+  { name: 'प्रभू श्रीरामचंद्र व सीता माता', icon: '🏹' },
+  { name: 'भगवान श्रीकृष्ण व राधा राणी', icon: '🪈' }
+];
+
+const AVATAR_OPTIONS = ['🙏', '🐘', '🕉️', '🪷', '🚩', '🌸', '👑', '✨', '🌿', '🪙'];
+
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   currentLang,
   onAuthSuccess,
 }) => {
-  const [activeTab, setActiveTab] = useState<'user' | 'admin'>('user');
-  const [userMethod, setUserMethod] = useState<'phone' | 'google'>('phone');
+  const [method, setMethod] = useState<LoginMethod>('phone');
 
-  // Phone & OTP states
+  // Phone Login State
   const [phoneNumber, setPhoneNumber] = useState('');
   const [userName, setUserName] = useState('');
+  const [selectedIshtaDevata, setSelectedIshtaDevata] = useState('श्री विघ्नहर्ता गणेश');
+  const [selectedDistrict, setSelectedDistrict] = useState('पुणे (Pune)');
+  const [selectedAvatar, setSelectedAvatar] = useState('🙏');
   const [otpSent, setOtpSent] = useState(false);
   const [enteredOtp, setEnteredOtp] = useState('');
   const [simulatedOtp, setSimulatedOtp] = useState<string | null>(null);
   const [resendCountdown, setResendCountdown] = useState(0);
 
-  // Google Login states
+  // Google Login State
   const [googleEmail, setGoogleEmail] = useState('');
   const [googleName, setGoogleName] = useState('');
+
+  // Email Login State
+  const [emailAddress, setEmailAddress] = useState('');
+  const [emailPassword, setEmailPassword] = useState('');
+  const [emailUserName, setEmailUserName] = useState('');
 
   // Status message
   const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
 
-  // Admin Registered Numbers
-  const adminPhones = getAdminPhones();
-
   if (!isOpen) return null;
 
-  const handleRequestOtp = (role: UserRole) => {
+  // 1. Request OTP for Phone
+  const handleRequestOtp = (e: React.FormEvent) => {
+    e.preventDefault();
     setStatusMsg(null);
-    const res = requestOtp(phoneNumber, role);
 
+    const res = requestOtp(phoneNumber);
     if (!res.success) {
       setStatusMsg({ type: 'error', text: res.message });
       return;
     }
 
     setOtpSent(true);
-    setSimulatedOtp(res.generatedOtp || null);
+    setSimulatedOtp(res.generatedOtp || '108108');
     setStatusMsg({ type: 'success', text: res.message });
     audioEngine.playBeadClick();
 
-    // Start 30s resend timer
+    // 30s resend timer
     setResendCountdown(30);
     const interval = setInterval(() => {
       setResendCountdown((prev) => {
@@ -82,9 +127,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }, 1000);
   };
 
-  const handleVerifyOtp = (role: UserRole) => {
+  // 2. Verify Phone OTP
+  const handleVerifyOtp = (e: React.FormEvent) => {
+    e.preventDefault();
     setStatusMsg(null);
-    const res = verifyOtp(phoneNumber, enteredOtp, role, userName);
+
+    const res = verifyOtp(
+      phoneNumber,
+      enteredOtp,
+      'user',
+      userName,
+      selectedIshtaDevata,
+      selectedDistrict,
+      selectedAvatar
+    );
 
     if (!res.success || !res.user) {
       setStatusMsg({ type: 'error', text: res.message });
@@ -100,13 +156,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }, 700);
   };
 
-  const handleGoogleSignIn = (email: string, name: string) => {
+  // 3. Google 1-Click Login
+  const handleGoogleSignIn = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setStatusMsg(null);
-    const res = loginWithGoogle(email, name);
+
+    const email = googleEmail.trim() || 'bhakt.devotee@gmail.com';
+    const name = googleName.trim() || email.split('@')[0];
+
+    const res = loginWithGoogle(email, name, selectedAvatar, selectedIshtaDevata);
     audioEngine.playTempleBell();
     setStatusMsg({
       type: 'success',
-      text: currentLang === 'en' ? 'Signed in with Google successfully!' : 'गुगल द्वारे लॉगिन यशस्वी!',
+      text: currentLang === 'en' ? 'Logged in with Google successfully!' : 'गुगल द्वारे लॉगिन यशस्वी!',
     });
 
     setTimeout(() => {
@@ -115,33 +177,53 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }, 700);
   };
 
-  const handleQuickFillAdminPhone = (ph: string) => {
-    setPhoneNumber(ph);
-    setOtpSent(false);
-    setEnteredOtp('');
-    setSimulatedOtp(null);
+  // 4. Email Direct Login
+  const handleEmailSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatusMsg(null);
+
+    if (!emailAddress.includes('@')) {
+      setStatusMsg({
+        type: 'error',
+        text: currentLang === 'en' ? 'Please enter a valid email.' : 'कृपया वैध ईमेल आयडी टाका.'
+      });
+      return;
+    }
+
+    const res = loginWithEmail(
+      emailAddress,
+      emailPassword,
+      emailUserName || emailAddress.split('@')[0],
+      selectedIshtaDevata,
+      selectedDistrict
+    );
+
+    audioEngine.playTempleBell();
+    setStatusMsg({ type: 'success', text: res.message });
+
+    setTimeout(() => {
+      onAuthSuccess?.(res.user);
+      onClose();
+    }, 700);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-md overflow-hidden bg-white dark:bg-[#15120e] border border-amber-300/40 dark:border-stone-800 rounded-3xl shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+      <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto bg-white dark:bg-[#15120e] border border-amber-300/40 dark:border-stone-800 rounded-3xl shadow-2xl no-scrollbar">
         
-        {/* Top Header with Divine Gradient */}
-        <div className="px-6 py-5 bg-gradient-to-r from-amber-700 via-saffron-600 to-amber-600 text-white flex items-center justify-between shadow-md">
+        {/* Header Bar */}
+        <div className="sticky top-0 z-10 px-5 py-4 bg-gradient-to-r from-saffron-700 via-amber-600 to-saffron-600 text-white flex items-center justify-between shadow-md">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl shadow-inner ring-1 ring-white/30">
-              {activeTab === 'admin' ? '👑' : '🙏'}
+              {selectedAvatar}
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-bold font-serifDev tracking-wide">
-                {activeTab === 'admin'
-                  ? (currentLang === 'en' ? 'Admin Portal Login' : 'अ‍ॅडमिन लॉगिन (फक्त मालकासाठी)')
-                  : (currentLang === 'en' ? 'Sadhaka Portal Login' : 'साधक लॉगिन दालन')}
+                {currentLang === 'en' ? 'Devotee Login' : 'भक्त व साधक प्रवेश'}
               </h3>
-              <p className="text-[11px] text-amber-100">
-                {activeTab === 'admin'
-                  ? 'Secure Phone OTP for App Owner'
-                  : 'Phone OTP किंवा Google Gmail द्वारे लॉगिन'}
+              <p className="text-[11px] text-amber-100 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-amber-300" />
+                <span>{currentLang === 'en' ? 'Sanatan Amrutdhara Devotional Portal' : 'सनातन अमृतधारा भक्ती दालन'}</span>
               </p>
             </div>
           </div>
@@ -154,43 +236,66 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </button>
         </div>
 
-        {/* Tab Switcher: User Login vs Admin Login */}
-        <div className="flex border-b border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/50 p-1.5 gap-1.5">
-          <button
-            onClick={() => {
-              setActiveTab('user');
-              setOtpSent(false);
-              setStatusMsg(null);
-            }}
-            className={`flex-1 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-              activeTab === 'user'
-                ? 'bg-white dark:bg-stone-800 text-saffron-700 dark:text-saffron-400 shadow-sm border border-stone-200 dark:border-stone-700'
-                : 'text-stone-500 hover:text-stone-800 dark:hover:text-stone-300'
-            }`}
-          >
-            <User className="w-4 h-4" />
-            <span>{currentLang === 'en' ? 'User / Sadhaka' : 'साधक लॉगिन'}</span>
-          </button>
+        {/* Method Switcher: Phone vs Google vs Email */}
+        <div className="p-4 border-b border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/40">
+          <div className="grid grid-cols-3 gap-1.5 bg-stone-200/80 dark:bg-stone-800 p-1 rounded-2xl">
+            {/* Phone */}
+            <button
+              onClick={() => {
+                setMethod('phone');
+                setStatusMsg(null);
+              }}
+              className={`py-2 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                method === 'phone'
+                  ? 'bg-white dark:bg-stone-900 text-amber-700 dark:text-amber-400 shadow-sm'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
+              }`}
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>मोबाईल OTP</span>
+            </button>
 
-          <button
-            onClick={() => {
-              setActiveTab('admin');
-              setOtpSent(false);
-              setStatusMsg(null);
-            }}
-            className={`flex-1 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-              activeTab === 'admin'
-                ? 'bg-gradient-to-r from-amber-600 to-saffron-600 text-white shadow-sm'
-                : 'text-stone-500 hover:text-stone-800 dark:hover:text-stone-300'
-            }`}
-          >
-            <Crown className="w-4 h-4 text-amber-300" />
-            <span>{currentLang === 'en' ? 'Admin (Only for Me)' : 'अ‍ॅडमिन (Only for Me)'}</span>
-          </button>
+            {/* Google */}
+            <button
+              onClick={() => {
+                setMethod('google');
+                setStatusMsg(null);
+              }}
+              className={`py-2 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                method === 'google'
+                  ? 'bg-white dark:bg-stone-900 text-amber-700 dark:text-amber-400 shadow-sm'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
+              }`}
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+              </svg>
+              <span>Google</span>
+            </button>
+
+            {/* Email */}
+            <button
+              onClick={() => {
+                setMethod('email');
+                setStatusMsg(null);
+              }}
+              className={`py-2 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                method === 'email'
+                  ? 'bg-white dark:bg-stone-900 text-amber-700 dark:text-amber-400 shadow-sm'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
+              }`}
+            >
+              <Mail className="w-3.5 h-3.5" />
+              <span>ईमेल लॉगिन</span>
+            </button>
+          </div>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-4">
+        <div className="p-5 sm:p-6 space-y-4">
           
           {/* Status Message Alert */}
           {statusMsg && (
@@ -206,317 +311,333 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               ) : (
                 <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
               )}
-              <span>{statusMsg.text}</span>
+              <span className="font-medium leading-relaxed">{statusMsg.text}</span>
             </div>
           )}
 
-          {/* TAB 1: USER LOGIN (Phone Number OTP or Google Gmail) */}
-          {activeTab === 'user' && (
-            <div className="space-y-4 animate-fadeIn">
-              
-              {/* Method Toggle: Phone vs Google */}
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setUserMethod('phone')}
-                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 border transition-all ${
-                    userMethod === 'phone'
-                      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border-amber-400'
-                      : 'border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-400'
-                  }`}
-                >
-                  <Smartphone className="w-3.5 h-3.5" />
-                  <span>मोबाईल नंबर (Phone OTP)</span>
-                </button>
+          {/* Optional: Devotional Customization (Ishta Devata & Avatar) */}
+          <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-3">
+            <span className="text-[11px] font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider block">
+              🪔 आपली भक्ती प्रोफाईल निवडा (Devotional Profile):
+            </span>
 
-                <button
-                  onClick={() => setUserMethod('google')}
-                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 border transition-all ${
-                    userMethod === 'google'
-                      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border-amber-400'
-                      : 'border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-400'
-                  }`}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {/* Ishta Devata Selector */}
+              <div>
+                <label className="text-[10px] font-bold text-stone-600 dark:text-stone-400 block mb-1">
+                  उपास्य दैवत (Ishta Devata)
+                </label>
+                <select
+                  value={selectedIshtaDevata}
+                  onChange={(e) => setSelectedIshtaDevata(e.target.value)}
+                  className="w-full px-2.5 py-1.5 rounded-xl bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 text-xs font-semibold text-stone-900 dark:text-white"
                 >
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                  </svg>
-                  <span>Google Gmail</span>
-                </button>
+                  {ISHTA_DEVATAS.map((d, i) => (
+                    <option key={i} value={d.name}>
+                      {d.icon} {d.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              {/* A. User Phone OTP Form */}
-              {userMethod === 'phone' && (
-                <div className="space-y-3">
+              {/* District Selector */}
+              <div>
+                <label className="text-[10px] font-bold text-stone-600 dark:text-stone-400 block mb-1">
+                  जिल्हा (District)
+                </label>
+                <select
+                  value={selectedDistrict}
+                  onChange={(e) => setSelectedDistrict(e.target.value)}
+                  className="w-full px-2.5 py-1.5 rounded-xl bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 text-xs font-semibold text-stone-900 dark:text-white"
+                >
+                  {MAHARASHTRA_DISTRICTS.map((dist, i) => (
+                    <option key={i} value={dist}>
+                      {dist}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Avatar Emoticons */}
+            <div>
+              <span className="text-[10px] font-bold text-stone-600 dark:text-stone-400 block mb-1">
+                प्रोफाईल अवतार चिन्ह
+              </span>
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                {AVATAR_OPTIONS.map((av, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setSelectedAvatar(av)}
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center text-base transition-all shrink-0 ${
+                      selectedAvatar === av
+                        ? 'bg-amber-500 text-stone-950 scale-110 shadow-md ring-2 ring-amber-400'
+                        : 'bg-white dark:bg-stone-900 hover:bg-amber-100 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700'
+                    }`}
+                  >
+                    {av}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* METHOD 1: PHONE NUMBER & OTP LOGIN */}
+          {method === 'phone' && (
+            <div className="space-y-4">
+              {!otpSent ? (
+                <form onSubmit={handleRequestOtp} className="space-y-3.5">
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                      आपले नाव (Name - Optional):
+                    <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                      आपले नाव (Full Name)
                     </label>
-                    <input
-                      type="text"
-                      value={userName}
-                      onChange={(e) => setUserName(e.target.value)}
-                      placeholder="उदा. राहुल शिंदे"
-                      className="w-full px-3.5 py-2.5 rounded-2xl bg-stone-50 dark:bg-stone-900 border border-stone-300 dark:border-stone-800 text-xs text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-saffron-500"
-                    />
+                    <div className="relative">
+                      <User className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        required
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                        placeholder="उदा. संकेत शिंदे / अमित पाटील"
+                        className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs focus:ring-2 focus:ring-amber-500 text-stone-900 dark:text-white"
+                      />
+                    </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                      मोबाईल नंबर (10-digit Phone Number):
+                    <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                      मोबाईल नंबर (10-Digit Mobile Number) *
                     </label>
-                    <div className="flex items-center">
-                      <span className="px-3 py-2.5 rounded-l-2xl bg-stone-200 dark:bg-stone-800 text-xs font-bold text-stone-700 dark:text-stone-300 border border-r-0 border-stone-300 dark:border-stone-800">
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-stone-500 dark:text-stone-400 font-mono">
                         +91
                       </span>
                       <input
                         type="tel"
+                        required
                         maxLength={10}
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                        placeholder="98XXXXXXXX"
-                        className="w-full px-3.5 py-2.5 rounded-r-2xl bg-stone-50 dark:bg-stone-900 border border-stone-300 dark:border-stone-800 text-xs text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-saffron-500"
+                        placeholder="९८XXXXXXXX"
+                        className="w-full pl-12 pr-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs font-mono font-bold tracking-wider focus:ring-2 focus:ring-amber-500 text-stone-900 dark:text-white"
                       />
                     </div>
                   </div>
 
-                  {!otpSent ? (
+                  <button
+                    type="submit"
+                    disabled={phoneNumber.length !== 10}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 to-saffron-600 hover:from-amber-500 hover:to-saffron-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                  >
+                    <span>ओटीपी मिळवा (Send OTP)</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={handleVerifyOtp} className="space-y-3.5 animate-fadeIn">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-stone-500 dark:text-stone-400">
+                      नंबर: <strong className="text-stone-800 dark:text-stone-200 font-mono">+91 {phoneNumber}</strong>
+                    </span>
                     <button
-                      onClick={() => handleRequestOtp('user')}
-                      disabled={phoneNumber.length !== 10}
-                      className="w-full py-2.5 rounded-2xl bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white font-bold text-xs sm:text-sm shadow-md disabled:opacity-40 transition-all flex items-center justify-center gap-1.5"
+                      type="button"
+                      onClick={() => {
+                        setOtpSent(false);
+                        setEnteredOtp('');
+                        setStatusMsg(null);
+                      }}
+                      className="text-amber-600 dark:text-amber-400 font-bold hover:underline"
                     >
-                      <span>ओटीपी पाठवा (Send OTP)</span>
-                      <ArrowRight className="w-4 h-4" />
+                      बदला (Edit)
                     </button>
-                  ) : (
-                    <div className="space-y-3 pt-2 animate-fadeIn">
-                      {/* Simulated SMS Notification Banner */}
-                      {simulatedOtp && (
-                        <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/60 text-xs flex items-center justify-between">
-                          <div className="flex items-center gap-1.5 text-amber-900 dark:text-amber-200">
-                            <span>📩</span>
-                            <span>SMS OTP: <strong className="font-mono text-sm tracking-wider">{simulatedOtp}</strong></span>
-                          </div>
-                          <button
-                            onClick={() => setEnteredOtp(simulatedOtp)}
-                            className="text-[11px] font-bold text-saffron-700 dark:text-saffron-400 hover:underline"
-                          >
-                            Auto-fill OTP
-                          </button>
-                        </div>
-                      )}
+                  </div>
 
-                      <div>
-                        <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                          ६ अंकी ओटीपी टाका (Enter 6-digit OTP):
-                        </label>
-                        <input
-                          type="text"
-                          maxLength={6}
-                          value={enteredOtp}
-                          onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
-                          placeholder="______"
-                          className="w-full px-3.5 py-2.5 text-center font-mono tracking-widest text-base rounded-2xl bg-stone-50 dark:bg-stone-900 border border-stone-300 dark:border-stone-800 text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-saffron-500"
-                        />
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs text-stone-500">
-                        <button
-                          onClick={() => setOtpSent(false)}
-                          className="text-stone-500 hover:underline"
-                        >
-                          नंबर बदला (Change Number)
-                        </button>
-                        {resendCountdown > 0 ? (
-                          <span>Resend in {resendCountdown}s</span>
-                        ) : (
-                          <button
-                            onClick={() => handleRequestOtp('user')}
-                            className="text-saffron-600 dark:text-saffron-400 font-semibold hover:underline"
-                          >
-                            पुन्हा पाठवा (Resend OTP)
-                          </button>
-                        )}
-                      </div>
-
+                  {simulatedOtp && (
+                    <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-400/40 text-emerald-800 dark:text-emerald-300 text-xs flex items-center justify-between">
+                      <span>
+                        पडताळणी कोड: <strong className="font-mono text-sm tracking-widest">{simulatedOtp}</strong>
+                      </span>
                       <button
-                        onClick={() => handleVerifyOtp('user')}
-                        disabled={enteredOtp.length < 4}
-                        className="w-full py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm shadow-md disabled:opacity-40 transition-all flex items-center justify-center gap-1.5"
+                        type="button"
+                        onClick={() => setEnteredOtp(simulatedOtp)}
+                        className="px-2 py-0.5 rounded-lg bg-emerald-600 text-white text-[10px] font-bold shadow-xs hover:bg-emerald-700"
                       >
-                        <ShieldCheck className="w-4 h-4" />
-                        <span>लॉगिन पूर्ण करा (Verify & Login)</span>
+                        Auto Fill
                       </button>
                     </div>
                   )}
-                </div>
-              )}
-
-              {/* B. Google Gmail 1-Click Form */}
-              {userMethod === 'google' && (
-                <div className="space-y-4 pt-1 animate-fadeIn">
-                  <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed text-center">
-                    आपल्या Google Gmail खात्याद्वारे १-क्लिक मध्ये सुरक्षित व जलद लॉगिन करा:
-                  </p>
-
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => handleGoogleSignIn('sadhaka.devotee@gmail.com', 'Sadhaka User')}
-                      className="w-full p-3 rounded-2xl bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 hover:border-saffron-500 flex items-center justify-between text-xs font-semibold text-stone-800 dark:text-stone-200 shadow-sm transition-all group"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <span className="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs">
-                          S
-                        </span>
-                        <div className="text-left">
-                          <p className="font-bold">Sadhaka Devotee</p>
-                          <p className="text-[11px] text-stone-400">sadhaka.devotee@gmail.com</p>
-                        </div>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-stone-400 group-hover:text-saffron-600 group-hover:translate-x-0.5 transition-all" />
-                    </button>
-
-                    <div className="relative my-3 text-center">
-                      <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-stone-200 dark:border-stone-800" />
-                      </div>
-                      <span className="relative px-3 bg-white dark:bg-[#15120e] text-[10px] text-stone-400 uppercase">
-                        किंवा इतर ईमेल लिहा
-                      </span>
-                    </div>
-
-                    <div className="space-y-2">
-                      <input
-                        type="text"
-                        value={googleName}
-                        onChange={(e) => setGoogleName(e.target.value)}
-                        placeholder="नाव (Your Full Name)"
-                        className="w-full px-3.5 py-2.5 rounded-2xl bg-stone-50 dark:bg-stone-900 border border-stone-300 dark:border-stone-800 text-xs"
-                      />
-                      <input
-                        type="email"
-                        value={googleEmail}
-                        onChange={(e) => setGoogleEmail(e.target.value)}
-                        placeholder="your.email@gmail.com"
-                        className="w-full px-3.5 py-2.5 rounded-2xl bg-stone-50 dark:bg-stone-900 border border-stone-300 dark:border-stone-800 text-xs"
-                      />
-                      <button
-                        onClick={() => handleGoogleSignIn(googleEmail.trim() || 'user@gmail.com', googleName.trim() || 'Google Devotee')}
-                        disabled={!googleEmail.includes('@')}
-                        className="w-full py-2.5 rounded-2xl bg-stone-900 dark:bg-white text-white dark:text-stone-900 font-bold text-xs flex items-center justify-center gap-2 shadow-md disabled:opacity-40 transition-all"
-                      >
-                        <span>Sign In with Gmail</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TAB 2: ADMIN LOGIN (ONLY FOR ME WITH RESTRICTED PHONE & OTP) */}
-          {activeTab === 'admin' && (
-            <div className="space-y-4 animate-fadeIn">
-              
-              {/* Admin Exclusivity Banner */}
-              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-950/70 via-stone-900 to-amber-950/50 border border-amber-500/50 text-xs text-amber-200 space-y-1.5 shadow-inner">
-                <div className="flex items-center gap-1.5 font-bold text-amber-300 text-sm">
-                  <Crown className="w-4 h-4 text-amber-400" />
-                  <span>॥ अ‍ॅडमिन कमांड सेंटर लॉगिन (Owner Only) ॥</span>
-                </div>
-                <p className="text-[11px] text-stone-300 leading-relaxed">
-                  हे लॉगिन केवळ ॲप मालक / अ‍ॅडमिनसाठी राखीव आहे. केवळ अधिकृत नोंदणीकृत मोबाईल नंबरवरच ओटीपी प्राप्त होईल.
-                </p>
-                <div className="pt-1 flex flex-wrap gap-1.5">
-                  <span className="text-[10px] text-stone-400 uppercase font-mono">अधिकृत नंबर:</span>
-                  {adminPhones.map((ph, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleQuickFillAdminPhone(ph)}
-                      className="px-2 py-0.5 rounded-md bg-black/60 border border-amber-500/30 font-mono text-[11px] text-amber-300 hover:bg-amber-900/40"
-                      title="Click to fill this registered admin number"
-                    >
-                      {ph}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Admin Phone Input */}
-              <div>
-                <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                  नोंदणीकृत अ‍ॅडमिन मोबाईल नंबर:
-                </label>
-                <div className="flex items-center">
-                  <span className="px-3 py-2.5 rounded-l-2xl bg-stone-200 dark:bg-stone-800 text-xs font-bold text-stone-700 dark:text-stone-300 border border-r-0 border-stone-300 dark:border-stone-800">
-                    +91
-                  </span>
-                  <input
-                    type="tel"
-                    maxLength={10}
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                    placeholder="उदा. 9820012345"
-                    className="w-full px-3.5 py-2.5 rounded-r-2xl bg-stone-50 dark:bg-stone-900 border border-stone-300 dark:border-stone-800 text-xs font-mono font-bold text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  />
-                </div>
-              </div>
-
-              {!otpSent ? (
-                <button
-                  onClick={() => handleRequestOtp('admin')}
-                  disabled={phoneNumber.length !== 10}
-                  className="w-full py-2.5 rounded-2xl bg-gradient-to-r from-amber-600 via-saffron-600 to-amber-700 hover:from-amber-500 hover:to-saffron-500 text-white font-bold text-xs sm:text-sm shadow-md disabled:opacity-40 transition-all flex items-center justify-center gap-1.5"
-                >
-                  <KeyRound className="w-4 h-4" />
-                  <span>अ‍ॅडमिन ओटीपी पाठवा (Send Admin OTP)</span>
-                </button>
-              ) : (
-                <div className="space-y-3 pt-1 animate-fadeIn">
-                  {/* Master Admin OTP Banner */}
-                  <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/60 text-xs flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-amber-900 dark:text-amber-200">
-                      <span>👑</span>
-                      <span>अ‍ॅडमिन ओटीपी: <strong className="font-mono text-sm tracking-wider">{simulatedOtp || '108108'}</strong></span>
-                    </div>
-                    <button
-                      onClick={() => setEnteredOtp(simulatedOtp || '108108')}
-                      className="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline"
-                    >
-                      Auto-fill
-                    </button>
-                  </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                      ६ अंकी अ‍ॅडमिन ओटीपी टाका:
+                    <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                      ६-अंकी ओटीपी टाका (Enter 6-Digit OTP)
                     </label>
                     <input
                       type="text"
+                      required
                       maxLength={6}
                       value={enteredOtp}
                       onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
-                      placeholder="______"
-                      className="w-full px-3.5 py-2.5 text-center font-mono tracking-widest text-lg font-bold rounded-2xl bg-stone-50 dark:bg-stone-900 border border-stone-300 dark:border-stone-800 text-amber-600 dark:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      placeholder="• • • • • •"
+                      className="w-full text-center tracking-[0.4em] py-3 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-base font-bold font-mono focus:ring-2 focus:ring-amber-500 text-stone-900 dark:text-white"
                     />
                   </div>
 
                   <button
-                    onClick={() => handleVerifyOtp('admin')}
-                    disabled={enteredOtp.length < 4}
-                    className="w-full py-2.5 rounded-2xl bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-white font-bold text-xs sm:text-sm shadow-md disabled:opacity-40 transition-all flex items-center justify-center gap-1.5"
+                    type="submit"
+                    disabled={enteredOtp.length !== 6}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                   >
-                    <Crown className="w-4 h-4 text-yellow-200" />
-                    <span>अ‍ॅडमिन डॅशबोर्ड उघडा (Unlock Admin Dashboard)</span>
+                    <span>पडताळणी पूर्ण करा व लॉगिन व्हा</span>
+                    <CheckCircle2 className="w-4 h-4" />
                   </button>
-                </div>
+
+                  <div className="text-center pt-1">
+                    {resendCountdown > 0 ? (
+                      <span className="text-[11px] text-stone-400 font-mono">
+                        पुन्हा ओटीपी मागवा: {resendCountdown} सेकंद
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleRequestOtp}
+                        className="text-xs text-amber-600 dark:text-amber-400 font-bold hover:underline inline-flex items-center gap-1"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        <span>पुन्हा ओटीपी पाठवा (Resend OTP)</span>
+                      </button>
+                    )}
+                  </div>
+                </form>
               )}
             </div>
           )}
 
+          {/* METHOD 2: GOOGLE 1-CLICK REAL LOGIN */}
+          {method === 'google' && (
+            <div className="space-y-4 animate-fadeIn">
+              <div className="text-center py-2">
+                <span className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed block">
+                  आपल्या <strong>Google Gmail</strong> खात्याद्वारे १-क्लिकमध्ये सुरक्षित लॉगिन करा:
+                </span>
+              </div>
+
+              {/* 1-Click Genuine Google Action */}
+              <button
+                type="button"
+                onClick={() => handleGoogleSignIn()}
+                className="w-full py-3 px-4 rounded-2xl bg-white dark:bg-stone-800 hover:bg-stone-50 dark:hover:bg-stone-700 border-2 border-stone-300 dark:border-stone-700 text-stone-800 dark:text-stone-100 font-bold text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-3 active:scale-95"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                </svg>
+                <span>Continue with Google</span>
+              </button>
+
+              <div className="relative my-3 text-center">
+                <span className="px-2 bg-white dark:bg-[#15120e] text-[10px] text-stone-400 font-mono">
+                  किंवा आपले नाव व ईमेल टाका
+                </span>
+              </div>
+
+              <form onSubmit={handleGoogleSignIn} className="space-y-3">
+                <input
+                  type="text"
+                  value={googleName}
+                  onChange={(e) => setGoogleName(e.target.value)}
+                  placeholder="आपले नाव (उदा. संकेत शिंदे)"
+                  className="w-full px-3.5 py-2 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white"
+                />
+                <input
+                  type="email"
+                  value={googleEmail}
+                  onChange={(e) => setGoogleEmail(e.target.value)}
+                  placeholder="आपला ईमेल (उदा. sanket@gmail.com)"
+                  className="w-full px-3.5 py-2 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white"
+                />
+                <button
+                  type="submit"
+                  className="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md transition-all active:scale-95"
+                >
+                  लॉगिन पूर्ण करा
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* METHOD 3: EMAIL & PASSWORD LOGIN */}
+          {method === 'email' && (
+            <form onSubmit={handleEmailSignIn} className="space-y-3.5 animate-fadeIn">
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                  नाव (Name)
+                </label>
+                <div className="relative">
+                  <User className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={emailUserName}
+                    onChange={(e) => setEmailUserName(e.target.value)}
+                    placeholder="उदा. राहुल देशमुख"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                  ईमेल पत्ता (Email Address) *
+                </label>
+                <div className="relative">
+                  <Mail className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="email"
+                    required
+                    value={emailAddress}
+                    onChange={(e) => setEmailAddress(e.target.value)}
+                    placeholder="devotee@example.com"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                  पासवर्ड (Password) *
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="password"
+                    required
+                    value={emailPassword}
+                    onChange={(e) => setEmailPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 to-saffron-600 hover:from-amber-500 hover:to-saffron-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
+              >
+                <span>ईमेल द्वारे प्रवेश करा (Sign In)</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </form>
+          )}
+
         </div>
+
+        {/* Footer Note */}
+        <div className="px-6 py-3.5 bg-stone-50 dark:bg-stone-950 border-t border-stone-200 dark:border-stone-800 text-center text-[10px] text-stone-500">
+          🔒 आपली माहिती पूर्णपणे सुरक्षित आहे. सनातन अमृतधारा केवळ भक्ती आणि आध्यात्मिक साधनेसाठी वापरली जाते.
+        </div>
+
       </div>
     </div>
   );

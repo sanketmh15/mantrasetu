@@ -12,9 +12,7 @@ import {
   Moon,
   ChevronRight,
   User,
-  Crown,
   LogOut,
-  ShieldCheck,
   Compass,
   Volume2,
   Square
@@ -636,35 +634,31 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       {currentUser ? (
         <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-amber-500/15 via-stone-900/60 to-amber-500/10 border border-amber-500/40 shadow-lg mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 animate-fadeIn w-full">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-600 to-saffron-600 text-white flex items-center justify-center text-xl shadow-md ring-1 ring-amber-300/40">
-              {currentUser.avatar || (currentUser.role === 'admin' ? '👑' : '🙏')}
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 to-saffron-600 text-white flex items-center justify-center text-2xl shadow-md ring-1 ring-amber-300/40">
+              {currentUser.avatar || '🙏'}
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm font-bold font-serifDev text-stone-900 dark:text-white">
                   ॥ स्वागतम्, {currentUser.name} ॥
                 </span>
                 <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
-                  {currentUser.role === 'admin' ? '👑 मुख्य अ‍ॅडमिन (Creator)' : '📿 पावन साधक'}
+                  📿 पावन साधक
                 </span>
+                {currentUser.ishtaDevata && (
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-saffron-500/20 text-saffron-700 dark:text-saffron-300 border border-saffron-500/30">
+                    🚩 {currentUser.ishtaDevata}
+                  </span>
+                )}
               </div>
               <p className="text-xs text-stone-500 dark:text-stone-400 font-mono mt-0.5">
                 खाते: {currentUser.phone || currentUser.email || 'Devotee Account'}
+                {currentUser.district && ` • 📍 ${currentUser.district}`}
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            {currentUser.role === 'admin' && (
-              <button
-                onClick={() => onNavigateTab('admin')}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-all"
-              >
-                <ShieldCheck className="w-4 h-4 text-amber-200" />
-                <span>अ‍ॅडमिन कमांड सेंटर उघडा</span>
-              </button>
-            )}
-
+          <div className="flex items-center gap-2.5">
             <button
               onClick={onLogout}
               className="px-4 py-2 rounded-xl bg-red-600/80 hover:bg-red-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-all hover:scale-105"
@@ -678,36 +672,27 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       ) : (
         <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-saffron-500/10 via-amber-500/15 to-orange-500/10 border border-saffron-500/30 shadow-md mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 animate-fadeIn w-full">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-saffron-600 to-amber-600 text-white flex items-center justify-center text-xl shadow-md ring-1 ring-amber-300/40">
-              <span>👤</span>
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-saffron-600 to-amber-600 text-white flex items-center justify-center text-2xl shadow-md ring-1 ring-amber-300/40">
+              <span>🙏</span>
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-bold font-serifDev text-stone-900 dark:text-white flex items-center gap-2">
-                <span>साधक व अ‍ॅडमिन लॉगिन (Devotee & Admin Login)</span>
+                <span>भक्त व साधक प्रवेश (Devotee Sign In)</span>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
               </h3>
               <p className="text-xs text-stone-600 dark:text-stone-300 mt-0.5 max-w-xl leading-relaxed">
-                आपले १०८ नामस्मरण जप, संकल्प, आवडते मंत्र व कुंभमेळा नोंदी सुरक्षित ठेवण्यासाठी लॉगिन करा.
+                आपले १०८ नामस्मरण जप, संकल्प, आवडते मंत्र व नित्यपूजा नित्यनियम सुरक्षित ठेवण्यासाठी मोफत प्रवेश करा.
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2">
             <button
               onClick={onOpenAuthModal}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-all hover:scale-105 border border-amber-300/40"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md transition-all hover:scale-105 border border-amber-300/40"
             >
-              <User className="w-3.5 h-3.5 text-amber-200" />
-              <span>साधक लॉगिन करा (Phone OTP / Google)</span>
-            </button>
-
-            <button
-              onClick={onOpenAuthModal}
-              className="px-3.5 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-amber-300 border border-amber-500/40 font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all"
-              title="Restricted for app creator"
-            >
-              <Crown className="w-3.5 h-3.5 text-amber-400" />
-              <span>अ‍ॅडमिन (Only for Me)</span>
+              <User className="w-4 h-4 text-amber-200" />
+              <span>भक्त लॉगिन करा (Phone OTP / Google / Email)</span>
             </button>
           </div>
         </div>

@@ -79,7 +79,11 @@ export interface AuthUser {
   avatar?: string;
   role: UserRole;
   createdAt: string;
-  provider: 'phone' | 'google';
+  provider: 'phone' | 'google' | 'email';
+  ishtaDevata?: string;
+  district?: string;
+  streakDays?: number;
+  japaCount?: number;
 }
 
 

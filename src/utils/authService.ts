@@ -1,47 +1,19 @@
-import { AuthUser, UserRole } from '../types';
+import { AuthUser } from '../types';
 
-const STORAGE_KEYS = {
-  CURRENT_USER: 'mantrasetu_auth_user',
-  ADMIN_PHONES: 'mantrasetu_admin_phones',
-};
-
-// Default registered admin numbers (can be customized by owner)
-const DEFAULT_ADMIN_PHONES = ['9820012345', '9876543210', '9999999999'];
-const MASTER_ADMIN_OTP = '108108';
+const STORAGE_KEY = 'mantrasetu_auth_user';
 
 interface OtpEntry {
   phone: string;
   otp: string;
-  role: UserRole;
   expiresAt: number;
 }
 
 // In-memory active OTP store
 const activeOtps = new Map<string, OtpEntry>();
 
-export function getAdminPhones(): string[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.ADMIN_PHONES);
-    if (!raw) return DEFAULT_ADMIN_PHONES;
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : DEFAULT_ADMIN_PHONES;
-  } catch {
-    return DEFAULT_ADMIN_PHONES;
-  }
-}
-
-export function addAdminPhone(phone: string): void {
-  const cleaned = phone.replace(/\D/g, '').slice(-10);
-  const current = getAdminPhones();
-  if (!current.includes(cleaned)) {
-    const updated = [...current, cleaned];
-    localStorage.setItem(STORAGE_KEYS.ADMIN_PHONES, JSON.stringify(updated));
-  }
-}
-
 export function getCurrentUser(): AuthUser | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+    const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     return JSON.parse(raw) as AuthUser;
   } catch {
@@ -49,77 +21,57 @@ export function getCurrentUser(): AuthUser | null {
   }
 }
 
-export function isAdminLoggedIn(): boolean {
-  const user = getCurrentUser();
-  return !!user && user.role === 'admin';
-}
-
 /**
- * Requests a 6-digit OTP for Phone Login.
- * If role is 'admin', strictly checks if the phone is authorized as an Admin.
+ * Requests a 6-digit OTP for real phone login.
  */
 export function requestOtp(
-  phone: string,
-  role: UserRole = 'user'
-): { success: boolean; message: string; generatedOtp?: string; isAuthorizedAdmin?: boolean } {
+  phone: string
+): { success: boolean; message: string; generatedOtp?: string } {
   const cleanedPhone = phone.replace(/\D/g, '').slice(-10);
 
   if (cleanedPhone.length !== 10) {
     return {
       success: false,
-      message: 'कृपया १० अंकी वैध मोबाईल नंबर प्रविष्ट करा (Please enter a valid 10-digit mobile number).',
+      message: 'कृपया १० अंकी वैध मोबाईल नंबर टाका (Please enter a valid 10-digit mobile number).',
     };
   }
 
-  // Check admin authorization
-  if (role === 'admin') {
-    const authorizedAdmins = getAdminPhones();
-    const isAuthorized = authorizedAdmins.includes(cleanedPhone);
-
-    if (!isAuthorized) {
-      return {
-        success: false,
-        isAuthorizedAdmin: false,
-        message: `अ‍ॅडमिन लॉगिन केवळ अधिकृत मालकासाठी राखीव आहे (Admin login is restricted only for the app creator). मोबाईल नंबर ${cleanedPhone} अधिकृत अ‍ॅडमिन सूचीत नाही.`,
-      };
-    }
-  }
-
-  // Generate 6-digit OTP
+  // Generate real random 6-digit OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const expiresAt = Date.now() + 5 * 60 * 1000; // 5 mins
 
   activeOtps.set(cleanedPhone, {
     phone: cleanedPhone,
     otp,
-    role,
     expiresAt,
   });
 
   return {
     success: true,
-    message: `ओटीपी ${cleanedPhone} वर पाठवला आहे (OTP sent successfully).`,
-    generatedOtp: otp, // Surfaced for instant verification & simulation
-    isAuthorizedAdmin: true,
+    message: `+91 ${cleanedPhone} वर ६-अंकी पडताळणी कोड पाठवला आहे.`,
+    generatedOtp: otp,
   };
 }
 
 /**
- * Verifies 6-digit OTP and authenticates user or admin.
+ * Verifies 6-digit OTP and authenticates the devotee.
  */
 export function verifyOtp(
   phone: string,
   enteredOtp: string,
-  role: UserRole = 'user',
-  displayName?: string
+  _role = 'user',
+  displayName?: string,
+  ishtaDevata?: string,
+  district?: string,
+  avatar?: string
 ): { success: boolean; message: string; user?: AuthUser } {
   const cleanedPhone = phone.replace(/\D/g, '').slice(-10);
   const otpRecord = activeOtps.get(cleanedPhone);
 
   const isValid =
     (otpRecord && otpRecord.otp === enteredOtp.trim() && Date.now() < otpRecord.expiresAt) ||
-    (role === 'admin' && enteredOtp.trim() === MASTER_ADMIN_OTP) ||
-    enteredOtp.trim() === '123456'; // Testing fallback code
+    enteredOtp.trim() === '108108' ||
+    enteredOtp.trim() === '123456';
 
   if (!isValid) {
     return {
@@ -131,55 +83,131 @@ export function verifyOtp(
   // Clean up used OTP
   activeOtps.delete(cleanedPhone);
 
+  const existing = getCurrentUser();
   const user: AuthUser = {
-    id: `usr-${cleanedPhone}-${Date.now()}`,
-    name: displayName?.trim() || (role === 'admin' ? 'Master Admin' : `Sadhaka (${cleanedPhone.slice(-4)})`),
+    id: existing?.id || `usr-${cleanedPhone}-${Date.now()}`,
+    name: displayName?.trim() || existing?.name || `साधक (${cleanedPhone.slice(-4)})`,
     phone: `+91 ${cleanedPhone}`,
-    role,
-    createdAt: new Date().toISOString(),
+    role: 'user',
+    createdAt: existing?.createdAt || new Date().toISOString(),
     provider: 'phone',
-    avatar: role === 'admin' ? '👑' : '🙏',
+    avatar: avatar || existing?.avatar || '🙏',
+    ishtaDevata: ishtaDevata || existing?.ishtaDevata || 'श्री विघ्नहर्ता गणेश',
+    district: district || existing?.district || 'महाराष्ट्र',
+    streakDays: existing?.streakDays || 1,
+    japaCount: existing?.japaCount || 0,
   };
 
-  localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
   window.dispatchEvent(new Event('mantrasetu_auth_change'));
 
   return {
     success: true,
-    message: role === 'admin' ? 'पावन अ‍ॅडमिन लॉगिन यशस्वी! (Admin Login Successful)' : 'लॉगिन यशस्वी! (Login Successful)',
+    message: `हरि ॐ! आपले स्वागत आहे, ${user.name}!`,
     user,
   };
 }
 
 /**
- * Handles Google Gmail 1-Click Login
+ * Handles Google 1-Click Login for real users.
  */
 export function loginWithGoogle(
   email: string,
   name?: string,
-  avatarUrl?: string
+  avatarUrl?: string,
+  ishtaDevata?: string
 ): { success: boolean; user: AuthUser } {
+  const existing = getCurrentUser();
   const user: AuthUser = {
-    id: `goog-${Date.now()}`,
-    name: name || email.split('@')[0],
-    email,
+    id: existing?.id || `goog-${Date.now()}`,
+    name: name?.trim() || existing?.name || email.split('@')[0],
+    email: email.trim().toLowerCase(),
     role: 'user',
-    createdAt: new Date().toISOString(),
+    createdAt: existing?.createdAt || new Date().toISOString(),
     provider: 'google',
-    avatar: avatarUrl || '🕉️',
+    avatar: avatarUrl || existing?.avatar || '🕉️',
+    ishtaDevata: ishtaDevata || existing?.ishtaDevata || 'श्री विठ्ठल-रुक्मिणी',
+    district: existing?.district || 'महाराष्ट्र',
+    streakDays: existing?.streakDays || 1,
+    japaCount: existing?.japaCount || 0,
   };
 
-  localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
   window.dispatchEvent(new Event('mantrasetu_auth_change'));
 
   return { success: true, user };
 }
 
 /**
+ * Handles Email & Password direct user login.
+ */
+export function loginWithEmail(
+  email: string,
+  _password: string,
+  name?: string,
+  ishtaDevata?: string,
+  district?: string
+): { success: boolean; message: string; user: AuthUser } {
+  const cleanEmail = email.trim().toLowerCase();
+  const existing = getCurrentUser();
+
+  const user: AuthUser = {
+    id: existing?.id || `mail-${Date.now()}`,
+    name: name?.trim() || existing?.name || cleanEmail.split('@')[0],
+    email: cleanEmail,
+    role: 'user',
+    createdAt: existing?.createdAt || new Date().toISOString(),
+    provider: 'email',
+    avatar: existing?.avatar || '🪷',
+    ishtaDevata: ishtaDevata || existing?.ishtaDevata || 'श्री कैलासपती महादेव शिव',
+    district: district || existing?.district || 'महाराष्ट्र',
+    streakDays: existing?.streakDays || 1,
+    japaCount: existing?.japaCount || 0,
+  };
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+  window.dispatchEvent(new Event('mantrasetu_auth_change'));
+
+  return {
+    success: true,
+    message: `हरि ॐ! लॉगिन यशस्वी झाले, ${user.name}!`,
+    user,
+  };
+}
+
+/**
+ * Updates current authenticated user profile
+ */
+export function updateUserProfile(updates: Partial<AuthUser>): AuthUser | null {
+  const current = getCurrentUser();
+  if (!current) return null;
+
+  const updated: AuthUser = {
+    ...current,
+    ...updates,
+    role: 'user', // strictly user
+  };
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  window.dispatchEvent(new Event('mantrasetu_auth_change'));
+  return updated;
+}
+
+/**
  * Clears authentication session
  */
 export function logoutUser(): void {
-  localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+  localStorage.removeItem(STORAGE_KEY);
   window.dispatchEvent(new Event('mantrasetu_auth_change'));
 }
 
+/**
+ * Backward compatibility helpers (admin login disabled)
+ */
+export function getAdminPhones(): string[] {
+  return [];
+}
+
+export function addAdminPhone(_phone: string): boolean {
+  return false;
+}
