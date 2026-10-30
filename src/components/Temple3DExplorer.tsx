@@ -50,14 +50,8 @@ export function Temple3DExplorer({ currentLang }: Temple3DExplorerProps) {
     audioEngine.playTempleBell();
     const script = `${activeTemple.name[currentLang]}। ${activeTemple.description[currentLang]}। गर्भगृह व शिखर रचना: ${activeZone.name[currentLang]}। ${activeZone.meaning[currentLang]}`;
 
-    audioEngine.playGoogleTTS(script, currentLang === 'en' ? 'en' : 'mr', () => {
+    audioEngine.speakText(script, currentLang === 'en' ? 'en-IN' : 'mr-IN', 0.88, () => {
       setIsTourPlaying(false);
-    }).then((played) => {
-      if (!played) {
-        audioEngine.speakText(script, currentLang === 'en' ? 'en-US' : 'mr-IN', 0.85, () => {
-          setIsTourPlaying(false);
-        });
-      }
     });
   };
 

@@ -44,14 +44,8 @@ export function SatvikPrasadFastingGuide({ currentLang }: SatvikPrasadFastingGui
     const fullText = `${selectedRecipe.title[currentLang]}। आराध्य: ${selectedRecipe.deityAssociated[currentLang]}। ${selectedRecipe.significance[currentLang]}। पाककृती: ${stepsText}। आरोग्य लाभ: ${selectedRecipe.healthTip[currentLang]}`;
 
     setIsSpeaking(true);
-    audioEngine.playGoogleTTS(fullText, currentLang === 'en' ? 'en' : 'mr', () => {
+    audioEngine.speakText(fullText, currentLang === 'en' ? 'en-IN' : 'mr-IN', 0.88, () => {
       setIsSpeaking(false);
-    }).then((played) => {
-      if (!played) {
-        audioEngine.speakText(fullText, currentLang === 'en' ? 'en-US' : 'mr-IN', 0.85, () => {
-          setIsSpeaking(false);
-        });
-      }
     });
   };
 

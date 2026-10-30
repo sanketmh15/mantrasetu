@@ -36,6 +36,9 @@ export function setVoicePersona(persona: VoicePersona): void {
 const DEFAULT_AUDIO_MAP: Record<string, string> = {
   'sukhkarta-dukhharta': '/audio/chants/sukhkarta-dukhharta.mp3',
   'amitabh-sample': '/audio/amitabh_sample.mp3',
+  '1': '/audio/chants/sukhkarta-dukhharta.mp3',
+  'ganesha': '/audio/chants/sukhkarta-dukhharta.mp3',
+  'ganesha-aarti': '/audio/chants/sukhkarta-dukhharta.mp3',
 };
 
 export function getCustomAudioMap(): Record<string, string> {
