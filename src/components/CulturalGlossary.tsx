@@ -100,8 +100,8 @@ export const CulturalGlossary: React.FC<CulturalGlossaryProps> = ({ isOpen, onCl
         <div className="p-4 border-t border-stone-800 bg-stone-900/40 text-center">
           <p className="text-xs text-stone-500">
             {currentLang === 'en'
-              ? 'MantraSetu bridges traditional spiritual philosophy with modern intellectual clarity.'
-              : 'मंत्रसेतु — प्राचीन भारतीय तत्त्वज्ञान आणि आधुनिक विचारसरणीचा सेतू.'}
+              ? 'Sanatan Amrutdhara bridges traditional spiritual philosophy with modern intellectual clarity.'
+              : 'सनातन अमृतधारा — प्राचीन भारतीय तत्त्वज्ञान आणि आधुनिक विचारसरणीचा संगम.'}
           </p>
         </div>
 

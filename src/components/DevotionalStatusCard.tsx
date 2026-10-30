@@ -100,14 +100,14 @@ export function DevotionalStatusCard({ currentLang }: DevotionalStatusCardProps)
   };
 
   const handleCopyText = () => {
-    const textToCopy = `🙏 ${getGreetingHeader()} 🙏\n\n📅 ${dateString} (${todayMeta.marathiDay})\n🚩 आजचे आराध्य: ${todayMeta.deity}\n\n✨ संत वचन:\n"${currentQuote.marathi}"\n— ${currentQuote.saint}\n\n${senderName ? `प्रेषक: ${senderName}\n` : ''}🌸 मंत्रसेतू: भक्ती व संस्कृतीचा पावन संगम https://mantrasetu.in`;
+    const textToCopy = `🙏 ${getGreetingHeader()} 🙏\n\n📅 ${dateString} (${todayMeta.marathiDay})\n🚩 आजचे आराध्य: ${todayMeta.deity}\n\n✨ संत वचन:\n"${currentQuote.marathi}"\n— ${currentQuote.saint}\n\n${senderName ? `प्रेषक: ${senderName}\n` : ''}🌸 सनातन अमृतधारा: भक्ती व संस्कृतीचा पावन संगम https://sanketmh15.github.io/mantrasetu/`;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleShareWhatsApp = () => {
-    const textToCopy = `🙏 *${getGreetingHeader()}* 🙏\n\n📅 *${dateString}* (${todayMeta.marathiDay})\n🚩 *आजचे आराध्य:* ${todayMeta.deity}\n\n📜 *संत विचार:*\n_${currentQuote.marathi}_\n— *${currentQuote.saint}*\n\n${senderName ? `🙏 प्रेषक: ${senderName}\n\n` : ''}🪔 *आपला दिवस मंगलमय जावो!*\n📲 MantraSetu भक्ती ॲप`;
+    const textToCopy = `🙏 *${getGreetingHeader()}* 🙏\n\n📅 *${dateString}* (${todayMeta.marathiDay})\n🚩 *आजचे आराध्य:* ${todayMeta.deity}\n\n📜 *संत विचार:*\n_${currentQuote.marathi}_\n— *${currentQuote.saint}*\n\n${senderName ? `🙏 प्रेषक: ${senderName}\n\n` : ''}🪔 *आपला दिवस मंगलमय जावो!*\n📲 सनातन अमृतधारा (Sanatan Amrutdhara) भक्ती ॲप`;
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(textToCopy)}`;
     window.open(url, '_blank');
   };
@@ -222,12 +222,12 @@ export function DevotionalStatusCard({ currentLang }: DevotionalStatusCardProps)
     // Footer Watermark
     ctx.fillStyle = '#fef3c7';
     ctx.font = '32px sans-serif';
-    ctx.fillText('📲 MantraSetu — भक्ती व संस्कृतीचा पावन संगम', 540, 1790);
+    ctx.fillText('📲 सनातन अमृतधारा (Sanatan Amrutdhara) — भक्ती व संस्कृतीचा पावन संगम', 540, 1790);
 
     // Trigger Download
     const dataUrl = canvas.toDataURL('image/png');
     const link = document.createElement('a');
-    link.download = `MantraSetu_Status_${now.toISOString().split('T')[0]}.png`;
+    link.download = `Sanatan_Amrutdhara_Status_${now.toISOString().split('T')[0]}.png`;
     link.href = dataUrl;
     link.click();
   };
@@ -429,7 +429,7 @@ export function DevotionalStatusCard({ currentLang }: DevotionalStatusCardProps)
                     </div>
                   )}
                   <div className="text-[10px] text-amber-200/80 font-mono">
-                    📲 MantraSetu • भक्ती व संस्कृतीचा संगम
+                    📲 सनातन अमृतधारा • भक्ती व संस्कृतीचा संगम
                   </div>
                 </div>
               </div>

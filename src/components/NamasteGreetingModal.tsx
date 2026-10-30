@@ -34,19 +34,19 @@ export const NamasteGreetingModal: React.FC<NamasteGreetingModalProps> = ({
       mr: '॥ ॐ नमः शिवाय • जय श्री राम • राम कृष्ण हरी ॥',
     },
     title: {
-      en: '॥ Divine Namaste • Welcome to MantraSetu ॥',
-      hi: '॥ पावन नमस्कार • मन्त्रसेतु में आपका स्वागतम् ॥',
-      mr: '॥ पावन नमस्कार • मंत्रसेतूमध्ये आपले स्वागतम् ॥',
+      en: '॥ Divine Namaste • Welcome to Sanatan Amrutdhara ॥',
+      hi: '॥ पावन नमस्कार • सनातन अमृतधारा में आपका स्वागतम् ॥',
+      mr: '॥ पावन नमस्कार • सनातन अमृतधारामध्ये आपले स्वागतम् ॥',
     },
     subtitle: {
       en: 'Welcome to your peaceful digital sanctuary. May the divine blessings of Lord Shiva, Shri Ram, and Vitthal Mauli illuminate your day with peace, strength, and serenity.',
-      hi: 'मंत्रसेतु डिजिटल भक्ति संकुल में आपका हार्दिक स्वागत है। भगवान शिव, श्री राम एवं विठुराया के पावन आशीर्वाद से आपका दिन मंगलमय, शांतिमय एवं आरोग्यदायी हो।',
-      mr: 'मंत्रसेतू डिजिटल भक्तीपीठामध्ये आपले सहर्ष स्वागत आहे. देवाधिदेव महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला आजचा दिवस मंगलमय, शांत व आनंदाचा जावो.',
+      hi: 'सनातन अमृतधारा डिजिटल भक्ति संकुल में आपका हार्दिक स्वागत है। भगवान शिव, श्री राम एवं विठुराया के पावन आशीर्वाद से आपका दिन मंगलमय, शांतिमय एवं आरोग्यदायी हो।',
+      mr: 'सनातन अमृतधारा डिजिटल भक्तीपीठामध्ये आपले सहर्ष स्वागत आहे. देवाधिदेव महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला आजचा दिवस मंगलमय, शांत व आनंदाचा जावो.',
     },
     speechText: {
-      en: 'Namaskar! Welcome to the MantraSetu Spiritual Portal. May Lord Shiva, Shri Ram, and Vitthal Mauli bless your day with peace, positive energy, and divine grace.',
-      hi: 'नमस्कार! मंत्रसेतु पावन भक्ति संकुल में आपका हार्दिक स्वागत है। भगवान शिव, श्री राम एवं विठुराया के आशीर्वाद से आपका दिन मंगलमय एवं शांतिमय हो।',
-      mr: 'नमस्कार! मंत्रसेतू पावन भक्ती दालनात आपले सहर्ष स्वागत आहे. महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला आजचा दिवस मंगलमय व शांततेचा जावो.',
+      en: 'Namaskar! Welcome to the Sanatan Amrutdhara Spiritual Portal. May Lord Shiva, Shri Ram, and Vitthal Mauli bless your day with peace, positive energy, and divine grace.',
+      hi: 'नमस्कार! सनातन अमृतधारा पावन भक्ति संकुल में आपका हार्दिक स्वागत है। भगवान शिव, श्री राम एवं विठुराया के आशीर्वाद से आपका दिन मंगलमय एवं शांतिमय हो।',
+      mr: 'नमस्कार! सनातन अमृतधारा पावन भक्ती दालनात आपले सहर्ष स्वागत आहे. महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला आजचा दिवस मंगलमय व शांततेचा जावो.',
     },
     enterBtn: {
       en: 'Enter Sanctuary (प्रवेश करा) 🙏',

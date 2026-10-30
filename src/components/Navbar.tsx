@@ -207,7 +207,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className="text-base sm:text-xl font-bold tracking-tight text-white font-serifDev cursor-pointer"
                   onClick={() => onTabChange('home')}
                 >
-                  MantraSetu
+                  {currentLang === 'en' ? 'Sanatan Amrutdhara' : 'सनातन अमृतधारा'}
                 </span>
 
                 {/* 50 Deities Quick Shortcut Pill (Desktop only - mobile has horizontal bar below) */}

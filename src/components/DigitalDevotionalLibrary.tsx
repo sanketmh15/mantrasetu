@@ -121,7 +121,7 @@ export function DigitalDevotionalLibrary({ currentLang }: DigitalDevotionalLibra
   };
 
   const handleShareBook = (book: DigitalBook) => {
-    const text = `📖 *${book.title[currentLang] || book.title.mr}*\nलेखक: ${book.author}\nविषय: ${book.subject}\n\nमराठी भक्तांसाठी मंत्रसेतू डिजिटल ग्रंथालय:\nhttps://mantrasetu.in`;
+    const text = `📖 *${book.title[currentLang] || book.title.mr}*\nलेखक: ${book.author}\nविषय: ${book.subject}\n\nमराठी भक्तांसाठी सनातन अमृतधारा डिजिटल ग्रंथालय:\nhttps://sanketmh15.github.io/mantrasetu/`;
     if (navigator.share) {
       navigator.share({ title: book.title.mr, text }).catch(() => {});
     } else {

@@ -393,8 +393,8 @@ export function UniversalGlobalSearch({
               <span className="text-3xl block mb-2">🔍</span>
               <p className="font-serifDev text-sm font-semibold text-stone-800 dark:text-stone-200">
                 {currentLang === 'en'
-                  ? 'Type to search across everything in MantraSetu'
-                  : 'मंत्रसेतूमधील सर्व ५० देवता, मंत्र, मंदिरे व सण शोधण्यासाठी टाईप करा'}
+                  ? 'Type to search across everything in Sanatan Amrutdhara'
+                  : 'सनातन अमृतधारामधील सर्व ५० देवता, मंत्र, मंदिरे व सण शोधण्यासाठी टाईप करा'}
               </p>
               <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs">
                 {['गणेश', 'महामृत्युंजय', 'पंढरपूर', 'त्र्यंबकेश्वर', 'सत्यनारायण पूजा', 'मोदक', 'एकादशी'].map(

@@ -171,12 +171,12 @@ export function DevotionalWallpaperCreator({ currentLang }: DevotionalWallpaperC
     // Watermark
     ctx.fillStyle = '#fef3c7';
     ctx.font = isMobile ? '28px sans-serif' : '24px sans-serif';
-    ctx.fillText('📲 MantraSetu — भक्ती व संस्कृतीचा पावन संगम', w / 2, isMobile ? 1820 : 1010);
+    ctx.fillText('📲 सनातन अमृतधारा (Sanatan Amrutdhara) — भक्ती व संस्कृतीचा पावन संगम', w / 2, isMobile ? 1820 : 1010);
 
     // Trigger Download
     const dataUrl = canvas.toDataURL('image/png');
     const link = document.createElement('a');
-    link.download = `MantraSetu_${activePreset.id}_wallpaper_${aspectRatio}.png`;
+    link.download = `Sanatan_Amrutdhara_${activePreset.id}_wallpaper_${aspectRatio}.png`;
     link.href = dataUrl;
     link.click();
     setIsGenerating(false);
@@ -370,7 +370,7 @@ export function DevotionalWallpaperCreator({ currentLang }: DevotionalWallpaperC
                     <div className="text-[10px] text-stone-300 mb-0.5">(आपले नाव)</div>
                   )}
                   <span className="text-[9px] text-amber-200/80 font-mono">
-                    📲 MantraSetu
+                    📲 सनातन अमृतधारा
                   </span>
                 </div>
               </div>

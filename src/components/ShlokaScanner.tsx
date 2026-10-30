@@ -184,7 +184,7 @@ export function ShlokaScanner({ currentLang }: ShlokaScannerProps) {
   };
 
   const handleCopy = () => {
-    const text = `${activeShloka.devanagari}\n\n${activeShloka.roman}\n\nसंदर्भ: ${activeShloka.sourceScripture[currentLang]}\nभावार्थ: ${activeShloka.overallMeaning[currentLang]}\n\n📲 MantraSetu श्लोक स्कॅनर`;
+    const text = `${activeShloka.devanagari}\n\n${activeShloka.roman}\n\nसंदर्भ: ${activeShloka.sourceScripture[currentLang]}\nभावार्थ: ${activeShloka.overallMeaning[currentLang]}\n\n📲 सनातन अमृतधारा (Sanatan Amrutdhara) श्लोक स्कॅनर`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

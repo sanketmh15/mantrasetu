@@ -74,7 +74,7 @@ export function StoriesForChildren({ currentLang }: StoriesForChildrenProps) {
   };
 
   const handleShareStory = () => {
-    const text = `📖 *${activeStory.title[currentLang] || activeStory.title.mr}*\nदेवता: ${activeStory.deity[currentLang] || activeStory.deity.mr}\n\nसंस्कार बोध: ${activeStory.moralLesson[currentLang] || activeStory.moralLesson.mr}\n\nमुलांसाठी मंत्रसेतू बोधकथा:\nhttps://mantrasetu.in`;
+    const text = `📖 *${activeStory.title[currentLang] || activeStory.title.mr}*\nदेवता: ${activeStory.deity[currentLang] || activeStory.deity.mr}\n\nसंस्कार बोध: ${activeStory.moralLesson[currentLang] || activeStory.moralLesson.mr}\n\nमुलांसाठी सनातन अमृतधारा बोधकथा:\nhttps://sanketmh15.github.io/mantrasetu/`;
     if (navigator.share) {
       navigator.share({ title: activeStory.title.mr, text }).catch(() => {});
     } else {

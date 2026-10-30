@@ -23,7 +23,9 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="md:col-span-2 space-y-3">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">🚩</span>
-            <span className="text-xl font-bold text-white font-serifDev">MantraSetu</span>
+            <span className="text-xl font-bold text-white font-serifDev">
+              {currentLang === 'en' ? 'Sanatan Amrutdhara' : 'सनातन अमृतधारा'}
+            </span>
             <span className="text-[10px] bg-amber-950/80 text-amber-300 font-semibold px-2.5 py-0.5 rounded-full border border-amber-700/60">
               {currentLang === 'en' ? '50 Deities & Kumbh Portal' : 'सर्व ५० देव-देवता व कुंभमेळा'}
             </span>
@@ -32,8 +34,8 @@ export const Footer: React.FC<FooterProps> = ({
             {currentLang === 'en'
               ? 'One-stop digital devotional sanctuary connecting you with India\'s sacred traditions, 50 deities, Simhastha Kumbh Mela, and 108 Japa.'
               : currentLang === 'hi'
-              ? 'भारतीय आध्यात्मिक परम्पराओं का प्रामाणिक डिजिटल सेतु। समस्त ५० पावन देवी-देवता, सिंहस्थ कुंभमेळा, १०८ जप एवं तीर्थ दर्शन।'
-              : 'भारतीय अध्यात्म आणि संस्कृतीचा प्रामाणिक डिजिटल सेतू. सर्व ५० पावन देव-देवता, सिंहस्थ कुंभमेळा, १०८ नामस्मरण आणि तीर्थक्षेत्रे.'}
+              ? 'सनातन अमृतधारा — भारतीय आध्यात्मिक परम्पराओं का प्रामाणिक डिजिटल सेतु। समस्त ५० पावन देवी-देवता, सिंहस्थ कुंभमेळा, १०८ जप एवं तीर्थ दर्शन।'
+              : 'सनातन अमृतधारा — भारतीय अध्यात्म आणि संस्कृतीचा प्रामाणिक डिजिटल सेतू. सर्व ५० पावन देव-देवता, सिंहस्थ कुंभमेळा, १०८ नामस्मरण आणि तीर्थक्षेत्रे.'}
           </p>
           <div className="text-xs text-stone-500 pt-2 border-t border-stone-900">
             <p>🙏 Faith • Knowledge • Tradition • Technology</p>
@@ -117,11 +119,11 @@ export const Footer: React.FC<FooterProps> = ({
       <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-stone-900 text-center text-[11px] text-stone-500">
         <p>
           {currentLang === 'en'
-            ? 'Ethical Devotion Notice: MantraSetu presents traditional devotional practices for spiritual reflection, peace, and cultural heritage. Content is strictly educational and non-superstitious.'
-            : 'अंधविश्वास मुक्ति सूचना: मंत्रसेतु प्राचीन परम्परागत साधना को आत्म-शांति, शुचिता और सांस्कृतिक ज्ञान हेतु प्रस्तुत करता है।'}
+            ? 'Ethical Devotion Notice: Sanatan Amrutdhara presents traditional devotional practices for spiritual reflection, peace, and cultural heritage. Content is strictly educational and non-superstitious.'
+            : 'अंधविश्वास मुक्ति सूचना: सनातन अमृतधारा प्राचीन परम्परागत साधना को आत्म-शांति, शुचिता और सांस्कृतिक ज्ञान हेतु प्रस्तुत करता है।'}
         </p>
         <p className="mt-1">
-          © {new Date().getFullYear()} MantraSetu • Built with devotion and precision.
+          © {new Date().getFullYear()} सनातन अमृतधारा (Sanatan Amrutdhara) • Built with devotion and precision.
         </p>
       </div>
     </footer>

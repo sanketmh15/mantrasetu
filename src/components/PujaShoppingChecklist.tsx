@@ -141,7 +141,7 @@ export function PujaShoppingChecklist({ currentLang }: PujaShoppingChecklistProp
       });
     }
 
-    text += `\n🙏 *MantraSetu पूजा साहित्य सहाय्यक* https://mantrasetu.in`;
+    text += `\n🙏 *सनातन अमृतधारा (Sanatan Amrutdhara) पूजा साहित्य सहाय्यक* https://sanketmh15.github.io/mantrasetu/`;
     return text;
   };
 

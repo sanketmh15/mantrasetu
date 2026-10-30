@@ -61,7 +61,7 @@ export function RashiGuideCalculator({
   };
 
   const handleShareRashi = () => {
-    const text = `♈ *माझी जन्मरास: ${activeRashi.name[currentLang] || activeRashi.name.mr}*\nस्वामी: ${activeRashi.rulingPlanet[currentLang] || activeRashi.rulingPlanet.mr}\nइष्टदेवता: ${activeRashi.ishtaDevata[currentLang] || activeRashi.ishtaDevata.mr}\nसिद्ध बीजमंत्र: ${activeRashi.beejMantra.sanskrit}\n\nमंत्रसेतूवर आपली रास व इष्टदेवता मंत्र शोधा:\nhttps://sanketmh15.github.io/mantrasetu/`;
+    const text = `♈ *माझी जन्मरास: ${activeRashi.name[currentLang] || activeRashi.name.mr}*\nस्वामी: ${activeRashi.rulingPlanet[currentLang] || activeRashi.rulingPlanet.mr}\nइष्टदेवता: ${activeRashi.ishtaDevata[currentLang] || activeRashi.ishtaDevata.mr}\nसिद्ध बीजमंत्र: ${activeRashi.beejMantra.sanskrit}\n\nसनातन अमृतधारावर आपली रास व इष्टदेवता मंत्र शोधा:\nhttps://sanketmh15.github.io/mantrasetu/`;
     if (navigator.share) {
       navigator.share({ title: activeRashi.name.mr, text }).catch(() => {});
     } else {

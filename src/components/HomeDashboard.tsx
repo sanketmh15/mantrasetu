@@ -474,10 +474,10 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-serifDev text-stone-900 dark:text-white">
               {currentLang === 'en'
-                ? 'Welcome to MantraSetu'
+                ? 'Welcome to Sanatan Amrutdhara'
                 : currentLang === 'hi'
-                ? 'मन्त्रसेतु डिजिटल भक्तीपीठ'
-                : 'मंत्रसेतू डिजिटल भक्तीपीठामध्ये आपले स्वागत'}
+                ? 'सनातन अमृतधारा डिजिटल भक्तिपीठ'
+                : 'सनातन अमृतधारा डिजिटल भक्तीपीठामध्ये आपले स्वागत'}
             </h1>
             <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 mt-1 max-w-2xl leading-relaxed">
               {currentLang === 'en'

@@ -296,7 +296,7 @@ Regarding your question, here is profound guidance blending ancient spiritual wi
               {
                 parts: [
                   {
-                    text: `You are an overpowered spiritual AI guide and universal genius named MantraSetu Divine AI. Answer in ${selectedVoiceLang.name} language with deep compassion, scriptural accuracy, and practical life problem solving. User asks: ${userText}`
+                    text: `You are an overpowered spiritual AI guide and universal genius named Sanatan Amrutdhara Divine AI. Answer in ${selectedVoiceLang.name} language with deep compassion, scriptural accuracy, and practical life problem solving. User asks: ${userText}`
                   }
                 ]
               }

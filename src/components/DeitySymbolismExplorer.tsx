@@ -66,14 +66,14 @@ export function DeitySymbolismExplorer({ currentLang }: DeitySymbolismExplorerPr
   };
 
   const handleCopyQuote = (item: SymbolismItem) => {
-    const text = `🔱 *${item.name[currentLang] || item.name.mr}*\nदेवता: ${item.deityAssociated[currentLang] || item.deityAssociated.mr}\n\nश्लोक: ${item.scripturalQuote.sanskrit}\nअर्थ: ${item.scripturalQuote.meaning[currentLang] || item.scripturalQuote.meaning.mr}\n\nगूढ अर्थ: ${item.esotericSymbolism[currentLang] || item.esotericSymbolism.mr}\n\nमंत्रसेतू देवप्रतीक रहस्य:\nhttps://mantrasetu.in`;
+    const text = `🔱 *${item.name[currentLang] || item.name.mr}*\nदेवता: ${item.deityAssociated[currentLang] || item.deityAssociated.mr}\n\nश्लोक: ${item.scripturalQuote.sanskrit}\nअर्थ: ${item.scripturalQuote.meaning[currentLang] || item.scripturalQuote.meaning.mr}\n\nगूढ अर्थ: ${item.esotericSymbolism[currentLang] || item.esotericSymbolism.mr}\n\nसनातन अमृतधारा देवप्रतीक रहस्य:\nhttps://sanketmh15.github.io/mantrasetu/`;
     navigator.clipboard.writeText(text);
     setCopiedId(item.id);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
   const handleShareItem = (item: SymbolismItem) => {
-    const text = `🔱 *${item.name[currentLang] || item.name.mr}* चे आध्यात्मिक रहस्य:\n\n${item.esotericSymbolism[currentLang] || item.esotericSymbolism.mr}\n\nमंत्रसेतू: https://mantrasetu.in`;
+    const text = `🔱 *${item.name[currentLang] || item.name.mr}* चे आध्यात्मिक रहस्य:\n\n${item.esotericSymbolism[currentLang] || item.esotericSymbolism.mr}\n\nसनातन अमृतधारा: https://sanketmh15.github.io/mantrasetu/`;
     if (navigator.share) {
       navigator.share({ title: item.name.mr, text }).catch(() => {});
     } else {

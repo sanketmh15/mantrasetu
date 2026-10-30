@@ -491,12 +491,18 @@ class AudioEngine {
    * without skipping Devanagari characters or producing 0ms silence.
    */
   private sacredOverrides: Record<string, string> = {
+    'सनातन अमृतधारा पावन भक्ती दालनात आपले सहर्ष स्वागत आहे. महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला आजचा दिवस मंगलमय व शांततेचा जावो.':
+      'Sanatan Amrutdhara paavan bhakti daalnaat aaple saharsha swaagat aahe. Mahadev, Prabhu Shri Ram aani Vithu Mauli chya krupe-ne aaplaa aajj-chaa divas mangalmay aani shaant-te-cha jaavo.',
+    'सनातन अमृतधारा पावन भक्ती दालनात आपले सहर्ष स्वागत आहे. महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला दिवस मंगलमय जावो.':
+      'Sanatan Amrutdhara paavan bhakti daalnaat aaple saharsha swaagat aahe. Mahadev, Prabhu Shri Ram aani Vithu Mauli chya krupe-ne aaplaa divas mangalmay jaavo.',
+    'सनातन अमृतधारा पावन भक्ति संकुल में आपका हार्दिक स्वागत है। भगवान शिव, श्री राम एवं विठुराया के आशीर्वाद से आपका दिन मंगलमय एवं शांतिमय हो।':
+      'Sanatan Amrutdhara paavan bhakti sankul mein aapka haardik swaagat hai. Bhagwan Shiv, Shri Ram evam Vithuraaya ke aasheervaad se aapka din mangalmay evam shaantimay ho.',
     'मंत्रसेतू पावन भक्ती दालनात आपले सहर्ष स्वागत आहे. महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला आजचा दिवस मंगलमय व शांततेचा जावो.':
-      'MantraSetu paavan bhakti daalnaat aaple saharsha swaagat aahe. Mahadev, Prabhu Shri Ram aani Vithu Mauli chya krupe-ne aaplaa aajj-chaa divas mangalmay aani shaant-te-cha jaavo.',
+      'Sanatan Amrutdhara paavan bhakti daalnaat aaple saharsha swaagat aahe. Mahadev, Prabhu Shri Ram aani Vithu Mauli chya krupe-ne aaplaa aajj-chaa divas mangalmay aani shaant-te-cha jaavo.',
     'मंत्रसेतू पावन भक्ती दालनात आपले सहर्ष स्वागत आहे. महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला दिवस मंगलमय जावो.':
-      'MantraSetu paavan bhakti daalnaat aaple saharsha swaagat aahe. Mahadev, Prabhu Shri Ram aani Vithu Mauli chya krupe-ne aaplaa divas mangalmay jaavo.',
+      'Sanatan Amrutdhara paavan bhakti daalnaat aaple saharsha swaagat aahe. Mahadev, Prabhu Shri Ram aani Vithu Mauli chya krupe-ne aaplaa divas mangalmay jaavo.',
     'मंत्रसेतु पावन भक्ति संकुल में आपका हार्दिक स्वागत है। भगवान शिव, श्री राम एवं विठुराया के आशीर्वाद से आपका दिन मंगलमय एवं शांतिमय हो।':
-      'MantraSetu paavan bhakti sankul mein aapka haardik swaagat hai. Bhagwan Shiv, Shri Ram evam Vithuraaya ke aasheervaad se aapka din mangalmay evam shaantimay ho.',
+      'Sanatan Amrutdhara paavan bhakti sankul mein aapka haardik swaagat hai. Bhagwan Shiv, Shri Ram evam Vithuraaya ke aasheervaad se aapka din mangalmay evam shaantimay ho.',
     'नमस्कार... ॐ गं गणपतये नमः। वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥':
       'Namaskaar... Om Gam Ganapataye Namaha. Vakratunda Mahakaya Suryakoti Samaprabha, Nirvighnam Kuru Me Deva Sarva Karyeshu Sarvada.',
     'ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्। उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात्॥':
@@ -513,12 +519,16 @@ class AudioEngine {
       'Om Namah Shivaaya.',
     'ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्॥':
       'Om Bhoor Bhuva-ha Swaha, Tat Savitur Varenyam, Bhargo Devasya Dheemahi, Dhiyo Yo Nah Prachodayaat.',
+    'सनातन अमृतधारा पावन भक्ती दालनात आपले सहर्ष स्वागत आहे.':
+      'Sanatan Amrutdhara paavan bhakti daalnaat aaple saharsha swaagat aahe.',
+    'सनातन अमृतधारा पावन भक्ति संकुल में आपका हार्दिक स्वागत है।':
+      'Sanatan Amrutdhara paavan bhakti sankul mein aapka haardik swaagat hai.',
     'मंत्रसेतू पावन भक्ती दालनात आपले सहर्ष स्वागत आहे.':
-      'MantraSetu paavan bhakti daalnaat aaple saharsha swaagat aahe.',
+      'Sanatan Amrutdhara paavan bhakti daalnaat aaple saharsha swaagat aahe.',
     'महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला आजचा दिवस मंगलमय व शांततेचा जावो.':
       'Mahadev, Prabhu Shri Ram aani Vithu Mauli chya krupe-ne aaplaa aajj-chaa divas mangalmay aani shaant-te-cha jaavo.',
     'मंत्रसेतु पावन भक्ति संकुल में आपका हार्दिक स्वागत है।':
-      'MantraSetu paavan bhakti sankul mein aapka haardik swaagat hai.',
+      'Sanatan Amrutdhara paavan bhakti sankul mein aapka haardik swaagat hai.',
     'भगवान शिव, श्री राम एवं विठुराया के आशीर्वाद से आपका दिन मंगलमय एवं शांतिमय हो।':
       'Bhagwan Shiv, Shri Ram evam Vithuraaya ke aasheervaad se aapka din mangalmay evam shaantimay ho.',
     'सर्व ५० पावन देव देवता दर्शन दालनात आपले स्वागत आहे.':

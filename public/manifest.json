@@ -1,7 +1,7 @@
 {
-  "name": "मंत्रसेतू | MantraSetu Devotional Portal",
-  "short_name": "MantraSetu",
-  "description": "महाराष्ट्राचे अग्रगण्य डिजिटल भक्ती पोर्टल: ५० देव-देवता, संपूर्ण ज्ञानेश्वरी, आजचे थेट चौघडिया, सिद्धिविनायक थेट दर्शन, १०८ जपमाळ व ३D मंदिरे.",
+  "name": "सनातन अमृतधारा | Sanatan Amrutdhara Devotional Portal",
+  "short_name": "Sanatan Amrutdhara",
+  "description": "सनातन अमृतधारा - महाराष्ट्राचे अग्रगण्य डिजिटल भक्ती पोर्टल: ५० देव-देवता, संपूर्ण ज्ञानेश्वरी, आजचे थेट चौघडिया, सिद्धिविनायक थेट दर्शन, १०८ जपमाळ व ३D मंदिरे.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

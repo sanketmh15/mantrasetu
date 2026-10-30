@@ -41,9 +41,9 @@ export const WelcomeGreetingBanner: React.FC<WelcomeGreetingBannerProps> = ({
       return {
         icon: '🚩',
         title: {
-          en: 'Divine Welcome to MantraSetu Spiritual Portal',
-          hi: 'मंत्रसेतु पावन भक्ति संकुल में आपका हार्दिक स्वागत है',
-          mr: 'मंत्रसेतू पावन भक्ती दालनात आपले सहर्ष स्वागत आहे',
+          en: 'Divine Welcome to Sanatan Amrutdhara Spiritual Portal',
+          hi: 'सनातन अमृतधारा पावन भक्ति संकुल में आपका हार्दिक स्वागत है',
+          mr: 'सनातन अमृतधारा पावन भक्ती दालनात आपले सहर्ष स्वागत आहे',
         },
         subtitle: {
           en: 'May your day be blessed with peace, positive energy, and divine grace. "Om Namah Shivaya • Jai Shri Ram • Ram Krishna Hari"',
@@ -52,10 +52,10 @@ export const WelcomeGreetingBanner: React.FC<WelcomeGreetingBannerProps> = ({
         },
         speechText:
           currentLang === 'en'
-            ? 'Welcome to the MantraSetu Spiritual Portal. May Lord Shiva, Shri Ram, and Vitthal Mauli bless your day with peace, positive energy, and divine grace.'
+            ? 'Welcome to Sanatan Amrutdhara Spiritual Portal. May Lord Shiva, Shri Ram, and Vitthal Mauli bless your day with peace, positive energy, and divine grace.'
             : currentLang === 'hi'
-            ? 'मंत्रसेतु पावन भक्ति संकुल में आपका हार्दिक स्वागत है। भगवान शिव, श्री राम एवं विठुराया के आशीर्वाद से आपका दिन मंगलमय एवं शांतिमय हो।'
-            : 'मंत्रसेतू पावन भक्ती दालनात आपले सहर्ष स्वागत आहे. महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला आजचा दिवस मंगलमय व शांततेचा जावो.',
+            ? 'सनातन अमृतधारा पावन भक्ति संकुल में आपका हार्दिक स्वागत है। भगवान शिव, श्री राम एवं विठुराया के आशीर्वाद से आपका दिन मंगलमय एवं शांतिमय हो।'
+            : 'सनातन अमृतधारा पावन भक्ती दालनात आपले सहर्ष स्वागत आहे. महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला आजचा दिवस मंगलमय व शांततेचा जावो.',
       };
     }
 

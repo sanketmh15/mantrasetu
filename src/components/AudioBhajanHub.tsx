@@ -101,7 +101,7 @@ export function AudioBhajanHub({ currentLang }: AudioBhajanHubProps) {
   };
 
   const handleShareBhajan = () => {
-    const text = `🎵 *${activeTrack.title[currentLang] || activeTrack.title.mr}*\nरचनाकार: ${activeTrack.saintAuthor}\n\n${activeTrack.lyrics.slice(0, 4).join('\n')}\n\nमंत्रसेतूवर संपूर्ण भजन व भूपाळी ऐका:\nhttps://sanketmh15.github.io/mantrasetu/`;
+    const text = `🎵 *${activeTrack.title[currentLang] || activeTrack.title.mr}*\nरचनाकार: ${activeTrack.saintAuthor}\n\n${activeTrack.lyrics.slice(0, 4).join('\n')}\n\nसनातन अमृतधारावर संपूर्ण भजन व भूपाळी ऐका:\nhttps://sanketmh15.github.io/mantrasetu/`;
     if (navigator.share) {
       navigator.share({ title: activeTrack.title.mr, text }).catch(() => {});
     } else {

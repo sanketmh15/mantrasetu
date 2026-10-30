@@ -39,7 +39,7 @@ export function LiveTempleDarshan({ currentLang }: LiveTempleDarshanProps) {
   };
 
   const handleShareDarshan = () => {
-    const text = `🔴 *${activeTemple.templeName[currentLang] || activeTemple.templeName.mr}* चे थेट लाईव्ह दर्शन:\n${activeTemple.trustWebsiteUrl}\n\nमंत्रसेतू वरून दर्शन घ्या: https://mantrasetu.in`;
+    const text = `🔴 *${activeTemple.templeName[currentLang] || activeTemple.templeName.mr}* चे थेट लाईव्ह दर्शन:\n${activeTemple.trustWebsiteUrl}\n\nसनातन अमृतधारा वरून दर्शन घ्या: https://sanketmh15.github.io/mantrasetu/`;
     if (navigator.share) {
       navigator.share({ title: activeTemple.templeName.mr, text }).catch(() => {});
     } else {

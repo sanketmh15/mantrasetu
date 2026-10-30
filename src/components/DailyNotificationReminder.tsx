@@ -60,7 +60,7 @@ export function DailyNotificationReminder({ currentLang }: DailyNotificationRemi
       if (permission === 'granted') {
         audioEngine.playTempleBell();
         // Send welcome test notification
-        new Notification('🚩 मंत्रसेतू: शुभ प्रभात!', {
+        new Notification('🚩 सनातन अमृतधारा: शुभ प्रभात!', {
           body: 'दैनिक सुप्रभातम व आरती नोटिफिकेशन्स यशस्वीरीत्या सुरू झाल्या आहेत. आपला दिवस मंगलमय जावो!',
           icon: './icon.svg',
         });
@@ -86,7 +86,7 @@ export function DailyNotificationReminder({ currentLang }: DailyNotificationRemi
   const handleTestNotification = () => {
     audioEngine.playTempleBell();
     if (permissionStatus === 'granted') {
-      new Notification('🪔 मंत्रसेतू दैनिक स्मरण', {
+      new Notification('🪔 सनातन अमृतधारा दैनिक स्मरण', {
         body: 'आजचा शुभ मुहूर्त सुरू झाला आहे. देवाचे नामस्मरण करा आणि १०८ जपमाळ पूर्ण करा.',
         icon: './icon.svg',
       });
