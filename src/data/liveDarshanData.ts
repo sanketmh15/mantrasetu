@@ -260,18 +260,18 @@ export const liveDarshanDatabase: LiveDarshanStream[] = [
 ];
 
 export const specificAartisDatabase: AartiVideoItem[] = [
-  // 1. Ganpati Sukhkarta Dukhharta - Amitabh Bachchan
+  // 1. Ganpati Sukhkarta Dukhharta - Sadhana Sargam / Siddhivinayak Temple
   {
-    id: 'ganesh_sukhkarta_amitabh',
+    id: 'ganesh_sukhkarta_traditional',
     title: {
-      en: 'Sukhkarta Dukhharta (Shri Siddhivinayak Aarti - Amitabh Bachchan)',
-      hi: 'सुखकर्ता दुःखहर्ता (श्री सिद्धिविनायक महाआरती - अमिताभ बच्चन)',
-      mr: 'सुखकर्ता दुःखहर्ता (सिद्धिविनायक महाआरती - अमिताभ बच्चन)'
+      en: 'Sukhkarta Dukhharta (Shri Siddhivinayak Temple Aarti - Sadhana Sargam)',
+      hi: 'सुखकर्ता दुःखहर्ता (श्री सिद्धिविनायक महाआरती - साधना सरगम)',
+      mr: 'सुखकर्ता दुःखहर्ता (श्री सिद्धिविनायक महाआरती - साधना सरगम)'
     },
     deity: { en: 'Lord Ganesha', hi: 'श्री गणेश', mr: 'श्री गणेश बाप्पा' },
-    singer: 'Amitabh Bachchan (अमिताभ बच्चन)',
-    youtubeUrl: 'https://www.youtube.com/watch?v=HFsWD539TxQ',
-    youtubeVideoId: 'HFsWD539TxQ',
+    singer: 'Sadhana Sargam (साधना सरगम)',
+    youtubeUrl: 'https://www.youtube.com/watch?v=TVQyllXcASE',
+    youtubeVideoId: 'TVQyllXcASE',
     duration: '४:१५ मिनिटे',
     category: 'aarti',
     lyricsSnippet: {

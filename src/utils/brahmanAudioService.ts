@@ -4,17 +4,17 @@ const VOICE_PERSONA_KEY = 'mantrasetu_voice_persona';
 
 /**
  * Voice persona configuration
- * Defaults to Amitabh Bachchan's legendary baritone voice across all mantras & greetings.
+ * Defaults to authentic Vedic Brahman / Panditji sacred chant voice across all mantras & greetings.
  */
-export type VoicePersona = 'amitabh_bachchan' | 'vedic_brahman' | 'divine_melodious';
+export type VoicePersona = 'vedic_brahman' | 'divine_melodious';
 
 export function getVoicePersona(): VoicePersona {
   try {
     const p = localStorage.getItem(VOICE_PERSONA_KEY);
-    if (p === 'amitabh_bachchan' || p === 'vedic_brahman' || p === 'divine_melodious') return p;
-    return 'amitabh_bachchan'; // DEFAULT TO AMITABH BACHCHAN
+    if (p === 'vedic_brahman' || p === 'divine_melodious') return p;
+    return 'vedic_brahman'; // DEFAULT TO VEDIC BRAHMAN / PANDITJI
   } catch {
-    return 'amitabh_bachchan';
+    return 'vedic_brahman';
   }
 }
 
@@ -27,15 +27,14 @@ export function setVoicePersona(persona: VoicePersona): void {
 }
 
 /**
- * Brahman / Panditji & Amitabh Bachchan Audio Mapping Service
- * Allows seamlessly pairing real human voice recordings (MP3/WAV) with deities & mantras,
- * while smoothly falling back to the resonant baritone synthesizer when no file is present.
+ * Brahman / Panditji Sacred Audio Mapping Service
+ * Allows seamlessly pairing authentic traditional recordings with deities & mantras,
+ * while smoothly falling back to the resonant chant synthesizer when no file is present.
  */
 
-// Default audio map seeded with authentic recordings (e.g. Amitabh Bachchan's Sukhkarta Dukhharta Aarti)
+// Default audio map seeded with authentic recordings
 const DEFAULT_AUDIO_MAP: Record<string, string> = {
   'sukhkarta-dukhharta': './audio/chants/sukhkarta-dukhharta.mp3',
-  'amitabh-sample': './audio/amitabh_sample.mp3',
   '1': './audio/chants/sukhkarta-dukhharta.mp3',
   'ganesha': './audio/chants/sukhkarta-dukhharta.mp3',
   'ganesha-aarti': './audio/chants/sukhkarta-dukhharta.mp3',

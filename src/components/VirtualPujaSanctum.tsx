@@ -198,7 +198,7 @@ export const VirtualPujaSanctum: React.FC<VirtualPujaSanctumProps> = ({
       setIsAartiWaving(true);
       audioEngine.playTempleBell();
 
-      // For Ganesha, play the authentic Amitabh Bachchan Sukhkarta Dukhharta Aarti recording!
+      // For Ganesha, play the authentic Sukhkarta Dukhharta Aarti recording!
       if (activeDeity.id === 'ganesha') {
         const audioUrl = getMantraBrahmanAudioUrl('sukhkarta-dukhharta');
         audioEngine.playBrahmanChant({
@@ -480,9 +480,7 @@ export const VirtualPujaSanctum: React.FC<VirtualPujaSanctumProps> = ({
                 <>
                   <Volume2 className="w-4 h-4" />
                   <span>
-                    {activeDeity.id === 'ganesha'
-                      ? (currentLang === 'en' ? 'Play Amitabh Bachchan Aarti' : 'अमिताभ बच्चन यांच्या आवाजात आरती सुरू करा')
-                      : (currentLang === 'en' ? 'Start Sacred Aarti & Chanting' : 'आरती व महामंत्र सुरू करा')}
+                    {currentLang === 'en' ? 'Start Sacred Aarti & Chanting' : 'पावन महाआरती व मंत्र सुरू करा'}
                   </span>
                 </>
               )}

@@ -57,7 +57,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [newAdminPhone, setNewAdminPhone] = useState('');
   const [phoneAddStatus, setPhoneAddStatus] = useState<string | null>(null);
 
-  // Amitabh Bachchan Voice Studio State
+  // Vedic Brahman Voice Studio State
   const [audioMap, setAudioMap] = useState<Record<string, string>>(getCustomAudioMap);
   const [testPlayingKey, setTestPlayingKey] = useState<string | null>(null);
   const [selectedGodForAudio, setSelectedGodForAudio] = useState<string>('ganesha');
@@ -287,7 +287,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           }`}
         >
           <Mic className="w-4 h-4 text-amber-300" />
-          <span>अमिताभ बच्चन व्हॉईस स्टुडिओ</span>
+          <span>वैदिक पुरोहित ध्वनी केंद्र</span>
         </button>
       </div>
 
@@ -694,7 +694,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         </div>
       )}
 
-      {/* SECTION 5: AMITABH BACHCHAN VOICE STUDIO & REAL AUDIO MANAGER */}
+      {/* SECTION 5: VEDIC BRAHMAN VOICE STUDIO & REAL AUDIO MANAGER */}
       {activeSection === 'voice' && (
         <div className="space-y-6 animate-fadeIn">
           {/* Header Banner */}
@@ -703,10 +703,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-600 to-saffron-600 text-white text-xs font-bold mb-2 shadow-sm">
                   <Mic className="w-3.5 h-3.5" />
-                  <span>॥ अमिताभ बच्चन बॅरिटोन आवाज व ध्वनी नियंत्रण केंद्र ॥</span>
+                  <span>॥ वैदिक पुरोहित व मंत्र ध्वनी नियंत्रण केंद्र ॥</span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold font-serifDev text-stone-900 dark:text-white">
-                  अमिताभ बच्चन (Big B) व्हॉईस ओव्हर व ऑडिओ व्यवस्थापन
+                  वैदिक पुरोहित व ऑडिओ व्यवस्थापन
                 </h3>
                 <p className="text-xs text-stone-600 dark:text-stone-300 mt-1 max-w-2xl leading-relaxed">
                   सनातन अमृतधारामध्ये सर्व मंत्र, स्वागत अभिवादन व पठणासाठी पवित्र आवाज तानपुरा संवादिनीसह डीफॉल्ट सक्रिय आहे.
@@ -718,7 +718,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
                 <div>
                   <p className="text-[10px] text-amber-300 uppercase font-mono font-bold">व्हॉईस मॉडेल</p>
-                  <p className="text-xs font-bold text-white">Amitabh Bachchan Baritone</p>
+                  <p className="text-xs font-bold text-white">Vedic Panditji Sacred Voice</p>
                 </div>
               </div>
             </div>
@@ -728,7 +728,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-stone-700 dark:text-stone-300 uppercase tracking-wide flex items-center gap-2">
                   <Volume2 className="w-4 h-4 text-amber-500" />
-                  <span>अमिताभ बच्चन आवाज थेट चाचणी (Test Amitabh Bachchan Chanting):</span>
+                  <span>वैदिक मंत्रघोष थेट चाचणी (Test Sacred Vedic Chanting):</span>
                 </h4>
                 {testPlayingKey && (
                   <button

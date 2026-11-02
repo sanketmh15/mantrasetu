@@ -95,7 +95,7 @@ export const NamasteGreetingModal: React.FC<NamasteGreetingModalProps> = ({
           setIsPlayingAudio(true);
           audioEngine.playTempleBell();
 
-          // Wait a gentle moment after bell chime, then recite greeting in Amitabh Bachchan voice
+          // Wait a gentle moment after bell chime, then recite greeting in sacred Vedic voice
           setTimeout(() => {
             if (isCancelled || isAudioMuted) return;
 
@@ -265,8 +265,8 @@ export const NamasteGreetingModal: React.FC<NamasteGreetingModalProps> = ({
             {isPlayingAudio ? <Volume2 className="w-4 h-4 text-amber-400" /> : <Play className="w-4 h-4 text-amber-400" />}
             <span>
               {isPlayingAudio
-                ? (currentLang === 'en' ? 'Big B Voice Reciting...' : 'अमिताभ बच्चन व्हॉईस सुरू आहे...')
-                : (currentLang === 'en' ? 'Play Amitabh Voiceover' : 'अमिताभ बच्चन आवाजात ऐका')}
+                ? (currentLang === 'en' ? 'Reciting Sacred Voice...' : 'पावन वाणी सुरू आहे...')
+                : (currentLang === 'en' ? 'Play Sacred Recitation' : 'पावन आवाजात ऐका')}
             </span>
           </button>
 

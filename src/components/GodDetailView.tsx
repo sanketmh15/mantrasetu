@@ -244,9 +244,7 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
                           <>
                             <Volume2 className="w-3.5 h-3.5 text-amber-200" />
                             <span>
-                              {selectedPersona === 'amitabh_bachchan'
-                                ? (currentLang === 'en' ? 'Listen (Amitabh Bachchan Voice)' : 'ऐका (अमिताभ बच्चन गंभीर वाणी)')
-                                : selectedPersona === 'vedic_brahman'
+                              {selectedPersona === 'vedic_brahman'
                                 ? (currentLang === 'en' ? 'Listen (Vedic Panditji)' : 'ऐका (वैदिक ब्राह्मण पंडितजी)')
                                 : (currentLang === 'en' ? 'Listen (Melodious Voice)' : 'ऐका (मधुर अमृतवाणी)')}
                             </span>
@@ -256,17 +254,6 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
 
                       {/* Quick Voice Persona Switcher */}
                       <div className="inline-flex items-center rounded-xl bg-stone-900/90 border border-amber-500/30 p-0.5 text-[11px]">
-                        <button
-                          onClick={() => handleSelectPersona('amitabh_bachchan')}
-                          className={`px-2 py-1 rounded-lg font-semibold transition-all ${
-                            selectedPersona === 'amitabh_bachchan'
-                              ? 'bg-amber-600 text-white shadow-sm'
-                              : 'text-stone-300 hover:text-white'
-                          }`}
-                          title="Amitabh Bachchan Baritone"
-                        >
-                          🎙️ बच्चन
-                        </button>
                         <button
                           onClick={() => handleSelectPersona('vedic_brahman')}
                           className={`px-2 py-1 rounded-lg font-semibold transition-all ${

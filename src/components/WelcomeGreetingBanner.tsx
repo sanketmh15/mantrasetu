@@ -18,22 +18,6 @@ export const WelcomeGreetingBanner: React.FC<WelcomeGreetingBannerProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isPlayingAartiSample, setIsPlayingAartiSample] = useState(false);
-
-  const handleToggleAartiSample = () => {
-    if (isPlayingAartiSample) {
-      audioEngine.stopSpeaking();
-      setIsPlayingAartiSample(false);
-    } else {
-      audioEngine.stopSpeaking();
-      setIsSpeaking(false);
-      setIsPlayingAartiSample(true);
-      audioEngine.playTempleBell();
-      audioEngine.playHumanAudio('/audio/amitabh_sample.mp3', () => {
-        setIsPlayingAartiSample(false);
-      });
-    }
-  };
 
   // Determine greeting based on activeTab
   const getGreetingData = () => {
@@ -279,31 +263,10 @@ export const WelcomeGreetingBanner: React.FC<WelcomeGreetingBannerProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2 shrink-0">
-          {/* Authentic Amitabh Bachchan Aarti Sample Button */}
-          <button
-            onClick={handleToggleAartiSample}
-            title={currentLang === 'en' ? 'Play authentic Amitabh Bachchan Ganpati Aarti sample' : 'अमिताभ बच्चन यांच्या आवाजातील सुखकर्ता दुखहर्ता आरती सॅम्पल ऐका'}
-            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-md ${
-              isPlayingAartiSample
-                ? 'bg-amber-600 hover:bg-amber-700 text-white ring-2 ring-amber-300 animate-pulse'
-                : 'bg-stone-900 hover:bg-stone-800 dark:bg-stone-800 dark:hover:bg-stone-700 text-amber-300 border border-amber-500/40 active:scale-95'
-            }`}
-          >
-            <span>{isPlayingAartiSample ? '⏹️' : '🎙️'}</span>
-            <span className="hidden md:inline">
-              {isPlayingAartiSample
-                ? (currentLang === 'en' ? 'Aarti Playing...' : 'आरती सुरू आहे...')
-                : (currentLang === 'en' ? 'Big B Aarti' : 'अमिताभ बच्चन आरती')}
-            </span>
-            <span className="md:hidden">
-              {isPlayingAartiSample ? 'थांबवा' : 'आरती'}
-            </span>
-          </button>
-
-          {/* Prominent Amitabh Bachchan Audio Speech Button */}
+          {/* Sacred Vedic Audio Speech Button */}
           <button
             onClick={handleSpeak}
-            title={currentLang === 'en' ? 'Listen to Welcome Greeting in Amitabh Bachchan voice' : 'अमिताभ बच्चन यांच्या आवाजात पावन अभिवादन ऐका'}
+            title={currentLang === 'en' ? 'Listen to Sacred Greeting' : 'पावन अभिवादन ऐका'}
             className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-md ${
               isSpeaking
                 ? 'bg-red-600 hover:bg-red-700 text-white ring-2 ring-red-400 animate-pulse'
@@ -319,7 +282,7 @@ export const WelcomeGreetingBanner: React.FC<WelcomeGreetingBannerProps> = ({
               <>
                 <Volume2 className="w-4 h-4 text-amber-200" />
                 <span className="hidden sm:inline">
-                  {currentLang === 'en' ? 'Big B Voice' : 'पावन अभिवादन ऐका'}
+                  {currentLang === 'en' ? 'Sacred Voice' : 'पावन अभिवादन ऐका'}
                 </span>
                 <span className="sm:hidden">
                   {currentLang === 'en' ? 'Listen' : 'ऐका'}

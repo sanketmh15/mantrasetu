@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Language, DeityId, ThemeMode, TextSize, AuthUser } from '../types';
 import { getTodayVratGuidance } from '../data/devotionalCalendar';
 import { getStoredJapaStats } from '../utils/storage';
@@ -13,9 +13,7 @@ import {
   ChevronRight,
   User,
   LogOut,
-  Compass,
-  Volume2,
-  Square
+  Compass
 } from 'lucide-react';
 
 interface HomeDashboardProps {
@@ -51,21 +49,6 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
 }) => {
   const todayGuidance = getTodayVratGuidance();
   const japaStats = getStoredJapaStats();
-  const [isPlayingAmitabhSample, setIsPlayingAmitabhSample] = useState(false);
-
-  const handleToggleAmitabhSample = () => {
-    if (isPlayingAmitabhSample) {
-      audioEngine.stopSpeaking();
-      setIsPlayingAmitabhSample(false);
-    } else {
-      audioEngine.stopSpeaking();
-      setIsPlayingAmitabhSample(true);
-      audioEngine.playTempleBell();
-      audioEngine.playHumanAudio('/audio/amitabh_sample.mp3', () => {
-        setIsPlayingAmitabhSample(false);
-      });
-    }
-  };
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -218,9 +201,9 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       id: 'puja',
       title: { en: 'Interactive Virtual E-Puja & Aarti Sanctum', hi: 'डिजिटल ई-पूजा एवं आरती गाभारा', mr: 'डिजिटल ई-पूजा व आरती गाभारा' },
       description: {
-        en: 'Circular wave aarti deepak, ring brass temple bell, shower flower petals, apply chandan tilak, blow shankhanaad, and Big B aarti.',
-        hi: 'आरती थाली घुमाएं, घंटी व शंख बजाएं, पुष्प वर्षा, तिलक अर्पण एवं बच्चन जी की आरती।',
-        mr: 'आरतीची थाळी फिरवा, घंटा व शंखनाद करा, फुलांची उधळण, चंदन टिळा, मोदक नैवेद्य व महानायक अमिताभ बच्चन यांच्या आवाजातील आरती.',
+        en: 'Circular wave aarti deepak, ring brass temple bell, shower flower petals, apply chandan tilak, blow shankhanaad, and traditional aarti.',
+        hi: 'आरती थाली घुमाएं, घंटी व शंख बजाएं, पुष्प वर्षा, तिलक अर्पण एवं पावन महाआरती।',
+        mr: 'आरतीची थाळी फिरवा, घंटा व शंखनाद करा, फुलांची उधळण, चंदन टिळा, मोदक नैवेद्य व पावन महाआरती.',
       },
       icon: '🪔',
       badge: { en: 'Feature 1 • E-Puja', hi: 'ई-पूजा', mr: '🪔 प्रत्यक्ष ई-पूजा' },
@@ -583,50 +566,40 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
         </div>
       </div>
 
-      {/* 1.25. Legendary Amitabh Bachchan Devotional Voiceover Showcase */}
-      <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-stone-900 via-amber-950/80 to-stone-900 border border-amber-500/50 shadow-xl mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4 text-white w-full">
+      {/* 1.25. Authentic Sacred Deity Aarti Sangrah Showcase */}
+      <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-amber-600 via-saffron-600 to-amber-700 shadow-xl mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4 text-white w-full">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 to-saffron-500 flex items-center justify-center text-2xl shadow-lg ring-2 ring-amber-300/40 shrink-0">
-            🎙️
+          <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner border border-white/30 shrink-0">
+            🪔
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm sm:text-base font-bold font-serifDev text-amber-300">
+              <span className="text-sm sm:text-base font-bold font-serifDev text-white">
                 {currentLang === 'en'
-                  ? 'Legendary Amitabh Bachchan Devotional Voice'
-                  : '॥ महानायक अमिताभ बच्चन यांच्या भारदस्त आवाजातील पावन गजर ॥'}
+                  ? 'Sacred Aarti Sangrah with YouTube Devotional Videos'
+                  : currentLang === 'hi'
+                  ? '॥ पावन देवी-देवता आरती संग्रह व यूट्यूब दर्शन ॥'
+                  : '॥ खऱ्या पारंपारिक देव-देवता आरत्या व यूट्यूब दर्शन ॥'}
               </span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                Official Sample
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-white/20 text-amber-100 border border-white/30">
+                मराठी व हिंदी
               </span>
             </div>
-            <p className="text-xs text-stone-300 mt-1 max-w-xl leading-relaxed">
+            <p className="text-xs text-amber-100/90 mt-1 max-w-xl leading-relaxed">
               {currentLang === 'en'
-                ? 'Experience the iconic baritone voice reciting "Sukhakarta Dukhaharta" Aarti with authentic spiritual resonance.'
-                : '"सुखकर्ता दुखहर्ता वार्ता विघ्नाची..." अमिताभ बच्चन यांच्या भारदस्त, गंभीर व मंत्रमुग्ध करणाऱ्या स्वरातील अस्सल आरती सॅम्पल ऐका.'}
+                ? 'Sing and listen to authentic Aartis for all deities with full Devanagari lyrics and integrated YouTube devotional videos.'
+                : 'सर्व ५० देवतांच्या मराठी व हिंदीतील खऱ्या पारंपारिक आरत्या, संपूर्ण बोल व यूट्यूब व्हिडिओसह दर्शन घ्या.'}
             </p>
           </div>
         </div>
 
         <button
-          onClick={handleToggleAmitabhSample}
-          className={`px-4 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all shrink-0 active:scale-95 ${
-            isPlayingAmitabhSample
-              ? 'bg-red-600 hover:bg-red-700 text-white ring-2 ring-red-400 animate-pulse'
-              : 'bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white ring-1 ring-amber-300/50 hover:scale-105'
-          }`}
+          onClick={() => onNavigateTab('deities')}
+          className="px-4 py-2.5 rounded-xl font-bold font-serifDev text-xs flex items-center justify-center gap-2 bg-white text-saffron-800 hover:bg-amber-50 shadow-lg transition-all shrink-0 active:scale-95"
         >
-          {isPlayingAmitabhSample ? (
-            <>
-              <Square className="w-4 h-4 fill-current" />
-              <span>{currentLang === 'en' ? 'Stop Aarti' : 'आरती थांबवा'}</span>
-            </>
-          ) : (
-            <>
-              <Volume2 className="w-4 h-4 text-amber-200" />
-              <span>{currentLang === 'en' ? 'Play Amitabh Voice Sample' : 'अमिताभ बच्चन व्हॉईस सॅम्पल ऐका'}</span>
-            </>
-          )}
+          <span>🪔</span>
+          <span>{currentLang === 'en' ? 'Explore All Aartis' : 'सर्व आरत्या पहा'}</span>
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
 

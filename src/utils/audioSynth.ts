@@ -1,9 +1,9 @@
 import { getVoicePersona, VoicePersona } from './brahmanAudioService';
 
 /**
- * Web Audio API synthesizer & Amitabh Bachchan Baritone Voice Engine for MantraSetu.
- * - Emulates the iconic, deep, reverberating bass-baritone voice of Amitabh Bachchan
- *   tuned to 0.74 pitch and 0.82 cadence for majestic gravitas across all mantras & greetings.
+ * Web Audio API synthesizer & Sacred Vedic Voice Engine for Sanatan Amrutdhara.
+ * - Provides resonant, authentic Vedic Brahman / Panditji sacred chanting
+ *   calibrated for majestic gravitas across all mantras, aartis & greetings.
  * - Provides authentic temple bells, conch (Shankhanaad), and ambient meditative Tanpura drone.
  * - Supports Real Human Voice Recording playback (MP3/WAV) when available.
  */
@@ -19,7 +19,7 @@ class AudioEngine {
   private sharedAudio: HTMLAudioElement | null = null;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private cachedVoices: SpeechSynthesisVoice[] = [];
-  private persona: VoicePersona = 'amitabh_bachchan';
+  private persona: VoicePersona = 'vedic_brahman';
   private isTTSAborted = false;
 
   constructor() {
@@ -211,7 +211,7 @@ class AudioEngine {
 
   /**
    * Resolves audio URLs for relative and base-path hosting (e.g. GitHub Pages /mantrasetu/).
-   * Ensures that /audio/amitabh_sample.mp3 and /audio/chants/... always resolve correctly.
+   * Ensures that /audio/chants/... always resolve correctly.
    */
   public resolveAudioUrl(url: string): string {
     if (!url || typeof url !== 'string') return '';
@@ -654,17 +654,14 @@ class AudioEngine {
     pitch: number;
     rate: number;
   } {
-    const activePersona = customPersona || this.persona || 'amitabh_bachchan';
+    const activePersona = customPersona || this.persona || 'vedic_brahman';
     const pref = (preferredLang || '').toLowerCase();
     const isMarathiPreferred = pref.startsWith('mr');
 
     // Calibrated persona acoustic properties (uniform across mobile & desktop)
-    let pitch = 0.78; // Bass-baritone for Amitabh Bachchan
-    let rate = 0.84;  // Majestic, unhurried cadence
-    if (activePersona === 'vedic_brahman') {
-      pitch = 0.90;
-      rate = 0.88;
-    } else if (activePersona === 'divine_melodious') {
+    let pitch = 0.88; // Reverberant solemn tone for Vedic Brahman / Panditji
+    let rate = 0.86;  // Majestic, unhurried cadence
+    if (activePersona === 'divine_melodious') {
       pitch = 1.00;
       rate = 0.92;
     }
@@ -683,23 +680,21 @@ class AudioEngine {
       return { voice: null, isDevanagariCapable: true, targetLang: isMarathiPreferred ? 'mr-IN' : 'hi-IN', pitch, rate };
     }
 
-    // 1. If Amitabh Bachchan Baritone is active: Prioritize rich Indian male voices
-    if (activePersona === 'amitabh_bachchan') {
-      const maleIndianVoice = voices.find((v) => {
-        const vn = (v.name || '').toLowerCase();
-        const vl = (v.lang || '').toLowerCase();
-        return (
-          vn.includes('hemant') ||
-          vn.includes('rishi') ||
-          vn.includes('madhav') ||
-          vn.includes('pradeep') ||
-          vn.includes('ravi') ||
-          (vl.startsWith('hi') && (vn.includes('male') || vn.includes('online')))
-        );
-      });
-      if (maleIndianVoice) {
-        return { voice: maleIndianVoice, isDevanagariCapable: true, targetLang: maleIndianVoice.lang, pitch, rate };
-      }
+    // 1. Prioritize rich Indian male voices for authentic chanting
+    const maleIndianVoice = voices.find((v) => {
+      const vn = (v.name || '').toLowerCase();
+      const vl = (v.lang || '').toLowerCase();
+      return (
+        vn.includes('hemant') ||
+        vn.includes('rishi') ||
+        vn.includes('madhav') ||
+        vn.includes('pradeep') ||
+        vn.includes('ravi') ||
+        (vl.startsWith('hi') && (vn.includes('male') || vn.includes('online')))
+      );
+    });
+    if (maleIndianVoice) {
+      return { voice: maleIndianVoice, isDevanagariCapable: true, targetLang: maleIndianVoice.lang, pitch, rate };
     }
 
     // 2. Language-targeted match for Marathi (mr)
@@ -804,8 +799,7 @@ class AudioEngine {
   /**
    * Universal Sacred Voice Engine:
    * Calibrated for uniform resonance across Android, iOS, Windows, and Mac.
-   * - 'amitabh_bachchan' (default): Majestic deep bass-baritone (pitch 0.78, rate 0.84)
-   * - 'vedic_brahman': Traditional Sanskrit priest chanting (pitch 0.90, rate 0.88)
+   * - 'vedic_brahman' (default): Traditional Sanskrit priest chanting (pitch 0.88, rate 0.86)
    * - 'divine_melodious': Melodious divine chanting
    */
   public async speakText(text: string, lang = 'mr', _userRate?: number, onEnd?: () => void): Promise<void> {
@@ -832,8 +826,7 @@ class AudioEngine {
       if (played) return;
     }
 
-    // For Amitabh Bachchan Baritone (default) or Vedic Brahman persona:
-    // Synthesizes with calibrated baritone Web Speech API engine & 136.1 Hz Tanpura
+    // Synthesizes with calibrated Vedic Brahman Web Speech API engine & 136.1 Hz Tanpura
     // ensuring identical, deep, majestic resonance across Android, iPhone, Windows, and Mac!
     this.speakSynthesisFallback(text, lang, safeEnd);
   }
@@ -930,7 +923,7 @@ class AudioEngine {
   /**
    * Unified Sacred Chant Player:
    * First tries to play the real recorded audio file (MP3) if available.
-   * Otherwise smoothly utilizes the Amitabh Bachchan Baritone Voice with 136.1 Hz Tanpura drone!
+   * Otherwise smoothly utilizes the Vedic Brahman Voice with 136.1 Hz Tanpura drone!
    */
   public async playBrahmanChant(options: {
     text: string;
@@ -963,7 +956,7 @@ class AudioEngine {
       if (played) return;
     }
 
-    // 2. Seamlessly use Amitabh Bachchan Baritone Voice Engine
+    // 2. Seamlessly use Vedic Brahman Voice Engine
     this.speakText(text, lang, rate, handleChantEnd);
   }
 

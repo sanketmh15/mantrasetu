@@ -182,7 +182,7 @@ export function SatvikPrasadFastingGuide({ currentLang }: SatvikPrasadFastingGui
                       : 'आवाज थांबवा'
                     : currentLang === 'en'
                     ? 'Listen Recipe (Audio)'
-                    : 'कृती ऐका (अमिताभ बच्चन व्हॉइस)'}
+                    : 'कृती ऐका (पावन वाणी)'}
                 </span>
               </button>
             </div>
