@@ -285,8 +285,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 31. Lord Kalki (भगवान कल्कि)
   'kalki': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/c/cf/Kalki.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/c/cf/Kalki.jpg',
+    primary: './images/kalki.jpg',
+    fallback: 'https://eduindex.org/wp-content/uploads/2021/07/kalki-the-last-avatar-of-vishnu.jpg',
     icon: '🐎',
     beejMantra: 'ॐ कल्किने नमः',
     tilak: '⚪ श्वेत तिलक'
@@ -294,8 +294,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 32. Lord Brahma (ब्रह्मदेव)
   'brahma': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Brahma_on_hamsa.jpg/960px-Brahma_on_hamsa.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Brahma.jpg',
+    primary: './images/brahma.jpg',
+    fallback: 'https://vedapuran.wordpress.com/wp-content/uploads/2013/02/brahma.jpg',
     icon: '📜',
     beejMantra: 'ॐ ब्रह्मणे नमः',
     tilak: '🟡 अष्टगंध'
@@ -303,8 +303,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 33. Mata Gayatri (माता गायत्री)
   'gayatri': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Gayatri.jpg/960px-Gayatri.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Gayatri.jpg',
+    primary: './images/gayatri.jpg',
+    fallback: 'https://i.pinimg.com/736x/7f/9b/0a/7f9b0acda79e955afb8cd05700f130f4.jpg',
     icon: '🪷',
     beejMantra: 'ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि',
     tilak: '🔴 कुंकुम तिलक'
@@ -330,8 +330,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 36. Mata Annapurna (अन्नपूर्णा देवी)
   'annapurna': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/2/20/Annapurna.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/2/20/Annapurna.jpg',
+    primary: './images/annapurna.jpg',
+    fallback: 'https://lookaside.instagram.com/seo/google_widget/crawler/?media_id=3910063084181848426',
     icon: '🍚',
     beejMantra: 'ॐ अन्नपूर्णायै नमः',
     tilak: '🔴 कुंकुम'
@@ -339,8 +339,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 37. Lord Jagannath (जगन्नाथ पुरी)
   'jagannath': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/d/d7/Jagannath_Lithograph_by_Raja_Ravi_Varma_1900s.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/d/d7/Jagannath_Lithograph_by_Raja_Ravi_Varma_1900s.jpg',
+    primary: './images/jagannath.jpg',
+    fallback: 'https://pujaabhishekam-crm.s3.ap-south-1.amazonaws.com/blogs/lord-jagannath.jpg',
     icon: '☸️',
     beejMantra: 'जय जगन्नाथ स्वामी नयन पथगामी भवतु मे',
     tilak: '⚪ कस्तुरी तिलक'
