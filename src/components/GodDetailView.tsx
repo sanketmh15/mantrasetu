@@ -4,6 +4,7 @@ import { GodEntry, fiftyGodsList } from '../data/fiftyGods';
 import { JapaCounter } from './JapaCounter';
 import { DeityImage } from './DeityImage';
 import { PlaceImage } from './PlaceImage';
+import { DeityAartiSection } from './DeityAartiSection';
 import { audioEngine } from '../utils/audioSynth';
 import { getDeityBrahmanAudioUrl, getVoicePersona, setVoicePersona, VoicePersona } from '../utils/brahmanAudioService';
 import {
@@ -118,6 +119,18 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
         </button>
 
         <div className="flex items-center gap-2">
+          {/* Quick Jump to Aarti */}
+          <button
+            onClick={() => {
+              const el = document.getElementById('deity-aarti-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border bg-gradient-to-r from-amber-500/10 to-saffron-500/10 dark:from-amber-950/40 dark:to-stone-900 border-amber-400/40 text-amber-800 dark:text-amber-300 hover:scale-102 transition-all shadow-sm"
+          >
+            <span>🪔</span>
+            <span>{currentLang === 'en' ? 'Aarti & Video' : currentLang === 'hi' ? 'पावन आरती' : 'आरती व व्हिडिओ'}</span>
+          </button>
+
           {/* Audio Greeting Toggle */}
           <button
             onClick={handleToggleAudio}
@@ -426,6 +439,13 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
         </div>
 
       </div>
+
+      {/* 4. Authentic Deity Aarti Section with Real YouTube & Full Lyrics (मराठी & हिंदी) */}
+      <DeityAartiSection
+        godId={god.id}
+        currentLang={currentLang}
+        deityName={god.name[currentLang]}
+      />
 
       {/* Fullscreen HD Darshan Modal */}
       {isZoomOpen && (
