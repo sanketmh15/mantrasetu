@@ -10,6 +10,18 @@ interface DeityImageProps {
   deityName?: string;
 }
 
+export function resolveDeityImageUrl(url?: string): string {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+    return trimmed;
+  }
+  const cleanPath = trimmed.replace(/^\.?\//, '');
+  const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) || './';
+  const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  return `${normalizedBase}${cleanPath}`;
+}
+
 export const DeityImage: React.FC<DeityImageProps> = ({
   src,
   fallbackSrc,
@@ -19,13 +31,14 @@ export const DeityImage: React.FC<DeityImageProps> = ({
   deityName,
 }) => {
   const regMeta = DEITY_IMAGE_REGISTRY[deityId];
-  const [currentSrc, setCurrentSrc] = useState<string>(src || regMeta?.primary || '');
+  const initialResolved = resolveDeityImageUrl(src || regMeta?.primary || '');
+  const [currentSrc, setCurrentSrc] = useState<string>(initialResolved);
   const [attemptIndex, setAttemptIndex] = useState<number>(0);
   const [hasError, setHasError] = useState<boolean>(false);
 
   useEffect(() => {
     // When props change, reset attempt index and src
-    const initial = src || regMeta?.primary || '';
+    const initial = resolveDeityImageUrl(src || regMeta?.primary || '');
     setCurrentSrc(initial);
     setAttemptIndex(0);
     setHasError(false);
@@ -34,10 +47,11 @@ export const DeityImage: React.FC<DeityImageProps> = ({
   const handleError = () => {
     if (attemptIndex === 0) {
       // First fallback: use explicit fallbackSrc or primary registry image
-      const nextSrc = (fallbackSrc && fallbackSrc !== currentSrc)
+      const candidateRaw = (fallbackSrc && resolveDeityImageUrl(fallbackSrc) !== currentSrc)
         ? fallbackSrc
-        : (regMeta?.primary && regMeta.primary !== currentSrc ? regMeta.primary : regMeta?.fallback);
+        : (regMeta?.primary && resolveDeityImageUrl(regMeta.primary) !== currentSrc ? regMeta.primary : regMeta?.fallback);
       
+      const nextSrc = resolveDeityImageUrl(candidateRaw || '');
       if (nextSrc && nextSrc !== currentSrc) {
         setAttemptIndex(1);
         setCurrentSrc(nextSrc);
@@ -45,11 +59,14 @@ export const DeityImage: React.FC<DeityImageProps> = ({
       }
     }
 
-    if (attemptIndex === 1 && regMeta?.fallback && regMeta.fallback !== currentSrc) {
+    if (attemptIndex === 1 && regMeta?.fallback) {
       // Second fallback: use secondary registry image
-      setAttemptIndex(2);
-      setCurrentSrc(regMeta.fallback);
-      return;
+      const nextSrc = resolveDeityImageUrl(regMeta.fallback);
+      if (nextSrc && nextSrc !== currentSrc) {
+        setAttemptIndex(2);
+        setCurrentSrc(nextSrc);
+        return;
+      }
     }
 
     // If all web images fail, show the sacred consecrated altarpiece

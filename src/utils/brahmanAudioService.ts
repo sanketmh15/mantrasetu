@@ -6,12 +6,12 @@ const VOICE_PERSONA_KEY = 'mantrasetu_voice_persona';
  * Voice persona configuration
  * Defaults to Amitabh Bachchan's legendary baritone voice across all mantras & greetings.
  */
-export type VoicePersona = 'amitabh_bachchan' | 'vedic_brahman';
+export type VoicePersona = 'amitabh_bachchan' | 'vedic_brahman' | 'divine_melodious';
 
 export function getVoicePersona(): VoicePersona {
   try {
     const p = localStorage.getItem(VOICE_PERSONA_KEY);
-    if (p === 'amitabh_bachchan' || p === 'vedic_brahman') return p;
+    if (p === 'amitabh_bachchan' || p === 'vedic_brahman' || p === 'divine_melodious') return p;
     return 'amitabh_bachchan'; // DEFAULT TO AMITABH BACHCHAN
   } catch {
     return 'amitabh_bachchan';
@@ -34,11 +34,11 @@ export function setVoicePersona(persona: VoicePersona): void {
 
 // Default audio map seeded with authentic recordings (e.g. Amitabh Bachchan's Sukhkarta Dukhharta Aarti)
 const DEFAULT_AUDIO_MAP: Record<string, string> = {
-  'sukhkarta-dukhharta': '/audio/chants/sukhkarta-dukhharta.mp3',
-  'amitabh-sample': '/audio/amitabh_sample.mp3',
-  '1': '/audio/chants/sukhkarta-dukhharta.mp3',
-  'ganesha': '/audio/chants/sukhkarta-dukhharta.mp3',
-  'ganesha-aarti': '/audio/chants/sukhkarta-dukhharta.mp3',
+  'sukhkarta-dukhharta': './audio/chants/sukhkarta-dukhharta.mp3',
+  'amitabh-sample': './audio/amitabh_sample.mp3',
+  '1': './audio/chants/sukhkarta-dukhharta.mp3',
+  'ganesha': './audio/chants/sukhkarta-dukhharta.mp3',
+  'ganesha-aarti': './audio/chants/sukhkarta-dukhharta.mp3',
 };
 
 export function getCustomAudioMap(): Record<string, string> {

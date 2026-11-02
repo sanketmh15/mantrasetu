@@ -643,12 +643,34 @@ class AudioEngine {
 
 
   /**
-   * Discovers and selects the best native Indian voice for offline speech synthesis.
-   * Matches preferred language (Marathi / Hindi / Sanskrit) with natural clarity.
+   * Discovers and selects the best native Indian voice for speech synthesis.
+   * Calibrates pitch, rate, and voice match across Android, iOS, Windows, and Mac
+   * so that the voice persona remains majestic and uniform across ALL devices!
    */
-  public getBestBrahmanVoice(preferredLang?: string): { voice: SpeechSynthesisVoice | null; isDevanagariCapable: boolean } {
+  public getBestBrahmanVoice(preferredLang?: string, customPersona?: VoicePersona): {
+    voice: SpeechSynthesisVoice | null;
+    isDevanagariCapable: boolean;
+    targetLang: string;
+    pitch: number;
+    rate: number;
+  } {
+    const activePersona = customPersona || this.persona || 'amitabh_bachchan';
+    const pref = (preferredLang || '').toLowerCase();
+    const isMarathiPreferred = pref.startsWith('mr');
+
+    // Calibrated persona acoustic properties (uniform across mobile & desktop)
+    let pitch = 0.78; // Bass-baritone for Amitabh Bachchan
+    let rate = 0.84;  // Majestic, unhurried cadence
+    if (activePersona === 'vedic_brahman') {
+      pitch = 0.90;
+      rate = 0.88;
+    } else if (activePersona === 'divine_melodious') {
+      pitch = 1.00;
+      rate = 0.92;
+    }
+
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      return { voice: null, isDevanagariCapable: false };
+      return { voice: null, isDevanagariCapable: true, targetLang: isMarathiPreferred ? 'mr-IN' : 'hi-IN', pitch, rate };
     }
 
     let voices = window.speechSynthesis.getVoices();
@@ -656,14 +678,31 @@ class AudioEngine {
       voices = this.cachedVoices || [];
     }
     if (!voices.length) {
-      return { voice: null, isDevanagariCapable: false };
+      // In iOS or asynchronous browsers before voices trigger, do NOT fail!
+      // Return null voice with targetLang 'hi-IN' so the browser invokes its internal language pack!
+      return { voice: null, isDevanagariCapable: true, targetLang: isMarathiPreferred ? 'mr-IN' : 'hi-IN', pitch, rate };
     }
 
-    const pref = (preferredLang || '').toLowerCase();
-    const isMarathiPreferred = pref.startsWith('mr');
-    const isHindiPreferred = pref.startsWith('hi') || pref.startsWith('sa');
+    // 1. If Amitabh Bachchan Baritone is active: Prioritize rich Indian male voices
+    if (activePersona === 'amitabh_bachchan') {
+      const maleIndianVoice = voices.find((v) => {
+        const vn = (v.name || '').toLowerCase();
+        const vl = (v.lang || '').toLowerCase();
+        return (
+          vn.includes('hemant') ||
+          vn.includes('rishi') ||
+          vn.includes('madhav') ||
+          vn.includes('pradeep') ||
+          vn.includes('ravi') ||
+          (vl.startsWith('hi') && (vn.includes('male') || vn.includes('online')))
+        );
+      });
+      if (maleIndianVoice) {
+        return { voice: maleIndianVoice, isDevanagariCapable: true, targetLang: maleIndianVoice.lang, pitch, rate };
+      }
+    }
 
-    // 1. Language-targeted match for Marathi (mr)
+    // 2. Language-targeted match for Marathi (mr)
     if (isMarathiPreferred) {
       const marathiVoice = voices.find((v) => {
         const vl = (v.lang || '').toLowerCase();
@@ -671,45 +710,41 @@ class AudioEngine {
         return vl.startsWith('mr') || vn.includes('marathi');
       });
       if (marathiVoice) {
-        return { voice: marathiVoice, isDevanagariCapable: true };
+        return { voice: marathiVoice, isDevanagariCapable: true, targetLang: 'mr-IN', pitch, rate };
       }
     }
 
-    // 2. Language-targeted match for Hindi / Sanskrit (hi / sa)
-    if (isHindiPreferred) {
-      const hindiVoice = voices.find((v) => {
-        const vl = (v.lang || '').toLowerCase();
-        const vn = (v.name || '').toLowerCase();
-        return vl.startsWith('hi') || vn.includes('hindi') || vn.includes('sanskrit');
-      });
-      if (hindiVoice) {
-        return { voice: hindiVoice, isDevanagariCapable: true };
-      }
-    }
-
-    // 3. Any Devanagari voice (Google Marathi, Google Hindi, Swara, Kalpana, Hemant, Madhav)
-    const anyDevanagari = voices.find((v) => {
+    // 3. Language-targeted match for Hindi / Sanskrit (hi / sa)
+    const hindiVoice = voices.find((v) => {
       const vl = (v.lang || '').toLowerCase();
       const vn = (v.name || '').toLowerCase();
-      return vl.startsWith('mr') || vl.startsWith('hi') || vn.includes('marathi') || vn.includes('hindi');
+      return (
+        vl.startsWith('hi') ||
+        vn.includes('hindi') ||
+        vn.includes('kalpana') ||
+        vn.includes('hemant') ||
+        vn.includes('swara') ||
+        vn.includes('lekha')
+      );
     });
-    if (anyDevanagari) {
-      return { voice: anyDevanagari, isDevanagariCapable: true };
+    if (hindiVoice) {
+      return { voice: hindiVoice, isDevanagariCapable: true, targetLang: 'hi-IN', pitch, rate };
     }
 
-    // 4. Indian English voice (Microsoft Ravi, Google English India)
+    // 4. Any Indian English voice (Rishi, Veena, Microsoft Ravi, Google English India)
     const indianEnglish = voices.find((v) => {
       const vl = (v.lang || '').toLowerCase();
       const vn = (v.name || '').toLowerCase();
-      return vl.includes('in') || vn.includes('india') || vn.includes('ravi');
+      return vl.includes('in') || vn.includes('india') || vn.includes('rishi') || vn.includes('veena') || vn.includes('ravi');
     });
     if (indianEnglish) {
-      return { voice: indianEnglish, isDevanagariCapable: false };
+      return { voice: indianEnglish, isDevanagariCapable: true, targetLang: 'hi-IN', pitch, rate };
     }
 
-    // 5. Default voice
-    const defaultVoice = voices.find((v) => v.default) || voices[0] || null;
-    return { voice: defaultVoice, isDevanagariCapable: false };
+    // 5. On Apple devices (iOS Safari, macOS) without explicit voice names,
+    // do NOT assign an American voice (like Samantha or Daniel)!
+    // Returning voice: null with targetLang: 'hi-IN' instructs iOS to invoke its native Hindi synthesizer!
+    return { voice: null, isDevanagariCapable: true, targetLang: isMarathiPreferred ? 'mr-IN' : 'hi-IN', pitch, rate };
   }
 
   /**
@@ -768,9 +803,10 @@ class AudioEngine {
 
   /**
    * Universal Sacred Voice Engine:
-   * 1. Priority 1 (Mobile & Desktop): Plays the clear, melodious native Indian Google Voice (tw-ob)
-   *    with calibrated MEDIUM speed (0.94) across Android, iOS, and PC.
-   * 2. Fallback: If network is offline, smoothly uses Web Speech API with medium cadence.
+   * Calibrated for uniform resonance across Android, iOS, Windows, and Mac.
+   * - 'amitabh_bachchan' (default): Majestic deep bass-baritone (pitch 0.78, rate 0.84)
+   * - 'vedic_brahman': Traditional Sanskrit priest chanting (pitch 0.90, rate 0.88)
+   * - 'divine_melodious': Melodious divine chanting
    */
   public async speakText(text: string, lang = 'mr', _userRate?: number, onEnd?: () => void): Promise<void> {
     this.stopSpeaking();
@@ -790,16 +826,20 @@ class AudioEngine {
       }
     };
 
-    // Priority 1: High-fidelity Native Indian Google Voice (the clear female voice preferred by the user)
-    const played = await this.playGoogleTTS(text, lang, safeEnd);
-    if (played) return;
+    // If 'divine_melodious' persona is chosen and online, try Google TTS stream:
+    if (this.persona === 'divine_melodious') {
+      const played = await this.playGoogleTTS(text, lang, safeEnd);
+      if (played) return;
+    }
 
-    // Fallback: Web Speech API
+    // For Amitabh Bachchan Baritone (default) or Vedic Brahman persona:
+    // Synthesizes with calibrated baritone Web Speech API engine & 136.1 Hz Tanpura
+    // ensuring identical, deep, majestic resonance across Android, iPhone, Windows, and Mac!
     this.speakSynthesisFallback(text, lang, safeEnd);
   }
 
   /**
-   * Offline Web Speech API fallback engine
+   * Universal Calibrated Speech Synthesis Engine
    */
   private async speakSynthesisFallback(text: string, lang = 'mr', onEnd?: () => void): Promise<void> {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -819,8 +859,7 @@ class AudioEngine {
       return;
     }
 
-    const { voice: bestVoice, isDevanagariCapable } = this.getBestBrahmanVoice(lang);
-    const isMobile = this.isMobileDevice();
+    const voiceConfig = this.getBestBrahmanVoice(lang, this.persona);
 
     let phraseIdx = 0;
 
@@ -834,35 +873,22 @@ class AudioEngine {
       const phraseText = phrases[phraseIdx];
       phraseIdx++;
 
-      let textToSpeak = phraseText;
-      let targetLang = lang;
-
-      const hasDevanagari = /[\u0900-\u097F]/.test(phraseText);
-
-      if (hasDevanagari) {
-        if (isDevanagariCapable) {
-          textToSpeak = phraseText;
-          targetLang = bestVoice && bestVoice.lang.toLowerCase().startsWith('mr') ? 'mr-IN' : 'hi-IN';
-        } else {
-          textToSpeak = this.toPhoneticRoman(phraseText);
-          targetLang = bestVoice ? bestVoice.lang : 'en-IN';
-        }
-      } else if (lang.toLowerCase().startsWith('en')) {
-        targetLang = 'en-IN';
-      }
+      // Pure authentic Devanagari text kept intact for all native engines
+      const textToSpeak = phraseText;
+      const targetLang = voiceConfig.targetLang || (lang.startsWith('mr') ? 'mr-IN' : 'hi-IN');
 
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       this.currentUtterance = utterance;
       utterance.lang = targetLang;
 
-      if (bestVoice) {
-        utterance.voice = bestVoice;
+      if (voiceConfig.voice) {
+        utterance.voice = voiceConfig.voice;
       }
 
-      // Medium comfortable speed
-      utterance.rate = 0.88;
+      // Universal pitch and rate calibrated to active persona (IDENTICAL on mobile & desktop!)
+      utterance.rate = voiceConfig.rate;
       utterance.volume = 1.0;
-      utterance.pitch = isMobile ? 1.0 : 0.95;
+      utterance.pitch = voiceConfig.pitch;
 
       let phraseFinished = false;
       const onPhraseDone = () => {

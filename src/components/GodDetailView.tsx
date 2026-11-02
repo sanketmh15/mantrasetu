@@ -5,7 +5,7 @@ import { JapaCounter } from './JapaCounter';
 import { DeityImage } from './DeityImage';
 import { PlaceImage } from './PlaceImage';
 import { audioEngine } from '../utils/audioSynth';
-import { getDeityBrahmanAudioUrl } from '../utils/brahmanAudioService';
+import { getDeityBrahmanAudioUrl, getVoicePersona, setVoicePersona, VoicePersona } from '../utils/brahmanAudioService';
 import {
   Sparkles,
   ArrowLeft,
@@ -16,7 +16,9 @@ import {
   Heart,
   Compass,
   Share2,
-  CheckCircle2
+  CheckCircle2,
+  Maximize2,
+  X
 } from 'lucide-react';
 
 interface GodDetailViewProps {
@@ -34,6 +36,8 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
   const god: GodEntry = fiftyGodsList.find((g) => g.id === godId) || fiftyGodsList[0];
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
+  const [selectedPersona, setSelectedPersona] = useState<VoicePersona>(() => getVoicePersona());
 
   // Stop any active audio when switching deity views
   useEffect(() => {
@@ -42,6 +46,16 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
     };
   }, [god.id]);
 
+  const handleSelectPersona = (p: VoicePersona) => {
+    setSelectedPersona(p);
+    setVoicePersona(p);
+    audioEngine.setPersona(p);
+    if (isPlayingAudio) {
+      audioEngine.stopSpeaking();
+      setIsPlayingAudio(false);
+    }
+  };
+
   const handleToggleAudio = () => {
     if (isPlayingAudio) {
       audioEngine.stopSpeaking();
@@ -49,6 +63,7 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
     } else {
       setIsPlayingAudio(true);
       audioEngine.playTempleBell();
+      audioEngine.setPersona(selectedPersona);
       const audioUrl = getDeityBrahmanAudioUrl(god.id);
       audioEngine.playBrahmanChant({
         text: god.audioGreetingText,
@@ -131,19 +146,42 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
       <div className="relative rounded-3xl overflow-hidden mb-10 shadow-2xl border border-stone-200 dark:border-stone-800">
         <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[420px] bg-stone-950">
           
-          {/* Left: Devotional Image of Deity */}
-          <div className="lg:col-span-5 relative h-72 lg:h-auto overflow-hidden">
-            <DeityImage
+          {/* Left: Devotional Image of Deity (Responsive, Uncut from Crown to Lotus Feet) */}
+          <div className="lg:col-span-5 relative h-[380px] xs:h-[420px] sm:h-[460px] lg:h-auto min-h-[380px] lg:min-h-[500px] overflow-hidden flex items-center justify-center bg-stone-950">
+            {/* Ambient Blurred Aura Background */}
+            <img
               src={god.image}
-              deityId={god.id}
-              deityName={god.name[currentLang]}
-              alt={god.name[currentLang]}
-              className="w-full h-full object-cover object-center"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 pointer-events-none"
             />
-            <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-stone-950/90 via-transparent to-transparent" />
-            
+
+            {/* Consecrated Uncut Sacred Portrait */}
+            <div
+              onClick={() => setIsZoomOpen(true)}
+              className="relative z-10 w-full h-full flex items-center justify-center p-3 sm:p-5 cursor-zoom-in group"
+              title={currentLang === 'en' ? 'Click for Fullscreen Sacred Darshan' : 'मोठ्या आकारात संपूर्ण दर्शनासाठी क्लिक करा'}
+            >
+              <DeityImage
+                src={god.image}
+                deityId={god.id}
+                deityName={god.name[currentLang]}
+                alt={god.name[currentLang]}
+                className="max-h-full max-w-full w-auto h-full object-contain object-top rounded-2xl shadow-2xl ring-2 ring-amber-500/40 group-hover:scale-[1.02] transition-transform duration-300"
+              />
+
+              {/* Fullscreen Darshan Pill for Mobile */}
+              <button
+                onClick={(e) => { e.stopPropagation(); setIsZoomOpen(true); }}
+                className="absolute bottom-4 right-4 z-20 px-2.5 py-1 rounded-xl bg-stone-950/80 backdrop-blur-md border border-amber-500/50 text-amber-300 text-[11px] font-bold flex items-center gap-1.5 shadow-lg hover:bg-amber-600 hover:text-white transition-all"
+              >
+                <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
+                <span>{currentLang === 'en' ? 'Full Darshan' : 'संपूर्ण दर्शन'}</span>
+              </button>
+            </div>
+
             {/* Serial Badge Overlay */}
-            <div className="absolute top-4 left-4 px-3 py-1 rounded-xl bg-stone-950/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-xs font-black shadow-lg">
+            <div className="absolute top-4 left-4 z-20 px-3 py-1 rounded-xl bg-stone-950/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-xs font-black shadow-lg">
               Deity #{god.serialNo < 10 ? `0${god.serialNo}` : god.serialNo}
             </div>
           </div>
@@ -174,27 +212,72 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
                       "{god.welcomeGreeting[currentLang]}"
                     </p>
                     
-                    {/* Big B Voice Recitation Button */}
-                    <button
-                      onClick={handleToggleAudio}
-                      className={`mt-3 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 ${
-                        isPlayingAudio
-                          ? 'bg-red-600 hover:bg-red-700 text-white ring-2 ring-red-400 animate-pulse'
-                          : 'bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white border border-amber-300/40 shadow-amber-500/20'
-                      }`}
-                    >
-                      {isPlayingAudio ? (
-                        <>
-                          <VolumeX className="w-3.5 h-3.5" />
-                          <span>{currentLang === 'en' ? 'Stop Voice' : 'आवाज थांबवा'}</span>
-                        </>
-                      ) : (
-                        <>
-                          <Volume2 className="w-3.5 h-3.5 text-amber-200" />
-                          <span>{currentLang === 'en' ? 'Listen in Amitabh Bachchan Voice' : 'पावन अभिवादन ऐका (अमिताभ बच्चन व्हॉईस)'}</span>
-                        </>
-                      )}
-                    </button>
+                    {/* Voice Controls: Play Button & Persona Switcher */}
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={handleToggleAudio}
+                        className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 ${
+                          isPlayingAudio
+                            ? 'bg-red-600 hover:bg-red-700 text-white ring-2 ring-red-400 animate-pulse'
+                            : 'bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white border border-amber-300/40 shadow-amber-500/20'
+                        }`}
+                      >
+                        {isPlayingAudio ? (
+                          <>
+                            <VolumeX className="w-3.5 h-3.5" />
+                            <span>{currentLang === 'en' ? 'Stop Voice' : 'आवाज थांबवा'}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Volume2 className="w-3.5 h-3.5 text-amber-200" />
+                            <span>
+                              {selectedPersona === 'amitabh_bachchan'
+                                ? (currentLang === 'en' ? 'Listen (Amitabh Bachchan Voice)' : 'ऐका (अमिताभ बच्चन गंभीर वाणी)')
+                                : selectedPersona === 'vedic_brahman'
+                                ? (currentLang === 'en' ? 'Listen (Vedic Panditji)' : 'ऐका (वैदिक ब्राह्मण पंडितजी)')
+                                : (currentLang === 'en' ? 'Listen (Melodious Voice)' : 'ऐका (मधुर अमृतवाणी)')}
+                            </span>
+                          </>
+                        )}
+                      </button>
+
+                      {/* Quick Voice Persona Switcher */}
+                      <div className="inline-flex items-center rounded-xl bg-stone-900/90 border border-amber-500/30 p-0.5 text-[11px]">
+                        <button
+                          onClick={() => handleSelectPersona('amitabh_bachchan')}
+                          className={`px-2 py-1 rounded-lg font-semibold transition-all ${
+                            selectedPersona === 'amitabh_bachchan'
+                              ? 'bg-amber-600 text-white shadow-sm'
+                              : 'text-stone-300 hover:text-white'
+                          }`}
+                          title="Amitabh Bachchan Baritone"
+                        >
+                          🎙️ बच्चन
+                        </button>
+                        <button
+                          onClick={() => handleSelectPersona('vedic_brahman')}
+                          className={`px-2 py-1 rounded-lg font-semibold transition-all ${
+                            selectedPersona === 'vedic_brahman'
+                              ? 'bg-amber-600 text-white shadow-sm'
+                              : 'text-stone-300 hover:text-white'
+                          }`}
+                          title="Vedic Panditji Chanting"
+                        >
+                          🪷 पंडितजी
+                        </button>
+                        <button
+                          onClick={() => handleSelectPersona('divine_melodious')}
+                          className={`px-2 py-1 rounded-lg font-semibold transition-all ${
+                            selectedPersona === 'divine_melodious'
+                              ? 'bg-amber-600 text-white shadow-sm'
+                              : 'text-stone-300 hover:text-white'
+                          }`}
+                          title="Melodious Voice"
+                        >
+                          🔔 मधुर
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -343,6 +426,52 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
         </div>
 
       </div>
+
+      {/* Fullscreen HD Darshan Modal */}
+      {isZoomOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-3 sm:p-6 animate-fadeIn"
+          onClick={() => setIsZoomOpen(false)}
+        >
+          <div
+            className="relative max-w-2xl w-full max-h-[92vh] flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top Close Bar */}
+            <div className="w-full flex items-center justify-between pb-3 text-white border-b border-stone-800 mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🪷</span>
+                <span className="font-bold font-serifDev text-base sm:text-lg text-amber-300">
+                  {god.name[currentLang]} — {currentLang === 'en' ? 'Sacred Consecrated Darshan' : 'साक्षात पावन दर्शन'}
+                </span>
+              </div>
+              <button
+                onClick={() => setIsZoomOpen(false)}
+                className="p-2 rounded-full bg-stone-800 text-stone-300 hover:text-white hover:bg-stone-700 transition-colors shadow-lg"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Central Uncut HD Murti */}
+            <div className="relative w-full max-h-[75vh] flex items-center justify-center overflow-hidden rounded-2xl bg-stone-950 p-2 shadow-2xl border border-amber-500/40">
+              <DeityImage
+                src={god.image}
+                deityId={god.id}
+                deityName={god.name[currentLang]}
+                alt={god.name[currentLang]}
+                className="max-h-[72vh] max-w-full w-auto h-auto object-contain object-center rounded-xl shadow-2xl"
+              />
+            </div>
+
+            {/* Bottom Footer Info */}
+            <div className="mt-3 text-center text-xs text-amber-200/90 font-serifDev">
+              <span>॥ {god.mantra} ॥</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

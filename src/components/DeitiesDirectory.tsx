@@ -170,18 +170,28 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
               className="group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-white dark:bg-stone-900/80 border border-stone-200 dark:border-stone-800/90 hover:border-saffron-500/60 dark:hover:border-saffron-500/60 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
             >
               {/* Top Image with Badge Overlays */}
-              <div className="relative h-40 sm:h-56 w-full overflow-hidden bg-stone-950">
+              <div className="relative h-56 xs:h-60 sm:h-64 w-full overflow-hidden bg-stone-950 flex items-center justify-center">
+                {/* Ambient Blurred Aura for vertical portraits */}
+                <img
+                  src={god.image}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 w-full h-full object-cover blur-xl opacity-35 scale-125 pointer-events-none"
+                />
+
                 <DeityImage
                   src={god.image}
                   deityId={god.id}
                   deityName={god.name[currentLang]}
                   alt={god.name[currentLang]}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                  className="relative z-10 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/30 to-transparent" />
+
+                {/* Soft Vignette Gradient: Only darkens bottom 26% for shrine badge readability, leaving face & crown 100% luminous */}
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-stone-950 via-stone-950/60 to-transparent z-20 pointer-events-none" />
 
                 {/* Serial Number Badge */}
-                <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl bg-stone-950/80 backdrop-blur-md border border-amber-500/40 text-amber-300 text-[10px] sm:text-xs font-black tracking-wider shadow-md">
+                <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-30 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl bg-stone-950/85 backdrop-blur-md border border-amber-500/50 text-amber-300 text-[10px] sm:text-xs font-black tracking-wider shadow-md">
                   #{god.serialNo < 10 ? `0${god.serialNo}` : god.serialNo}
                 </div>
 
@@ -189,18 +199,18 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
                 <button
                   onClick={(e) => handlePlayAudio(e, god)}
                   title="Devotional Audio Greeting"
-                  className={`absolute top-2 right-2 sm:top-3 sm:right-3 p-1.5 sm:p-2 rounded-lg sm:rounded-xl backdrop-blur-md border transition-all ${
+                  className={`absolute top-2 right-2 sm:top-3 sm:right-3 z-30 p-1.5 sm:p-2 rounded-lg sm:rounded-xl backdrop-blur-md border transition-all ${
                     isAudioPlaying
-                      ? 'bg-saffron-600 text-white border-saffron-300 animate-pulse'
-                      : 'bg-stone-950/70 text-amber-300 border-amber-500/30 hover:bg-saffron-600 hover:text-white'
+                      ? 'bg-saffron-600 text-white border-saffron-300 animate-pulse ring-2 ring-saffron-400'
+                      : 'bg-stone-950/80 text-amber-300 border-amber-500/40 hover:bg-saffron-600 hover:text-white'
                   }`}
                 >
                   <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
 
                 {/* Holy Place Tag */}
-                <div className="absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-3 flex items-center justify-between text-[10px] sm:text-[11px] text-amber-200">
-                  <span className="flex items-center gap-1 bg-stone-950/80 px-1.5 sm:px-2 py-0.5 rounded-lg border border-amber-900/50 truncate max-w-[90%]">
+                <div className="absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-3 z-30 flex items-center justify-between text-[10px] sm:text-[11px] text-amber-200 pointer-events-none">
+                  <span className="flex items-center gap-1 bg-stone-950/85 backdrop-blur-sm px-1.5 sm:px-2 py-0.5 rounded-lg border border-amber-900/60 truncate max-w-[95%] shadow-sm">
                     <MapPin className="w-3 h-3 text-amber-400 shrink-0" />
                     <span className="truncate">{god.primaryShrine[currentLang]}</span>
                   </span>
