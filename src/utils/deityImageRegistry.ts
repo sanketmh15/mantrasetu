@@ -204,8 +204,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 22. Lord Surya (भगवान सूर्यनारायण)
   'surya': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/5/57/Surya_poster.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Sculpture_of_Surya%2C_the_Sun_God.jpg',
+    primary: './images/surya.jpg',
+    fallback: 'https://i.pinimg.com/236x/5b/55/f3/5b55f327a6c9f2ac3d0b173f28805121.jpg',
     icon: '☀️',
     beejMantra: 'ॐ सूर्याय नमः',
     tilak: '🔴 रक्तचंदन'
@@ -213,8 +213,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 23. Lord Chandra (भगवान चंद्रदेव)
   'chandra': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Chandra_deva.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Chandra_deva.jpg',
+    primary: './images/chandra.jpg',
+    fallback: 'https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=1005468301625819',
     icon: '🌙',
     beejMantra: 'ॐ सोमाय नमः',
     tilak: '⚪ श्वेतचंदन'
@@ -222,8 +222,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 24. Lord Kalabhairava (कालभैरव)
   'kalabhairava': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Bhairav.JPG/960px-Bhairav.JPG',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/6/68/Bhairav.JPG',
+    primary: './images/kalabhairava.jpg',
+    fallback: 'https://i.pinimg.com/736x/6a/3d/6c/6a3d6c3d2720320e00b3679fc213349a.jpg',
     icon: '🐕',
     beejMantra: 'ॐ कालभैरवाय नमः',
     tilak: '🔴 काजळ व भस्म'
@@ -231,8 +231,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 25. Lord Narasimha (भगवान नृसिंह)
   'narasimha': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/5/51/Narasimha_by_Raja_Ravi_Varma.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/5/51/Narasimha_by_Raja_Ravi_Varma.jpg',
+    primary: './images/narasimha.jpg',
+    fallback: 'https://cdn.shopaccino.com/rudraksha-center/products/narsimha-puja-290708_l.jpg',
     icon: '🦁',
     beejMantra: 'ॐ उग्रं वीरं महाविष्णुं ज्वलन्तं सर्वतोमुखम्',
     tilak: '🟡 ऊर्ध्वपुंड्र'
@@ -240,8 +240,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 26. Lord Varaha (भगवान वराह)
   'varaha': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Varaha.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Varaha.jpg',
+    primary: './images/varaha.jpg',
+    fallback: 'https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=2774800422815452',
     icon: '🐗',
     beejMantra: 'ॐ वराहाय नमः',
     tilak: '🟡 पीतचंदन'
