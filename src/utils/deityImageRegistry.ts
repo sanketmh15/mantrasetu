@@ -33,8 +33,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 3. Mata Parvati (माता पार्वती)
   'parvati': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Gajagauri-2.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Shiva_Parvati_Ganesha.jpg',
+    primary: './images/parvati.jpg',
+    fallback: 'https://glorioushinduism.com/wp-content/uploads/2017/04/parvati.jpg',
     icon: '🌺',
     beejMantra: 'ॐ उमाये नमः',
     tilak: '🔴 सिंदूर'
@@ -42,8 +42,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 4. Lord Vishnu (वैकुंठपती नारायण)
   'vishnu': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Vishnu.jpg/960px-Vishnu.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Vishnu.jpg',
+    primary: './images/vishnu.jpg',
+    fallback: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Vishnu.jpg/960px-Vishnu.jpg',
     icon: '🪷',
     beejMantra: 'ॐ नमो नारायणाय',
     tilak: '🟡 ऊर्ध्वपुंड्र'
@@ -51,8 +51,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 5. Mata Lakshmi (महालक्ष्मी देवी)
   'lakshmi': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Goddess_Lakshmi_by_Raja_Ravi_Varma.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Lakshmi.jpg',
+    primary: './images/lakshmi.jpg',
+    fallback: 'https://static.toiimg.com/thumb/msid-103859903,width-400,resizemode-4/103859903.jpg',
     icon: '🪙',
     beejMantra: 'ॐ श्रीं महालक्ष्म्यै नमः',
     tilak: '🔴 कुंकुम'
@@ -60,8 +60,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 6. Mata Saraswati (विद्यादात्री सरस्वती)
   'saraswati': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Saraswati_by_Raja_Ravi_Varma.jpg/960px-Saraswati_by_Raja_Ravi_Varma.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/1/12/Saraswati.jpg',
+    primary: './images/saraswati.jpg',
+    fallback: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Saraswati_by_Raja_Ravi_Varma.jpg/960px-Saraswati_by_Raja_Ravi_Varma.jpg',
     icon: '🪕',
     beejMantra: 'ॐ ऐं सरस्वत्यै नमः',
     tilak: '⚪ श्वेतचंदन'
@@ -69,8 +69,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 7. Lord Hanuman (संकटमोचन हनुमान)
   'hanuman': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/0/01/HANUMAN_LIFTS_HILL.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Hanuman.jpg',
+    primary: './images/hanuman.jpg',
+    fallback: 'https://upload.wikimedia.org/wikipedia/commons/0/01/HANUMAN_LIFTS_HILL.jpg',
     icon: '🚩',
     beejMantra: 'ॐ हं हनुमते नमः',
     tilak: '🟠 शेंदूर'
@@ -78,8 +78,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 8. Lord Rama (मर्यादा पुरुषोत्तम प्रभू श्री रामचंद्र)
   'rama': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Ramapanchayan%2C_Raja_Ravi_Varma_%28Lithograph%29.jpg/960px-Ramapanchayan%2C_Raja_Ravi_Varma_%28Lithograph%29.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Rama.jpg',
+    primary: './images/rama.jpg',
+    fallback: 'https://miro.medium.com/1*WU2rlrgINSAxLWyyoJ770w.jpeg',
     icon: '🏹',
     beejMantra: 'श्री राम जय राम जय जय राम',
     tilak: '🟡 रामानंदी'
@@ -87,8 +87,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 9. Mata Sita (माता जानकी)
   'sita': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Sita_in_Ashoka_Vatika.jpg/960px-Sita_in_Ashoka_Vatika.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/d/d2/Sita_in_Ashoka_Vatika.jpg',
+    primary: './images/sita.jpg',
+    fallback: 'https://ritsin.com/wp-content/uploads/2016/01/lord-hanuman-ji-with-maa-sita-1.jpg',
     icon: '🌸',
     beejMantra: 'ॐ श्री सीतायै नमः',
     tilak: '🔴 सौभाग्य तिलक'
@@ -96,8 +96,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 10. Lord Krishna (द्वारकाधीश श्रीकृष्ण)
   'krishna': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2f/Krishna_playing_the_flute.jpg/960px-Krishna_playing_the_flute.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Krishna_playing_the_flute.jpg',
+    primary: './images/krishna.jpg',
+    fallback: 'https://www.templepurohit.com/wp-content/uploads/2015/07/Lord-Krishna-Hindu-Gods-and-Deities-Iconography-e1437897218326.jpg',
     icon: '🪈',
     beejMantra: 'ॐ नमो भगवते वासुदेवाय',
     tilak: '🟡 गोपीचंदन'

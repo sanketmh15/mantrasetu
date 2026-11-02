@@ -65,7 +65,7 @@ const pujaDeities: PujaDeity[] = [
     id: 'hanuman',
     name: { en: 'Shri Hanuman', hi: 'श्री हनुमान', mr: 'संकटमोचन श्री हनुमान' },
     symbol: '🚩',
-    image: DEITY_IMAGE_REGISTRY['hanuman']?.primary || 'https://upload.wikimedia.org/wikipedia/commons/0/01/HANUMAN_LIFTS_HILL.jpg',
+    image: DEITY_IMAGE_REGISTRY['hanuman']?.primary || './images/hanuman.jpg',
     mantra: 'ॐ हं हनुमते नमः • जय जय जय हनुमान गोसाईं कृपा करहु गुरुदेव की नाईं',
     flowerType: { en: 'Rui Leaves & Sindoor Mala', hi: 'आक (रुई) के पत्ते व सिंदूर', mr: 'रुईच्या पानांची माळ व शेंदूर' },
     flowerEmoji: '🏵️',

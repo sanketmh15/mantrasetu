@@ -39,7 +39,7 @@ export const FESTIVAL_IMAGE_REGISTRY: Record<string, FestivalImageInfo> = {
     placeImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/Tulja_Bhavani_Mandir%2C_Tuljapur.jpg'
   },
   'diwali_lakshmi_pujan': {
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Goddess_Lakshmi_by_Raja_Ravi_Varma.jpg',
+    imageUrl: './images/lakshmi.jpg',
     festivalPlaceName: {
       en: 'Mahalaxmi Temple, Kolhapur & Ayodhya Deepotsav',
       hi: 'महालक्ष्मी मंदिर, कोल्हापुर एवं अयोध्या दीपोत्सव धाम',
@@ -57,7 +57,7 @@ export const FESTIVAL_IMAGE_REGISTRY: Record<string, FestivalImageInfo> = {
     placeImageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Pandurang_vitthal_Temple%2C_Pandharpur%2C_Maharashtra_04.jpg/960px-Pandurang_vitthal_Temple%2C_Pandharpur%2C_Maharashtra_04.jpg'
   },
   'gudi_padwa': {
-    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Ramapanchayan%2C_Raja_Ravi_Varma_%28Lithograph%29.jpg/960px-Ramapanchayan%2C_Raja_Ravi_Varma_%28Lithograph%29.jpg',
+    imageUrl: './images/rama.jpg',
     festivalPlaceName: {
       en: 'Traditional Maharashtrian Shobha Yatras (Girgaon, Thane, Pune)',
       hi: 'पारंपरिक महाराष्ट्रीय नववर्ष शोभायात्रा (ठाणे, गिरगांव, पुणे)',
@@ -75,7 +75,7 @@ export const FESTIVAL_IMAGE_REGISTRY: Record<string, FestivalImageInfo> = {
     placeImageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Ramkund_Nashik.jpg/960px-Ramkund_Nashik.jpg'
   },
   'ram_navami': {
-    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Ramapanchayan%2C_Raja_Ravi_Varma_%28Lithograph%29.jpg/960px-Ramapanchayan%2C_Raja_Ravi_Varma_%28Lithograph%29.jpg',
+    imageUrl: './images/rama.jpg',
     festivalPlaceName: {
       en: 'Ayodhya Ram Janmabhoomi & Kalaram Mandir, Nashik',
       hi: 'अयोध्या राम जन्मभूमि एवं कालाराम मंदिर, पंचवटी नाशिक',
@@ -84,7 +84,7 @@ export const FESTIVAL_IMAGE_REGISTRY: Record<string, FestivalImageInfo> = {
     placeImageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Ayodhya_Ram_Mandir_Inauguration_Day_Picture.jpg/960px-Ayodhya_Ram_Mandir_Inauguration_Day_Picture.jpg'
   },
   'hanuman_jayanti': {
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/01/HANUMAN_LIFTS_HILL.jpg',
+    imageUrl: './images/hanuman.jpg',
     festivalPlaceName: {
       en: 'Anjaneri Mountain (Birthplace, Nashik) & Salangpur Hanuman',
       hi: 'अंजनेरी पर्वत (जन्मस्थान नाशिक) एवं सारंगपुर कष्टभंजन हनुमान',
@@ -93,7 +93,7 @@ export const FESTIVAL_IMAGE_REGISTRY: Record<string, FestivalImageInfo> = {
     placeImageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/Trimbakeshwar_Temple%2C_Nashik.jpg/960px-Trimbakeshwar_Temple%2C_Nashik.jpg'
   },
   'krishna_janmashtami': {
-    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2f/Krishna_playing_the_flute.jpg/960px-Krishna_playing_the_flute.jpg',
+    imageUrl: './images/krishna.jpg',
     festivalPlaceName: {
       en: 'Mathura-Vrindavan, Dwarka & Maharashtra Dahi Handi Utsav',
       hi: 'मथुरा-वृंदावन, द्वारका धाम एवं महाराष्ट्र दही हांडी उत्सव',

@@ -45,11 +45,11 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onNavigate }) => {
               <div className="absolute -inset-1.5 bg-gradient-to-r from-orange-600 via-amber-500 to-red-600 rounded-3xl blur-md opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse" />
               <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border-2 border-orange-400/60 shadow-2xl bg-stone-900 flex flex-col items-center justify-center">
                 <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/0/01/HANUMAN_LIFTS_HILL.jpg"
+                  src="./images/hanuman.jpg"
                   alt="Lord Hanuman - Sankat Mochan"
                   className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/commons/4/46/Hanuman.jpg';
+                    (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/commons/0/01/HANUMAN_LIFTS_HILL.jpg';
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent pointer-events-none" />
