@@ -15,8 +15,8 @@ export interface DeityImageMeta {
 export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
   // 1. Lord Ganesha (विघ्नहर्ता गणेश)
   'ganesha': {
-    primary: 'https://i.pinimg.com/736x/9d/2f/5e/9d2f5ed8c0c5908f43fe6e9371fc9ae2.jpg',
-    fallback: './images/ganesha.jpg',
+    primary: './images/ganesha.jpg',
+    fallback: 'https://i.pinimg.com/736x/9d/2f/5e/9d2f5ed8c0c5908f43fe6e9371fc9ae2.jpg',
     icon: '🐘',
     beejMantra: 'ॐ गं गणपतये नमः',
     tilak: '🔴 रक्तचंदन'
@@ -159,8 +159,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 17. Lord Dattatreya (श्री गुरुदेव दत्त)
   'dattatreya': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Dattatrey%2C_Ravi_Varma_Press.jpg',
-    fallback: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Dattatrey%2C_Ravi_Varma_Press.jpg/960px-Dattatrey%2C_Ravi_Varma_Press.jpg',
+    primary: './images/dattatreya.jpg',
+    fallback: 'https://www.templepurohit.com/wp-content/uploads/2016/03/Lord-Dattatreya-Story-Significance-16-Avatars-of-Lord-Datattreya-1.jpg',
     icon: '📿',
     beejMantra: 'दिगंबरा दिगंबरा श्रीपाद वल्लभ दिगंबरा',
     tilak: '⚪ भस्म त्रिपुंड्र'
@@ -168,8 +168,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 18. Shri Swami Samarth (अक्कलकोट स्वामी समर्थ महाराज)
   'swami-samarth': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Shri_Swami_Samarth.jpg/960px-Shri_Swami_Samarth.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Shri_Swami_Samarth.jpg',
+    primary: './images/swami_samarth.jpg',
+    fallback: 'https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=736306065269013',
     icon: '🌸',
     beejMantra: 'भिऊ नकोस मी तुझ्या पाठीशी आहे',
     tilak: '🟡 चंदन अष्टगंध'
@@ -177,8 +177,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 19. Shri Sai Baba (शिर्डी साई बाबा)
   'sai-baba': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Shirdi_Sai_Baba.jpg/960px-Shirdi_Sai_Baba.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Shirdi_Sai_Baba.jpg',
+    primary: './images/sai_baba.jpg',
+    fallback: 'https://i.pinimg.com/736x/63/6e/35/636e3572cc843cbe7ad99ca781bd4f99.jpg',
     icon: '✨',
     beejMantra: 'सबका मालिक एक • ॐ साई राम',
     tilak: '⚪ उदी तिलक'
@@ -186,8 +186,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 20. Sant Gajanan Maharaj (शेगाव गजानन महाराज)
   'gajanan-maharaj': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/3/3b/Gajanan_maharaj.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/2/27/Gajanan_maharaj_Temple_image.jpg',
+    primary: './images/gajanan_maharaj.jpg',
+    fallback: 'https://i.pinimg.com/736x/73/5c/af/735cafcc65d3997070dfd75b4581b678.jpg',
     icon: '🌾',
     beejMantra: 'गण गण गणात बोते',
     tilak: '🟡 चंदन टिळा'
@@ -195,8 +195,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 21. Lord Kartikeya (मुरुगन / कार्तिकेय)
   'kartikeya': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/Murugan_by_Raja_Ravi_Varma.jpg/960px-Murugan_by_Raja_Ravi_Varma.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/8/81/Murugan_by_Raja_Ravi_Varma.jpg',
+    primary: './images/kartikeya.jpg',
+    fallback: 'https://i.pinimg.com/736x/36/00/13/360013a4121f8e817bba7e67817569df.jpg',
     icon: '🦚',
     beejMantra: 'ॐ षण्मुखाय नमः',
     tilak: '🔴 सिंदूर'
