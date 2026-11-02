@@ -48,7 +48,7 @@ export const FESTIVAL_IMAGE_REGISTRY: Record<string, FestivalImageInfo> = {
     placeImageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Mahalaxmi_Temple%2C_Kolhapur.jpg/960px-Mahalaxmi_Temple%2C_Kolhapur.jpg'
   },
   'ashadhi_ekadashi': {
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Vithoba.JPG',
+    imageUrl: './images/vitthal.jpg',
     festivalPlaceName: {
       en: 'Pandharpur Chandrabhaga Snan & Sant Tukaram / Dnyaneshwar Wari',
       hi: 'पंढरपुर चंद्रभागा स्नान एवं संत ज्ञानेश्वर-तुकाराम पालखी वारी',

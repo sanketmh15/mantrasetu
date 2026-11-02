@@ -54,7 +54,7 @@ const pujaDeities: PujaDeity[] = [
     id: 'vitthal',
     name: { en: 'Lord Vitthal-Rakhumai', hi: 'श्री विट्ठल-रुक्मिणी', mr: 'विठू माऊली व रखुमाई' },
     symbol: '🪷',
-    image: DEITY_IMAGE_REGISTRY['vitthal']?.primary || 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Vithoba.JPG',
+    image: DEITY_IMAGE_REGISTRY['vitthal']?.primary || './images/vitthal.jpg',
     mantra: 'राम कृष्ण हरी • पुंडलिक वरदे हरी विठ्ठल श्री ज्ञानदेव तुकाराम',
     flowerType: { en: 'Sacred Tulsi Mala (तुळशी माळ)', hi: 'तुलसी माला एवं मंजिरी', mr: 'सुगंधी तुळशी माळ व मंजिरी' },
     flowerEmoji: '🌿',

@@ -62,11 +62,11 @@ export const VitthalHero: React.FC<VitthalHeroProps> = ({ currentLang, onNavigat
             <div className="absolute -inset-1.5 bg-gradient-to-r from-yellow-500 via-amber-400 to-orange-500 rounded-3xl blur-md opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse" />
             <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border-2 border-amber-400/60 shadow-2xl bg-stone-900 flex flex-col items-center justify-center">
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/1/1c/Vithoba.JPG"
+                src="./images/vitthal.jpg"
                 alt="Lord Vitthal Pandharpur - Vithu Mauli"
                 className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/commons/1/11/Vitthal_-_Rakhumai.jpg';
+                  (e.target as HTMLImageElement).src = 'https://i.pinimg.com/736x/87/4f/62/874f62224f1264639a06c2f1aa115b07.jpg';
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent pointer-events-none" />

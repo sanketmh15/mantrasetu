@@ -105,8 +105,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 11. Radha Rani (श्री राधा राणी)
   'radha': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/be/Radha_in_the_Moonlight.jpg/960px-Radha_in_the_Moonlight.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/9/98/Radha.jpg',
+    primary: './images/radha.jpg',
+    fallback: 'https://images.pexels.com/photos/39161487/pexels-photo-39161487/free-photo-of-exquisite-radha-rani-statue-adorned-with-floral-garland.jpeg?cs=tinysrgb&dpr=1&w=500',
     icon: '🪷',
     beejMantra: 'ॐ राधे राधे',
     tilak: '🟡 गोपीचंदन'
@@ -114,8 +114,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 12. Lord Vitthal (पंढरपूर विठुराया)
   'vitthal': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Vithoba.JPG',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Vitthal_-_Rakhumai.jpg',
+    primary: './images/vitthal.jpg',
+    fallback: 'https://i.pinimg.com/736x/87/4f/62/874f62224f1264639a06c2f1aa115b07.jpg',
     icon: '🪷',
     beejMantra: 'ॐ नमो भगवते विठ्ठलाय',
     tilak: '⚪ गोपीचंदन व तुळस'
@@ -132,8 +132,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 14. Lord Khandoba (जेजुरी मल्हारी मार्तंड)
   'khandoba': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Khandoba.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/8/88/Khandoba_Poona_painting_1800-05.jpg',
+    primary: './images/khandoba.jpg',
+    fallback: 'https://i.pinimg.com/736x/7e/94/5f/7e945fff229bc5b38f77fa29d69c73d2.jpg',
     icon: '⚔️',
     beejMantra: 'येळकोट येळकोट जय मल्हार',
     tilak: '🟡 भंडारा'
