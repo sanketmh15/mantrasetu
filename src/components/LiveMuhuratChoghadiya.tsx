@@ -200,18 +200,18 @@ export function LiveMuhuratChoghadiya({ currentLang }: LiveMuhuratChoghadiyaProp
           {/* Time Remaining Ring / Meter */}
           <div className="flex items-center gap-4 bg-white/80 dark:bg-stone-800/80 backdrop-blur-md px-5 py-4 rounded-2xl border border-amber-200 dark:border-stone-700 shadow-md">
             <div className="text-center">
-              <div className="text-xs text-stone-500 dark:text-stone-400 font-medium">
+              <div className="text-xs text-stone-600 dark:text-stone-200 font-medium">
                 {currentLang === 'en' ? 'Time Remaining' : currentLang === 'hi' ? 'शेष समय' : 'उर्वरित वेळ'}
               </div>
               <div className="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 font-mono">
                 {currentChoghadiya.timeLeftMinutes}{' '}
-                <span className="text-xs font-normal text-stone-600 dark:text-stone-300">
+                <span className="text-xs font-normal text-stone-600 dark:text-stone-200">
                   {currentLang === 'en' ? 'mins' : 'मिनिटे'}
                 </span>
               </div>
             </div>
             <div className="w-24">
-              <div className="text-[10px] text-right text-stone-500 dark:text-stone-400 mb-1">
+              <div className="text-[10px] text-right text-stone-600 dark:text-stone-200 mb-1 font-semibold">
                 {currentChoghadiya.progressPercent}%
               </div>
               <div className="w-full bg-stone-200 dark:bg-stone-700 h-2.5 rounded-full overflow-hidden">
@@ -308,7 +308,7 @@ export function LiveMuhuratChoghadiya({ currentLang }: LiveMuhuratChoghadiyaProp
           </div>
           <div className="grid grid-cols-2 gap-3 mt-3">
             <div className="p-3 rounded-xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700">
-              <span className="text-[11px] text-stone-500 dark:text-stone-400 block font-semibold">
+              <span className="text-[11px] text-stone-600 dark:text-stone-200 block font-semibold">
                 {currentLang === 'en' ? 'Yamaganda' : 'यमगंड काळ'}
               </span>
               <span className="text-sm font-bold text-stone-900 dark:text-white font-mono">
@@ -316,7 +316,7 @@ export function LiveMuhuratChoghadiya({ currentLang }: LiveMuhuratChoghadiyaProp
               </span>
             </div>
             <div className="p-3 rounded-xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700">
-              <span className="text-[11px] text-stone-500 dark:text-stone-400 block font-semibold">
+              <span className="text-[11px] text-stone-600 dark:text-stone-200 block font-semibold">
                 {currentLang === 'en' ? 'Gulika Kaal' : 'गुलिक काळ'}
               </span>
               <span className="text-sm font-bold text-stone-900 dark:text-white font-mono">
@@ -542,7 +542,7 @@ export function LiveMuhuratChoghadiya({ currentLang }: LiveMuhuratChoghadiyaProp
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+                      <p className="text-xs text-stone-600 dark:text-stone-200 mt-0.5">
                         {slot.significance[currentLang]}
                       </p>
                     </div>
@@ -550,18 +550,18 @@ export function LiveMuhuratChoghadiya({ currentLang }: LiveMuhuratChoghadiyaProp
 
                   <div className="flex items-center gap-6 justify-between md:justify-end text-xs sm:text-sm">
                     <div className="text-right">
-                      <span className="text-stone-500 dark:text-stone-400 text-[11px] block">
+                      <span className="text-stone-600 dark:text-stone-300 text-[11px] block font-medium">
                         {currentLang === 'en' ? 'Time Window' : 'वेळ'}
                       </span>
-                      <span className="font-mono font-bold text-stone-800 dark:text-stone-200">
+                      <span className="font-mono font-bold text-stone-800 dark:text-stone-100">
                         {timeRange}
                       </span>
                     </div>
                     <div className="text-right min-w-[90px]">
-                      <span className="text-stone-500 dark:text-stone-400 text-[11px] block">
+                      <span className="text-stone-600 dark:text-stone-300 text-[11px] block font-medium">
                         {currentLang === 'en' ? 'Planet' : 'स्वामी'}
                       </span>
-                      <span className="font-semibold text-amber-700 dark:text-amber-400 text-xs">
+                      <span className="font-semibold text-amber-700 dark:text-amber-300 text-xs">
                         {slot.rulingPlanet.split('/')[0]}
                       </span>
                     </div>

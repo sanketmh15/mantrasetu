@@ -301,7 +301,7 @@ export function NearbyTemplesGuide({ currentLang }: NearbyTemplesGuideProps) {
                 </div>
 
                 {/* Timings row */}
-                <div className="flex items-center gap-1.5 text-xs text-stone-600 dark:text-stone-400 mb-2 font-mono">
+                <div className="flex items-center gap-1.5 text-xs text-stone-700 dark:text-stone-300 mb-2 font-mono font-medium">
                   <Clock className="w-3.5 h-3.5 text-amber-500" />
                   <span>{temple.timings}</span>
                 </div>
@@ -316,7 +316,7 @@ export function NearbyTemplesGuide({ currentLang }: NearbyTemplesGuideProps) {
 
                 {/* Dress code & phone if available */}
                 {temple.dressCode && (
-                  <div className="mt-2 text-[11px] text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
+                  <div className="mt-2 text-[11px] text-stone-600 dark:text-stone-300 flex items-center gap-1.5 font-medium">
                     <Shield className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                     <span>{temple.dressCode[currentLang]}</span>
                   </div>
@@ -341,7 +341,7 @@ export function NearbyTemplesGuide({ currentLang }: NearbyTemplesGuideProps) {
                 </div>
 
                 {/* Facilities Badges (Wheelchair, Parking, Bhakta Niwas) */}
-                <div className="mt-4 flex items-center gap-3 text-stone-500 dark:text-stone-400 text-xs">
+                <div className="mt-4 flex items-center gap-3 text-stone-600 dark:text-stone-300 text-xs font-medium">
                   {temple.seniorWheelchair && (
                     <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400" title="Senior Citizen Wheelchair Ramp Available">
                       <Accessibility className="w-4 h-4" />

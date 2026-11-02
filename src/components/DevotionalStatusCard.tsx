@@ -434,7 +434,7 @@ export function DevotionalStatusCard({ currentLang }: DevotionalStatusCardProps)
                 </div>
               </div>
             </div>
-            <p className="text-center text-xs text-stone-500 mt-3">
+            <p className="text-center text-xs text-stone-600 dark:text-stone-300 font-medium mt-3">
               📱 ९:१६ व्हॉट्सॲप स्टेटस व इन्स्टाग्राम स्टोरीसाठी अचूक प्रमाण
             </p>
           </div>

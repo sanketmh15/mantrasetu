@@ -170,13 +170,13 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
               className="group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-white dark:bg-stone-900/80 border border-stone-200 dark:border-stone-800/90 hover:border-saffron-500/60 dark:hover:border-saffron-500/60 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
             >
               {/* Top Image with Badge Overlays */}
-              <div className="relative h-56 xs:h-60 sm:h-64 w-full overflow-hidden bg-stone-950 flex items-center justify-center">
+              <div className="relative h-60 xs:h-64 sm:h-72 w-full overflow-hidden bg-stone-950 flex items-center justify-center p-2">
                 {/* Ambient Blurred Aura for vertical portraits */}
                 <img
                   src={god.image}
                   alt=""
                   aria-hidden="true"
-                  className="absolute inset-0 w-full h-full object-cover blur-xl opacity-35 scale-125 pointer-events-none"
+                  className="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-125 pointer-events-none"
                 />
 
                 <DeityImage
@@ -184,7 +184,7 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
                   deityId={god.id}
                   deityName={god.name[currentLang]}
                   alt={god.name[currentLang]}
-                  className="relative z-10 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  className="relative z-10 max-h-full max-w-full w-auto h-full object-contain object-center drop-shadow-xl group-hover:scale-105 transition-transform duration-500"
                 />
 
                 {/* Soft Vignette Gradient: Only darkens bottom 26% for shrine badge readability, leaving face & crown 100% luminous */}
@@ -238,15 +238,15 @@ export const DeitiesDirectory: React.FC<DeitiesDirectoryProps> = ({
                   </div>
 
                   {/* Vahana & Weapon Quick Info */}
-                  <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] text-stone-600 dark:text-stone-400 mb-2 sm:mb-4">
+                  <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] text-stone-700 dark:text-stone-300 mb-2 sm:mb-4">
                     <div className="truncate">
-                      <span className="font-semibold text-stone-800 dark:text-stone-300">
+                      <span className="font-semibold text-stone-900 dark:text-stone-100">
                         {currentLang === 'en' ? 'Vahana: ' : 'वाहन: '}
                       </span>
                       <span className="truncate">{god.vahana[currentLang]}</span>
                     </div>
                     <div className="truncate">
-                      <span className="font-semibold text-stone-800 dark:text-stone-300">
+                      <span className="font-semibold text-stone-900 dark:text-stone-100">
                         {currentLang === 'en' ? 'Festivals: ' : 'सण: '}
                       </span>
                       <span className="truncate">{god.festivals[0]}</span>

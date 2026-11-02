@@ -229,9 +229,9 @@ class AudioEngine {
   /**
    * Native Indian Google Audio Stream (The clear, melodious voice requested by user).
    * Uses persistent shared AudioElement to guarantee 100% continuous playback on mobile (Android/iOS)
-   * with smooth chunk transitions and calibrated MEDIUM speaking speed (0.94).
+   * with smooth chunk transitions and calibrated speed for uniform sound on ALL devices.
    */
-  public playGoogleTTS(text: string, lang = 'mr', onEnd?: () => void): Promise<boolean> {
+  public playGoogleTTS(text: string, lang = 'mr', onEnd?: () => void, persona?: VoicePersona): Promise<boolean> {
     return new Promise((resolve) => {
       try {
         this.isTTSAborted = false;
@@ -247,8 +247,11 @@ class AudioEngine {
         const audio = this.getSharedAudio();
         this.currentHumanAudio = audio;
 
-        // Calibrated MEDIUM pace (0.94 rate gives relaxed, clear, melodious tempo)
-        audio.playbackRate = 0.94;
+        // Calibrated speaking pace for cross-device consistency:
+        // 0.88 for unhurried Vedic Brahman chant, 0.94 for divine melodious
+        const activePersona = persona || this.persona || 'vedic_brahman';
+        const rate = activePersona === 'vedic_brahman' ? 0.88 : 0.94;
+        audio.playbackRate = rate;
 
         const playNext = () => {
           if (this.isTTSAborted) {
@@ -270,7 +273,7 @@ class AudioEngine {
           const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${langCode}&client=tw-ob&q=${encodeURIComponent(chunkText)}`;
 
           audio.src = url;
-          audio.playbackRate = 0.94; // Medium comfortable speed
+          audio.playbackRate = rate; // Consistent across chunks
 
           audio.onended = () => {
             // Gentle natural pause between chunks (140ms)
@@ -834,14 +837,14 @@ class AudioEngine {
       }
     }
 
-    // If 'divine_melodious' persona is chosen and online, try Google TTS stream:
-    if (this.persona === 'divine_melodious') {
-      const played = await this.playGoogleTTS(text, lang, safeEnd);
-      if (played) return;
-    }
+    // Cross-Device High-Fidelity Audio Stream:
+    // Ensures that the exact same clear, authentic Indian voice plays consistently
+    // across ALL devices (Android, iPhone, iPad, Windows, and Mac)!
+    const played = await this.playGoogleTTS(text, lang, safeEnd, this.persona);
+    if (played) return;
 
     // Synthesizes with calibrated Vedic Brahman Web Speech API engine & 136.1 Hz Tanpura
-    // ensuring identical, deep, majestic resonance across Android, iPhone, Windows, and Mac!
+    // when offline or as local device fallback:
     this.speakSynthesisFallback(text, lang, safeEnd);
   }
 

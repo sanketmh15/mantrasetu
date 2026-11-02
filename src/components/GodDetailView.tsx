@@ -298,16 +298,16 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
                 <p className="text-lg sm:text-xl font-bold font-serifDev text-white">
                   {god.mantra}
                 </p>
-                <p className="text-xs text-stone-400 italic mt-1">
+                <p className="text-xs text-amber-200/90 italic mt-1 font-sans">
                   {god.mantraRoman}
                 </p>
               </div>
             </div>
 
             {/* Quick Metadata: Primary Shrine & District */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 border-t border-stone-800 text-xs text-stone-300">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 border-t border-stone-800 text-xs text-stone-200">
               <div>
-                <span className="text-stone-400 block text-[10px] uppercase font-bold">
+                <span className="text-amber-300/90 block text-[10px] uppercase font-bold tracking-wider">
                   {currentLang === 'en' ? 'Primary Shrine' : 'प्रमुख तीर्थ'}
                 </span>
                 <span className="font-semibold text-amber-200 truncate block">
@@ -315,18 +315,18 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
                 </span>
               </div>
               <div>
-                <span className="text-stone-400 block text-[10px] uppercase font-bold">
+                <span className="text-amber-300/90 block text-[10px] uppercase font-bold tracking-wider">
                   {currentLang === 'en' ? 'Divine Vehicle' : 'वाहन'}
                 </span>
-                <span className="font-semibold text-stone-200">
+                <span className="font-semibold text-white">
                   {god.vahana[currentLang]}
                 </span>
               </div>
               <div className="col-span-2 sm:col-span-1">
-                <span className="text-stone-400 block text-[10px] uppercase font-bold">
+                <span className="text-amber-300/90 block text-[10px] uppercase font-bold tracking-wider">
                   {currentLang === 'en' ? 'Weapons & Symbols' : 'शस्त्र व प्रतीके'}
                 </span>
-                <span className="font-semibold text-stone-200 truncate block">
+                <span className="font-semibold text-white truncate block">
                   {god.weaponOrSymbols[currentLang]}
                 </span>
               </div>

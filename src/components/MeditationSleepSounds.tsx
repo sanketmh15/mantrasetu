@@ -486,7 +486,7 @@ export function MeditationSleepSounds({ currentLang }: MeditationSleepSoundsProp
                         {preset.name[currentLang]}
                       </span>
                     </div>
-                    <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2">
+                    <p className="text-xs text-stone-600 dark:text-stone-300 line-clamp-2">
                       {preset.desc[currentLang]}
                     </p>
                   </button>
@@ -506,7 +506,7 @@ export function MeditationSleepSounds({ currentLang }: MeditationSleepSoundsProp
                     : 'स्लीप टाइमर (६० सेकंद हळुवार फेड-आउट)'}
                 </span>
               </span>
-              <span className="text-xs text-stone-500 dark:text-stone-400">
+              <span className="text-xs text-stone-600 dark:text-stone-200 font-medium">
                 {timerMinutes ? `${timerMinutes} min` : 'Continuous (अखंड)'}
               </span>
             </div>
@@ -550,7 +550,7 @@ export function MeditationSleepSounds({ currentLang }: MeditationSleepSoundsProp
               <h3 className="text-xl font-bold font-serifDev text-stone-900 dark:text-white">
                 {currentLang === 'en' ? 'Mindful Breathing' : 'शांत श्वासोच्छ्वास ध्यान'}
               </h3>
-              <p className="text-xs text-stone-600 dark:text-stone-400 mt-1 max-w-xs mx-auto">
+              <p className="text-xs text-stone-600 dark:text-stone-300 mt-1 max-w-xs mx-auto">
                 {currentLang === 'en'
                   ? 'Follow the sacred breathing ring to naturally lower your heart rate and calm your nervous system.'
                   : 'स्क्रीनवरील रिंगच्या तालावर श्वास घ्या, रोखून धरा व हळूच सोडा. मन एकाग्र होईल.'}

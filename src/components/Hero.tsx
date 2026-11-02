@@ -68,7 +68,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onNavigate }) => {
           <p className="mt-3 text-base sm:text-xl text-saffron-300/90 font-medium font-devanagari">
             {hanumanData.title[currentLang]}
           </p>
-          <p className="mt-2 text-xs sm:text-sm text-stone-400 max-w-2xl mx-auto">
+          <p className="mt-2 text-xs sm:text-sm text-stone-200 max-w-2xl mx-auto">
             {hanumanData.tagline[currentLang]}
           </p>
 
@@ -117,7 +117,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onNavigate }) => {
                 {currentLang === 'en' ? 'Nishkama Seva' : currentLang === 'hi' ? 'निष्काम सेवा' : 'निष्काम सेवा'}
               </h3>
             </div>
-            <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
               {currentLang === 'en'
                 ? 'Infinite power completely free from personal ego. Hanuman teaches that true strength is dedicated to the upliftment of all beings.'
                 : currentLang === 'hi'
@@ -135,7 +135,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onNavigate }) => {
                 {currentLang === 'en' ? 'Intellect & Grammar' : currentLang === 'hi' ? 'बुद्धिमतां वरिष्ठम्' : 'बुद्धिमंतांत श्रेष्ठ'}
               </h3>
             </div>
-            <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
               {currentLang === 'en'
                 ? 'Master of nine schools of grammar (Nava-Vyakarana-Pandita). He represents sharp mental focus, eloquence, and calm discernment.'
                 : currentLang === 'hi'
@@ -153,7 +153,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onNavigate }) => {
                 {currentLang === 'en' ? 'Authentic Tradition' : currentLang === 'hi' ? 'प्रामाणिक परम्परा' : 'प्रामाणिक परंपरा'}
               </h3>
             </div>
-            <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
               {currentLang === 'en'
                 ? 'Rooted in Valmiki Ramayana, Ramcharitmanas, and Samarth Ramdas Swami\'s teachings—free from commercial superstitions.'
                 : currentLang === 'hi'
@@ -167,10 +167,10 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onNavigate }) => {
         <div className="mt-8 p-4 sm:p-5 rounded-2xl bg-stone-950 border border-stone-800/80">
           <div className="flex items-center justify-between cursor-pointer" onClick={() => setShowAllNames(!showAllNames)}>
             <div>
-              <h4 className="text-sm font-semibold text-stone-200">
+              <h4 className="text-sm font-semibold text-stone-100">
                 {currentLang === 'en' ? 'The 12 Sacred Names of Lord Hanuman' : currentLang === 'hi' ? 'श्री हनुमान जी के १२ पावन नाम' : 'श्री मारुतीरायांची १२ पवित्र नावे'}
               </h4>
-              <p className="text-xs text-stone-400">
+              <p className="text-xs text-stone-300 font-medium">
                 {currentLang === 'en' ? 'Traditional names recited for courage and clarity before any undertaking' : currentLang === 'hi' ? 'संकल्प और निर्भयता हेतु परम्परागत द्वादश नाम' : 'धैर्य आणि आत्मविश्वासासाठी नित्य उच्चारली जाणारी १२ नावे'}
               </p>
             </div>
@@ -186,9 +186,9 @@ export const Hero: React.FC<HeroProps> = ({ currentLang, onNavigate }) => {
                 <div key={idx} className="p-2.5 rounded-xl bg-stone-900/60 border border-stone-800">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-saffron-300 text-sm">{item.name}</span>
-                    <span className="text-[10px] text-stone-500 font-mono">{item.roman}</span>
+                    <span className="text-[10px] text-stone-400 font-mono">{item.roman}</span>
                   </div>
-                  <p className="text-xs text-stone-400 mt-1 leading-snug">
+                  <p className="text-xs text-stone-300 mt-1 leading-snug">
                     {item.meaning[currentLang]}
                   </p>
                 </div>

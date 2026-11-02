@@ -379,29 +379,29 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
       {/* 2. Key Metrics Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-4 rounded-2xl bg-gradient-to-b from-[#1c1815] to-[#12100e] border border-stone-800 text-center shadow-md">
-          <span className="text-[11px] text-stone-400 block font-medium">{currentLang === 'en' ? 'Total Route Distance' : 'एकूण पायी अंतर'}</span>
+          <span className="text-[11px] text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Total Route Distance' : 'एकूण पायी अंतर'}</span>
           <p className="text-xl sm:text-2xl font-bold text-amber-300 mt-0.5">{totalKm} km</p>
-          <span className="text-[11px] text-stone-400">{activeRoute.length} {currentLang === 'en' ? 'Palkhi Halts' : 'पावन मुक्काम'}</span>
+          <span className="text-[11px] text-stone-300 font-medium">{activeRoute.length} {currentLang === 'en' ? 'Palkhi Halts' : 'पावन मुक्काम'}</span>
         </div>
 
         <div className="p-4 rounded-2xl bg-gradient-to-b from-[#1c1815] to-[#12100e] border border-stone-800 text-center shadow-md">
-          <span className="text-[11px] text-stone-400 block font-medium">{currentLang === 'en' ? 'Pilgrim Count' : 'वारकरी भाविक'}</span>
+          <span className="text-[11px] text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Pilgrim Count' : 'वारकरी भाविक'}</span>
           <p className="text-xl sm:text-2xl font-bold text-saffron-400 mt-0.5">१५,००,०००+</p>
-          <span className="text-[11px] text-stone-400">{currentLang === 'en' ? 'Varkari Devotees' : 'श्रद्धाळू माऊली'}</span>
+          <span className="text-[11px] text-stone-300 font-medium">{currentLang === 'en' ? 'Varkari Devotees' : 'श्रद्धाळू माऊली'}</span>
         </div>
 
         <div className="p-4 rounded-2xl bg-gradient-to-b from-[#1c1815] to-[#12100e] border border-stone-800 text-center shadow-md">
-          <span className="text-[11px] text-stone-400 block font-medium">{currentLang === 'en' ? 'Tradition Age' : 'परंपरा वय'}</span>
+          <span className="text-[11px] text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Tradition Age' : 'परंपरा वय'}</span>
           <p className="text-xl sm:text-2xl font-bold text-yellow-400 mt-0.5">८००+ वर्षे</p>
-          <span className="text-[11px] text-stone-400">{currentLang === 'en' ? 'Since 13th Century' : '१३ व्या शतकापासून'}</span>
+          <span className="text-[11px] text-stone-300 font-medium">{currentLang === 'en' ? 'Since 13th Century' : '१३ व्या शतकापासून'}</span>
         </div>
 
         <div className="p-4 rounded-2xl bg-gradient-to-b from-[#1c1815] to-[#12100e] border border-stone-800 text-center shadow-md">
-          <span className="text-[11px] text-stone-400 block font-medium">{currentLang === 'en' ? 'Ringan Ceremonies' : 'रिंगण सोहळे'}</span>
+          <span className="text-[11px] text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Ringan Ceremonies' : 'रिंगण सोहळे'}</span>
           <p className="text-xl sm:text-2xl font-bold text-emerald-400 mt-0.5">
             {activeRoute.filter((h) => h.ringanType !== 'none').length} {currentLang === 'en' ? 'Grand Ringans' : 'भव्य रिंगणे'}
           </p>
-          <span className="text-[11px] text-stone-400">गोल व उभे रिंगण</span>
+          <span className="text-[11px] text-stone-300 font-medium">गोल व उभे रिंगण</span>
         </div>
       </div>
 
@@ -412,11 +412,11 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
             <span className="font-bold text-amber-300 font-serifDev text-sm">
               {selectedHalt.location[currentLang] || selectedHalt.location.mr}
             </span>
-            <span className="text-stone-400">
+            <span className="text-amber-200/90 font-medium">
               (मुक्काम #{selectedHalt.stopNumber} / {activeRoute.length})
             </span>
           </div>
-          <div className="flex items-center gap-3 text-stone-300 font-mono text-[11px]">
+          <div className="flex items-center gap-3 text-stone-200 font-mono text-[11px]">
             <span>प्रस्थान: {currentKm} km</span>
             <span className="text-amber-500 font-bold">•</span>
             <span className="text-emerald-400 font-semibold">पंढरपूर बाकी: {remainingKm} km</span>
@@ -431,7 +431,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
           />
         </div>
 
-        <div className="flex items-center justify-between text-[11px] text-stone-400 mt-2">
+        <div className="flex items-center justify-between text-[11px] text-stone-300 font-medium mt-2">
           <span>{activeRouteId === 'dnyaneshwar' ? 'आळंदी (प्रस्थान)' : 'देहू (प्रस्थान)'} (0 km)</span>
           <span className="text-amber-300 font-bold">{progressPercent}% पंढरीची वाटचाल पूर्ण</span>
           <span>श्री क्षेत्र पंढरपूर ({totalKm} km) 🚩</span>
@@ -453,7 +453,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
               <button
                 onClick={() => setFilterType('all')}
                 className={`px-2 py-0.5 rounded-lg font-semibold transition-all ${
-                  filterType === 'all' ? 'bg-amber-500 text-black' : 'bg-stone-900 text-stone-400 hover:text-white'
+                  filterType === 'all' ? 'bg-amber-500 text-black shadow-sm' : 'bg-stone-800 border border-stone-700 text-stone-200 hover:text-white hover:bg-stone-700'
                 }`}
               >
                 सर्व
@@ -461,7 +461,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
               <button
                 onClick={() => setFilterType('ringan')}
                 className={`px-2 py-0.5 rounded-lg font-semibold transition-all ${
-                  filterType === 'ringan' ? 'bg-amber-500 text-black' : 'bg-stone-900 text-stone-400 hover:text-white'
+                  filterType === 'ringan' ? 'bg-amber-500 text-black shadow-sm' : 'bg-stone-800 border border-stone-700 text-stone-200 hover:text-white hover:bg-stone-700'
                 }`}
               >
                 🐎 रिंगण
@@ -469,7 +469,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
               <button
                 onClick={() => setFilterType('snan')}
                 className={`px-2 py-0.5 rounded-lg font-semibold transition-all ${
-                  filterType === 'snan' ? 'bg-amber-500 text-black' : 'bg-stone-900 text-stone-400 hover:text-white'
+                  filterType === 'snan' ? 'bg-amber-500 text-black shadow-sm' : 'bg-stone-800 border border-stone-700 text-stone-200 hover:text-white hover:bg-stone-700'
                 }`}
               >
                 🌊 स्नान
@@ -484,10 +484,10 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
                 <button
                   key={halt.stopNumber}
                   onClick={() => setSelectedHalt(halt)}
-                  className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center justify-between ${
+                  className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center justify-between group ${
                     isSelected
                       ? 'bg-gradient-to-r from-amber-950/90 to-saffron-950/80 border-amber-500 text-white shadow-lg ring-1 ring-amber-400/30'
-                      : 'bg-stone-900/60 border-stone-800/80 text-stone-400 hover:text-stone-200 hover:bg-stone-800/60'
+                      : 'bg-stone-900/80 border-stone-800 text-stone-300 hover:text-white hover:bg-stone-800/80'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -495,16 +495,16 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
                       className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
                         isSelected
                           ? 'bg-amber-500 text-stone-950 font-extrabold shadow-sm'
-                          : 'bg-stone-800 text-stone-400'
+                          : 'bg-stone-800 text-amber-300 font-bold border border-amber-600/30'
                       }`}
                     >
                       {halt.stopNumber}
                     </span>
                     <div>
-                      <h4 className="text-xs sm:text-sm font-bold text-stone-200">
+                      <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-amber-300 transition-colors">
                         {halt.location[currentLang] || halt.location.mr}
                       </h4>
-                      <span className="text-[11px] text-stone-400">
+                      <span className="text-[11px] text-stone-300 font-medium">
                         {halt.district} • {halt.distanceFromStartKm} km
                       </span>
                     </div>
@@ -540,7 +540,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
                 <button
                   onClick={handlePrevHalt}
                   disabled={currentIndex === 0}
-                  className="p-1.5 rounded-xl bg-stone-900 border border-stone-800 text-stone-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-stone-800"
+                  className="p-1.5 rounded-xl bg-stone-800 border border-stone-700 text-stone-100 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-stone-700 transition-colors"
                   title="Previous Halt"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -548,7 +548,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
                 <button
                   onClick={handleNextHalt}
                   disabled={currentIndex === activeRoute.length - 1}
-                  className="p-1.5 rounded-xl bg-stone-900 border border-stone-800 text-stone-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-stone-800"
+                  className="p-1.5 rounded-xl bg-stone-800 border border-stone-700 text-stone-100 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-stone-700 transition-colors"
                   title="Next Halt"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -560,12 +560,12 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
               {selectedHalt.location[currentLang] || selectedHalt.location.mr}
             </h3>
 
-            <div className="flex flex-wrap items-center gap-3 text-xs text-stone-400 mb-4 font-mono">
+            <div className="flex flex-wrap items-center gap-3 text-xs text-stone-300 mb-4 font-mono font-medium">
               <span className="px-2.5 py-0.5 rounded-lg bg-stone-900 border border-stone-800 text-amber-300 font-bold">
                 जिल्हा: {selectedHalt.district}
               </span>
               <span>•</span>
-              <span className="text-stone-300">
+              <span className="text-stone-200">
                 {selectedHalt.distanceFromStartKm} km {currentLang === 'en' ? 'from starting point' : 'प्रस्थानापासून अंतर'}
               </span>
               <span>•</span>
@@ -574,7 +574,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
               </span>
             </div>
 
-            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed mb-6 bg-stone-950/40 p-4 rounded-2xl border border-stone-800/80">
+            <p className="text-xs sm:text-sm text-stone-200 leading-relaxed mb-6 bg-stone-950/70 p-4 rounded-2xl border border-stone-800">
               {selectedHalt.significance[currentLang] || selectedHalt.significance.mr}
             </p>
 
@@ -589,7 +589,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
                       : (currentLang === 'en' ? 'Grand Ubhe Ringan (Straight Horse Sprint at Wakhari)' : 'भव्य उभे रिंगण सोहळा (वाखरी)')}
                   </span>
                 </div>
-                <p className="text-xs text-stone-200 leading-relaxed">
+                <p className="text-xs text-stone-100 leading-relaxed">
                   {selectedHalt.ringanType === 'gol'
                     ? (currentLang === 'en'
                         ? 'Lakhs of Varkaris form a massive circular boundary. Sant Dnyaneshwar\'s / Sant Tukaram\'s consecrated riderless horse (Mauli\'s Ashwa) gallops at lightning speed inside the circle. Devotees take the dust touched by its hooves to their forehead as sacred prasad.'
@@ -603,12 +603,12 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
 
             {/* Special Dive Ghat Highlight if Stop 3 in Dnyaneshwar Palkhi */}
             {activeRouteId === 'dnyaneshwar' && selectedHalt.stopNumber === 3 && (
-              <div className="p-4 rounded-2xl bg-amber-950/40 border border-amber-700/40 mb-6 text-xs text-stone-200">
+              <div className="p-4 rounded-2xl bg-amber-950/40 border border-amber-700/40 mb-6 text-xs text-stone-100">
                 <span className="font-bold text-amber-300 block mb-1 flex items-center gap-1.5">
                   <span>⛰️</span>
                   <span>दिवे घाटाची विहंगम चढण (Dive Ghat Elevation 700m):</span>
                 </span>
-                <p className="leading-relaxed text-stone-300">
+                <p className="leading-relaxed text-stone-200">
                   हडपसर ओलांडून सासवडकडे जाताना दिवे घाटातून लाखो वारकरी जेव्हा पायी चढतात, तेव्हा घाटातील वळणावळणावर भगव्या पताकांचे अथांग महासागर पाहायला मिळते. वारीतील हे सर्वात नयनरम्य दृश्य मानले जाते.
                 </p>
               </div>
@@ -620,7 +620,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
                 <Award className="w-3.5 h-3.5" />
                 <span>{currentLang === 'en' ? 'Core Varkari Values at this Halt' : 'वारकरी शिस्त व परंपरा'}</span>
               </h4>
-              <div className="space-y-1.5 text-xs text-stone-300">
+              <div className="space-y-1.5 text-xs text-stone-200 font-medium">
                 <div className="flex items-start gap-2">
                   <span className="text-saffron-400 font-bold">•</span>
                   <span>{vitthalLore.theWariTradition.varkariPrinciples[0][currentLang]}</span>
@@ -646,9 +646,9 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedHalt.location.mr + ' ' + selectedHalt.district + ' Maharashtra')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 font-semibold text-xs transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-stone-900 hover:bg-stone-800 text-stone-100 border border-stone-700 font-semibold text-xs transition-all"
               >
-                <ExternalLink className="w-4 h-4 text-stone-400" />
+                <ExternalLink className="w-4 h-4 text-amber-300" />
                 <span>{currentLang === 'en' ? 'Open in Google Maps' : 'गुगल मॅप्स लोकेशन'}</span>
               </a>
             </div>
@@ -668,7 +668,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
           <h3 className="text-2xl sm:text-3xl font-extrabold font-serifDev text-white mt-1">
             {currentLang === 'en' ? '24-Hour Daily Schedule in Wari' : 'वारीतील पावन २४ तासांचा शिस्तबद्ध दिनक्रम'}
           </h3>
-          <p className="text-xs sm:text-sm text-stone-300 mt-1">
+          <p className="text-xs sm:text-sm text-stone-200 mt-1">
             लाखो वारकऱ्यांची वाटचाल ही कोणत्याही पोलिसांशिवाय अवघ्या जगात एकमेव अशी शिस्तबद्ध व शांततापूर्ण साधना मानली जाते.
           </p>
         </div>
@@ -688,7 +688,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
               <h4 className="text-sm font-bold text-stone-100 font-serifDev">
                 {item.title[currentLang] || item.title.mr}
               </h4>
-              <p className="text-xs text-stone-400 leading-relaxed">
+              <p className="text-xs text-stone-300 leading-relaxed font-normal">
                 {item.desc[currentLang] || item.desc.mr}
               </p>
             </div>
@@ -707,7 +707,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
             <h3 className="text-xl sm:text-2xl font-bold font-serifDev text-white mt-1">
               {currentLang === 'en' ? 'Varkari Yatra Kit & Health Packing List' : 'वारीला जाताना सोबत बाळगावयाचे आवश्यक साहित्य'}
             </h3>
-            <p className="text-xs text-stone-400 mt-0.5">
+            <p className="text-xs text-stone-300 font-medium mt-0.5">
               पायी वारी सुखकर होण्यासाठी वारकरी परंपरेनुसार आवश्यक गोष्टींची तपासणी करा:
             </p>
           </div>
@@ -731,7 +731,7 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
                 className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-3 ${
                   isChecked
                     ? 'bg-amber-950/40 border-amber-600/60 text-white shadow-sm'
-                    : 'bg-stone-900/50 border-stone-800 text-stone-300 hover:bg-stone-800/60'
+                    : 'bg-stone-900/70 border-stone-800 text-stone-200 hover:bg-stone-800/80 hover:border-amber-600/40'
                 }`}
               >
                 <button
@@ -741,14 +741,14 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
                   {isChecked ? (
                     <CheckCircle2 className="w-5 h-5 text-amber-400" />
                   ) : (
-                    <Circle className="w-5 h-5 text-stone-600" />
+                    <Circle className="w-5 h-5 text-amber-400/80" />
                   )}
                 </button>
                 <div className="flex-1">
-                  <p className={`text-xs font-semibold ${isChecked ? 'line-through text-stone-400' : 'text-stone-200'}`}>
+                  <p className={`text-xs font-semibold ${isChecked ? 'line-through text-stone-400' : 'text-white'}`}>
                     {item.name[currentLang] || item.name.mr}
                   </p>
-                  <span className="text-[10px] text-amber-400/80 font-mono">
+                  <span className="text-[10px] text-amber-300 font-mono font-bold">
                     {item.category[currentLang] || item.category.mr}
                   </span>
                 </div>

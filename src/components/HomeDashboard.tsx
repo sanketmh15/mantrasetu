@@ -509,7 +509,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                 className={`px-2 py-1 rounded-lg font-bold transition-all ${
                   textSize === 'normal'
                     ? 'bg-amber-600 text-white shadow-sm'
-                    : 'text-stone-600 dark:text-stone-400'
+                    : 'text-stone-700 dark:text-stone-200 hover:text-stone-900 dark:hover:text-white'
                 }`}
                 title="Standard Text Size"
               >
@@ -520,7 +520,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                 className={`px-2 py-1 rounded-lg font-bold transition-all ${
                   textSize === 'large'
                     ? 'bg-amber-600 text-white shadow-sm'
-                    : 'text-stone-600 dark:text-stone-400'
+                    : 'text-stone-700 dark:text-stone-200 hover:text-stone-900 dark:hover:text-white'
                 }`}
                 title="Large Text for Seniors"
               >
@@ -531,7 +531,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                 className={`px-2 py-1 rounded-lg font-bold transition-all ${
                   textSize === 'xlarge'
                     ? 'bg-amber-600 text-white shadow-sm'
-                    : 'text-stone-600 dark:text-stone-400'
+                    : 'text-stone-700 dark:text-stone-200 hover:text-stone-900 dark:hover:text-white'
                 }`}
                 title="Extra Large Text for Seniors"
               >
@@ -748,7 +748,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                     {deity.name[currentLang]}
                   </h3>
 
-                  <p className="text-[11px] sm:text-xs text-stone-600 dark:text-stone-400 mt-0.5 sm:mt-1 leading-snug line-clamp-2">
+                  <p className="text-[11px] sm:text-xs text-stone-700 dark:text-stone-300 mt-0.5 sm:mt-1 leading-snug line-clamp-2">
                     {deity.tagline[currentLang]}
                   </p>
                 </div>
@@ -778,7 +778,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                   {!isSelected && (
                     <button
                       onClick={handleSelectAsIshta}
-                      className="w-full py-1 px-1.5 rounded-lg text-[10px] sm:text-[11px] font-semibold text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-stone-800/50 transition-colors flex items-center justify-center gap-1"
+                      className="w-full py-1 px-1.5 rounded-lg text-[10px] sm:text-[11px] font-semibold text-stone-700 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-200 hover:bg-amber-50 dark:hover:bg-stone-800/50 transition-colors flex items-center justify-center gap-1"
                     >
                       <span>📿</span>
                       <span className="truncate">{currentLang === 'en' ? 'Set as Active' : 'इष्टदेवता निवडा'}</span>
@@ -904,7 +904,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             ? '"वृक्षवल्ली आम्हां सोयरीं वनचरें — प्रकृति एवं प्राणिमात्र से प्रेम ही सच्ची ईश्वर भक्ति है।"'
             : '"वृक्षवल्ली आम्हां सोयरीं वनचरें, पक्षी ही सुस्वरें आळविती | आनंदाचे डोही आनंद तरंग, आनंदचि अंग आपुलिया ||"'}
         </blockquote>
-        <span className="text-xs text-stone-600 dark:text-stone-400 mt-2 block font-semibold">
+        <span className="text-xs text-stone-700 dark:text-stone-300 mt-2 block font-semibold">
           — {currentLang === 'en' ? 'Jagadguru Sant Tukaram Maharaj' : 'जगद्गुरू संत तुकाराम महाराज'}
         </span>
       </div>
