@@ -402,8 +402,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 44. Lord Agni (अग्निदेव)
   'agni': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/Agni.jpg/960px-Agni.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/b/b7/Agni.jpg',
+    primary: './images/agni.jpg',
+    fallback: 'https://vedapuran.wordpress.com/wp-content/uploads/2013/03/agni.jpg',
     icon: '🔥',
     beejMantra: 'ॐ अग्नये नमः',
     tilak: '🔴 सिंदूर भस्म'
@@ -429,8 +429,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 47. Lord Yama (यमराज - धर्मराज)
   'yama': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Yama.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Yama.jpg',
+    primary: './images/yama.jpg',
+    fallback: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Yama_on_buffalo.jpg/250px-Yama_on_buffalo.jpg',
     icon: '🐃',
     beejMantra: 'ॐ यमाय धर्मराजाय नमः',
     tilak: '🔴 रक्तचंदन'
@@ -438,8 +438,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 48. Mata Ganga (गंगा माता)
   'ganga': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Ganga_Devi_Painting.jpg/960px-Ganga_Devi_Painting.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/e/e4/Ganga_Devi_Painting.jpg',
+    primary: './images/ganga.jpg',
+    fallback: 'https://aaradhika.com/wp-content/uploads/2020/03/ganga-maata-2.jpg',
     icon: '🌊',
     beejMantra: 'ॐ गंगे च यमुने चैव गोदावरि सरस्वति',
     tilak: '⚪ श्वेतचंदन'
@@ -447,8 +447,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 49. Mata Yamuna (यमुना माता)
   'yamuna': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Yamuna.jpg/960px-Yamuna.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Yamuna.jpg',
+    primary: './images/yamuna.jpg',
+    fallback: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Yamuna.jpg/960px-Yamuna.jpg',
     icon: '🌊',
     beejMantra: 'ॐ यमुनोत्थायै नमः',
     tilak: '🟡 चंदन'
