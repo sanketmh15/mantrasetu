@@ -249,8 +249,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 27. Lord Kurma (भगवान कूर्म)
   'kurma': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Kurma.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Kurma.jpg',
+    primary: './images/kurma.jpg',
+    fallback: 'https://c8.alamy.com/comp/JH27K1/sri-vadapathira-kaliamman-hindu-temple-avatar-of-vishnu-kurma-2nd-JH27K1.jpg',
     icon: '🐢',
     beejMantra: 'ॐ कूर्माय नमः',
     tilak: '🟡 चंदन'
@@ -258,7 +258,7 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 28. Lord Matsya (भगवान मत्स्य)
   'matsya': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Matsya_avatar.jpg/960px-Matsya_avatar.jpg',
+    primary: './images/matsya.jpg',
     fallback: 'https://upload.wikimedia.org/wikipedia/commons/f/f9/Matsya_avatar.jpg',
     icon: '🐟',
     beejMantra: 'ॐ मत्स्याय नमः',
@@ -267,8 +267,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 29. Lord Vamana (भगवान वामन)
   'vamana': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/a/a8/Vamana.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/a/a8/Vamana.jpg',
+    primary: './images/vamana.jpg',
+    fallback: 'https://www.hindu-cosmos.com/uploads/9/0/7/1/90717105/published/dda787753b42eeab4311d374053feba7.jpg',
     icon: '☂️',
     beejMantra: 'ॐ वामनाय नमः',
     tilak: '🟡 गोपीचंदन'
@@ -276,8 +276,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 30. Lord Parashurama (भगवान परशुराम)
   'parashurama': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Parashurama.jpg/960px-Parashurama.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Parashurama.jpg',
+    primary: './images/parashurama.jpg',
+    fallback: 'https://cdn.shopaccino.com/rudraksha-center/products/parshuram-puja-571876_l.jpg',
     icon: '🪓',
     beejMantra: 'ॐ जामदग्न्याय नमः',
     tilak: '🔴 रक्तचंदन'
