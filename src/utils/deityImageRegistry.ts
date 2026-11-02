@@ -357,8 +357,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 39. Lord Ayyappa (सबरीमाला अय्यप्पा)
   'ayyappa': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Ayyappan.jpg/960px-Ayyappan.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Ayyappan.jpg',
+    primary: './images/ayyappa.jpg',
+    fallback: 'https://lookaside.instagram.com/seo/google_widget/crawler/?media_id=3739342946601924922',
     icon: '🏹',
     beejMantra: 'स्वामीये शरणम् अय्यप्पा',
     tilak: '🟡 चंदन भस्म'
@@ -366,8 +366,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 40. Lord Shani Dev (शनि शिंगणापूर)
   'shani-dev': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/Shani_Dev.jpg/960px-Shani_Dev.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/e/ee/Shani_Dev.jpg',
+    primary: './images/shani_dev.jpg',
+    fallback: 'http://www.shreehindutemple.net/wp-content/uploads/2014/06/shanidev-231x300.jpg',
     icon: '⚖️',
     beejMantra: 'ॐ शं शनैश्चराय नमः',
     tilak: '🔵 नील तिलक'
@@ -375,8 +375,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 41. Lord Dhanvantari (धन्वंतरी भगवान)
   'dhanvantari': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/05/Dhanvantari.jpg/960px-Dhanvantari.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Dhanvantari.jpg',
+    primary: './images/dhanvantari.jpg',
+    fallback: 'https://m.media-amazon.com/images/I/61Xzp0peTlL._AC_UF894%2C1000_QL80_.jpg',
     icon: '🍯',
     beejMantra: 'ॐ नमो भगवते महासुदर्शनाय वासुदेवाय धन्वन्तरये',
     tilak: '🟡 अष्टगंध'
@@ -384,8 +384,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 42. Lord Kubera (धनाधिपती कुबेर)
   'kubera': {
-    primary: 'https://upload.wikimedia.org/wikipedia/commons/2/29/Kubera.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/2/29/Kubera.jpg',
+    primary: './images/kubera.jpg',
+    fallback: 'https://i.pinimg.com/originals/16/21/de/1621dea318f0de94dffafc405bc2eee2.jpg',
     icon: '💰',
     beejMantra: 'ॐ यक्षाय कुबेराय वैश्रवणाय धनधान्याधिपतये नमः',
     tilak: '🟡 सुवर्ण तिलक'
@@ -393,8 +393,8 @@ export const DEITY_IMAGE_REGISTRY: Record<string, DeityImageMeta> = {
 
   // 43. Lord Indra (देवराज इंद्र)
   'indra': {
-    primary: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/Indra.jpg/960px-Indra.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/8/82/Indra.jpg',
+    primary: './images/indra.jpg',
+    fallback: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhCb5ANt1UajiSemqyi3QELYriE8pH7yEdCj1cvecMXKhJofw0lGiVuRC80hiOeZ-Sg4Z9U4bbj2F6w0LsennKRYQ2YZiiLwxvasSDJwWwnFzGjV9KbOaQwpC8Idzx-I2bpleN1DL5tsWQ/s1600/indra.jpg',
     icon: '⚡',
     beejMantra: 'ॐ इन्द्राय नमः',
     tilak: '🟡 पीतचंदन'
