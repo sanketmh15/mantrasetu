@@ -1,4 +1,5 @@
 import { getVoicePersona, VoicePersona } from './brahmanAudioService';
+import { aiVoiceover } from './aiVoiceoverService';
 
 /**
  * Web Audio API synthesizer & Sacred Vedic Voice Engine for Sanatan Amrutdhara.
@@ -819,6 +820,19 @@ class AudioEngine {
         onEnd?.();
       }
     };
+
+    // If AI voiceover (Sarvam AI Bulbul V3 / ElevenLabs) is configured, prioritize it
+    if (aiVoiceover.hasAnyKeyConfigured()) {
+      try {
+        const aiAudio = await aiVoiceover.synthesizeDevotionalAudio(text, lang);
+        if (aiAudio?.url) {
+          const played = await this.playHumanAudio(aiAudio.url, safeEnd);
+          if (played) return;
+        }
+      } catch (e) {
+        console.warn('AI voiceover fallback in speakText:', e);
+      }
+    }
 
     // If 'divine_melodious' persona is chosen and online, try Google TTS stream:
     if (this.persona === 'divine_melodious') {

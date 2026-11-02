@@ -6,6 +6,7 @@ import { DeityImage } from './DeityImage';
 import { PlaceImage } from './PlaceImage';
 import { DeityAartiSection } from './DeityAartiSection';
 import { audioEngine } from '../utils/audioSynth';
+import { aiVoiceover } from '../utils/aiVoiceoverService';
 import { getDeityBrahmanAudioUrl, getVoicePersona, setVoicePersona, VoicePersona } from '../utils/brahmanAudioService';
 import {
   Sparkles,
@@ -277,6 +278,13 @@ export const GodDetailView: React.FC<GodDetailViewProps> = ({
                           🔔 मधुर
                         </button>
                       </div>
+
+                      {aiVoiceover.hasAnyKeyConfigured() && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-[10px] font-bold text-emerald-300">
+                          <span>⚡</span>
+                          <span>{aiVoiceover.getActiveProvider() === 'elevenlabs' ? 'ElevenLabs' : 'Sarvam Bulbul V3'}</span>
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

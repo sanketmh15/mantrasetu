@@ -7,6 +7,7 @@ import {
   getCustomAudioMap,
   setCustomAudioMapping,
 } from '../utils/brahmanAudioService';
+import { aiVoiceover, AIVoiceProvider } from '../utils/aiVoiceoverService';
 import {
   Crown,
   Users,
@@ -25,7 +26,10 @@ import {
   Volume2,
   Play,
   Square,
-  Music
+  Music,
+  Key,
+  Cpu,
+  Check
 } from 'lucide-react';
 
 interface AdminPanelProps {
@@ -63,6 +67,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [selectedGodForAudio, setSelectedGodForAudio] = useState<string>('ganesha');
   const [customAudioInput, setCustomAudioInput] = useState<string>('');
   const [audioSaveMsg, setAudioSaveMsg] = useState<string | null>(null);
+
+  // AI Voiceover Studio State (Sarvam AI Bulbul V3 & ElevenLabs)
+  const [sarvamApiKey, setSarvamApiKey] = useState(aiVoiceover.getSarvamApiKey());
+  const [elevenApiKey, setElevenApiKey] = useState(aiVoiceover.getElevenLabsApiKey());
+  const [aiProvider, setAiProvider] = useState<AIVoiceProvider>(aiVoiceover.getActiveProvider());
+  const [sarvamSpeaker, setSarvamSpeaker] = useState(aiVoiceover.getSarvamSpeaker());
+  const [elevenVoiceId, setElevenVoiceId] = useState(aiVoiceover.getElevenVoiceId());
+  const [aiTestLoading, setAiTestLoading] = useState(false);
+  const [aiSaveMsg, setAiSaveMsg] = useState<string | null>(null);
 
   // Search & Filter for 50 Deities
   const [godSearch, setGodSearch] = useState('');
@@ -764,7 +777,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   }`}
                 >
                   <p className="text-xs font-bold text-stone-900 dark:text-white flex items-center justify-between">
-                    <span>श्री गणेश महामंत्र (Big B)</span>
+                    <span>श्री गणेश महामंत्र (गणपती बाप्पा)</span>
                     <Play className="w-3.5 h-3.5 text-amber-500" />
                   </p>
                   <p className="text-[11px] font-serifDev text-stone-500 dark:text-stone-400 mt-1">
@@ -790,7 +803,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   }`}
                 >
                   <p className="text-xs font-bold text-stone-900 dark:text-white flex items-center justify-between">
-                    <span>महामृत्युंजय मंत्र (Big B)</span>
+                    <span>महामृत्युंजय मंत्र (महादेव)</span>
                     <Play className="w-3.5 h-3.5 text-indigo-400" />
                   </p>
                   <p className="text-[11px] font-serifDev text-stone-500 dark:text-stone-400 mt-1">
@@ -816,7 +829,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   }`}
                 >
                   <p className="text-xs font-bold text-stone-900 dark:text-white flex items-center justify-between">
-                    <span>श्री हनुमान चालीसा (Big B)</span>
+                    <span>श्री हनुमान चालीसा (मारुतीराया)</span>
                     <Play className="w-3.5 h-3.5 text-rose-500" />
                   </p>
                   <p className="text-[11px] font-serifDev text-stone-500 dark:text-stone-400 mt-1">
@@ -842,7 +855,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   }`}
                 >
                   <p className="text-xs font-bold text-stone-900 dark:text-white flex items-center justify-between">
-                    <span>विठ्ठल गजर (Big B)</span>
+                    <span>विठ्ठल गजर (पांडुरंग माऊली)</span>
                     <Play className="w-3.5 h-3.5 text-amber-500" />
                   </p>
                   <p className="text-[11px] font-serifDev text-stone-500 dark:text-stone-400 mt-1">
@@ -851,6 +864,283 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* AI VOICEOVER STUDIO: SARVAM AI (BULBUL V3) & ELEVENLABS */}
+          <div className="rounded-3xl bg-gradient-to-br from-stone-900 via-amber-950/60 to-stone-900 border-2 border-amber-500/50 p-6 sm:p-8 text-white space-y-6 shadow-2xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-saffron-500 flex items-center justify-center text-2xl shadow-lg ring-2 ring-amber-300/40 shrink-0">
+                  ⚡
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs uppercase tracking-widest font-bold text-amber-300 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-400/30">
+                      AI Voiceover Engine
+                    </span>
+                    <span className="text-xs text-amber-200">Sarvam AI (Bulbul V3) • ElevenLabs</span>
+                  </div>
+                  <h4 className="text-lg sm:text-xl font-bold font-serifDev text-white mt-1">
+                    अत्याधुनिक AI व्हॉईसओव्हर सेटअप (हिंदी व मराठी)
+                  </h4>
+                  <p className="text-xs text-stone-300 mt-0.5">
+                    सर्व ५० देवतांच्या मंत्र, आरती व अभिवादनासाठी भारतीय भाषांमध्ये सर्वोच्च उच्चार दर्जा.
+                  </p>
+                </div>
+              </div>
+
+              {/* Provider Selector */}
+              <div className="flex flex-wrap gap-1.5 p-1.5 bg-black/50 rounded-2xl border border-amber-500/30">
+                {(['auto', 'sarvam', 'elevenlabs', 'off'] as const).map((prov) => (
+                  <button
+                    key={prov}
+                    onClick={() => {
+                      setAiProvider(prov);
+                      aiVoiceover.setActiveProvider(prov);
+                    }}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      aiProvider === prov
+                        ? 'bg-amber-600 text-white shadow-md'
+                        : 'text-stone-400 hover:text-white'
+                    }`}
+                  >
+                    {prov === 'auto'
+                      ? '⚡ ऑटो (Auto)'
+                      : prov === 'sarvam'
+                      ? '🇮🇳 Sarvam AI'
+                      : prov === 'elevenlabs'
+                      ? '🌐 ElevenLabs'
+                      : '🪷 ऑफलाईन'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Two Column Grid: Sarvam AI & ElevenLabs */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+              
+              {/* 1. Sarvam AI (Bulbul V3) Card */}
+              <div className="p-5 rounded-2xl bg-black/40 border border-amber-500/30 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🇮🇳</span>
+                    <h5 className="font-bold text-sm text-amber-300 font-serifDev">
+                      Sarvam AI — Bulbul V3 (मराठी व हिंदी तज्ज्ञ)
+                    </h5>
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/30 font-bold">
+                    bulbul:v3
+                  </span>
+                </div>
+
+                <p className="text-xs text-stone-300 leading-relaxed">
+                  भारतातील सर्वोत्तम जनरेटिव्ह टेक्स्ट-टू-स्पीच, जे अस्सल मराठी (`mr-IN`) आणि हिंदी (`hi-IN`) शुद्ध उच्चार, नैसर्गिक विराम व भक्तीभाव प्रदान करते.
+                </p>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-stone-300 mb-1 flex items-center gap-1.5">
+                      <Key className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Sarvam API Subscription Key:</span>
+                    </label>
+                    <input
+                      type="password"
+                      value={sarvamApiKey}
+                      onChange={(e) => setSarvamApiKey(e.target.value)}
+                      placeholder="उदा. sk_live_... किंवा api-subscription-key"
+                      className="w-full px-3 py-2 rounded-xl bg-stone-900 border border-stone-700 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-stone-300 mb-1 flex items-center gap-1.5">
+                      <Cpu className="w-3.5 h-3.5 text-amber-400" />
+                      <span>आवाज वक्ता (Devotional Speaker):</span>
+                    </label>
+                    <select
+                      value={sarvamSpeaker}
+                      onChange={(e) => setSarvamSpeaker(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-stone-900 border border-stone-700 text-xs text-white focus:outline-none focus:border-amber-400"
+                    >
+                      <option value="ratan">🪷 रतन (गंभीर पुरोहित / Solemn Temple Baritone)</option>
+                      <option value="arvind">🕉️ अरविंद (वैदिक शास्त्री / Traditional Priest)</option>
+                      <option value="meera">🌺 मीरा (मधुर भक्तिमय / Melodious Female Devotional)</option>
+                      <option value="aditya">🚩 आदित्य (स्पष्ट शास्त्रीय / Clear Classical Male)</option>
+                      <option value="ananya">🌸 अनन्या (शांत ध्यान / Peaceful Meditative Female)</option>
+                    </select>
+                  </div>
+
+                  {/* Live Sarvam Test Buttons */}
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      onClick={async () => {
+                        if (!sarvamApiKey.trim()) {
+                          alert('कृपया प्रथम Sarvam API Key टाका आणि सेव्ह करा.');
+                          return;
+                        }
+                        setAiTestLoading(true);
+                        audioEngine.playTempleBell();
+                        const url = await aiVoiceover.generateSarvamSpeech({
+                          text: 'सुखकर्ता दुःखहर्ता वार्ता विघ्नाची । नुरवी पुरवी प्रेम कृपा जयाची ॥ जय देव जय मंगलमूर्ती ।',
+                          lang: 'mr-IN',
+                          speaker: sarvamSpeaker,
+                          pace: 0.88,
+                        });
+                        setAiTestLoading(false);
+                        if (url) {
+                          audioEngine.playHumanAudio(url);
+                        } else {
+                          alert('Sarvam AI ऑडिओ जनरेशन अयशस्वी झाले. कृपया API Key तपासा.');
+                        }
+                      }}
+                      disabled={aiTestLoading}
+                      className="px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-[11px] font-bold text-amber-200 transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <Play className="w-3 h-3 text-amber-400" />
+                      <span>मराठी टेस्ट (Bulbul V3)</span>
+                    </button>
+
+                    <button
+                      onClick={async () => {
+                        if (!sarvamApiKey.trim()) {
+                          alert('कृपया प्रथम Sarvam API Key टाका आणि सेव्ह करा.');
+                          return;
+                        }
+                        setAiTestLoading(true);
+                        audioEngine.playTempleBell();
+                        const url = await aiVoiceover.generateSarvamSpeech({
+                          text: 'ॐ गं गणपतये नमः। वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥',
+                          lang: 'hi-IN',
+                          speaker: sarvamSpeaker,
+                          pace: 0.88,
+                        });
+                        setAiTestLoading(false);
+                        if (url) {
+                          audioEngine.playHumanAudio(url);
+                        } else {
+                          alert('Sarvam AI ऑडिओ जनरेशन अयशस्वी झाले. कृपया API Key तपासा.');
+                        }
+                      }}
+                      disabled={aiTestLoading}
+                      className="px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-[11px] font-bold text-amber-200 transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <Play className="w-3 h-3 text-amber-400" />
+                      <span>हिंदी टेस्ट (Bulbul V3)</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. ElevenLabs Card */}
+              <div className="p-5 rounded-2xl bg-black/40 border border-amber-500/30 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🌐</span>
+                    <h5 className="font-bold text-sm text-amber-300 font-serifDev">
+                      ElevenLabs Multilingual V2
+                    </h5>
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-400/30 font-bold">
+                    eleven_multilingual_v2
+                  </span>
+                </div>
+
+                <p className="text-xs text-stone-300 leading-relaxed">
+                  जागतिक दर्जाचे मल्टिलिंग्युअल जनरेटिव्ह AI मॉडेल, जे समृद्ध व मानवी भावनात्मक आवाजात मंत्रोच्चार व श्लोक पठण करते.
+                </p>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-stone-300 mb-1 flex items-center gap-1.5">
+                      <Key className="w-3.5 h-3.5 text-blue-400" />
+                      <span>ElevenLabs API Key (xi-api-key):</span>
+                    </label>
+                    <input
+                      type="password"
+                      value={elevenApiKey}
+                      onChange={(e) => setElevenApiKey(e.target.value)}
+                      placeholder="उदा. sk_..."
+                      className="w-full px-3 py-2 rounded-xl bg-stone-900 border border-stone-700 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-blue-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-stone-300 mb-1 flex items-center gap-1.5">
+                      <Mic className="w-3.5 h-3.5 text-blue-400" />
+                      <span>Voice ID:</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={elevenVoiceId}
+                      onChange={(e) => setElevenVoiceId(e.target.value)}
+                      placeholder="उदा. pNInz6obpgDQGcFmaJgB"
+                      className="w-full px-3 py-2 rounded-xl bg-stone-900 border border-stone-700 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-blue-400"
+                    />
+                  </div>
+
+                  {/* Live ElevenLabs Test Button */}
+                  <div className="pt-1">
+                    <button
+                      onClick={async () => {
+                        if (!elevenApiKey.trim()) {
+                          alert('कृपया प्रथम ElevenLabs API Key टाका आणि सेव्ह करा.');
+                          return;
+                        }
+                        setAiTestLoading(true);
+                        audioEngine.playTempleBell();
+                        const url = await aiVoiceover.generateElevenLabsSpeech({
+                          text: 'ॐ नमो भगवते वासुदेवाय। शान्ताकारं भुजगशयनं पद्मनाभं सुरेशम्।',
+                          voiceId: elevenVoiceId,
+                        });
+                        setAiTestLoading(false);
+                        if (url) {
+                          audioEngine.playHumanAudio(url);
+                        } else {
+                          alert('ElevenLabs ऑडिओ जनरेशन अयशस्वी झाले. कृपया API Key तपासा.');
+                        }
+                      }}
+                      disabled={aiTestLoading}
+                      className="w-full px-3 py-2 rounded-xl bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/40 text-[11px] font-bold text-blue-200 transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <Play className="w-3 h-3 text-blue-400" />
+                      <span>ElevenLabs चाचणी ऐका</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Bottom Save All AI Settings Bar */}
+            <div className="pt-3 border-t border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <span className="text-xs text-stone-400">
+                {aiVoiceover.hasAnyKeyConfigured()
+                  ? '✅ AI व्हॉईसओव्हर सक्रिय आहे — सर्व ५० देवतांचे मंत्र व अभिवादन AI आवाजात ऐकू येईल.'
+                  : 'ℹ️ की न दिल्यास ॲप आपोआप स्थानिक वैदिक पुरोहित (पंडितजी) स्वरात तानपुऱ्यासह चालेल.'}
+              </span>
+
+              <button
+                onClick={() => {
+                  aiVoiceover.setSarvamApiKey(sarvamApiKey);
+                  aiVoiceover.setElevenLabsApiKey(elevenApiKey);
+                  aiVoiceover.setActiveProvider(aiProvider);
+                  aiVoiceover.setSarvamSpeaker(sarvamSpeaker);
+                  aiVoiceover.setElevenVoiceId(elevenVoiceId);
+                  setAiSaveMsg('AI व्हॉईसओव्हर सेटिंग्ज यशस्वीरित्या सेव्ह झाल्या!');
+                  setTimeout(() => setAiSaveMsg(null), 3000);
+                }}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all shrink-0"
+              >
+                <Check className="w-4 h-4" />
+                <span>AI व्हॉईस सेटिंग्ज सेव्ह करा</span>
+              </button>
+            </div>
+
+            {aiSaveMsg && (
+              <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold text-center animate-fadeIn">
+                {aiSaveMsg}
+              </div>
+            )}
           </div>
 
           {/* Guide for Providing Sample Audio Files */}
