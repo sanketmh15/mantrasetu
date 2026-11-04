@@ -351,7 +351,7 @@ export const DailyPujaGuide: React.FC<DailyPujaGuideProps> = ({
               ) : (
                 <>
                   <Volume2 className="w-3.5 h-3.5 text-amber-200" />
-                  <span>{currentLang === 'en' ? 'Listen Mantra Chanting' : 'मंत्रोच्चारण ऐका (Big B)'}</span>
+                  <span>{currentLang === 'en' ? 'Listen Mantra Chanting' : 'मंत्रोच्चारण ऐका (वैदिक पंडितजी)'}</span>
                 </>
               )}
             </button>

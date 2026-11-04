@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Language } from '../types';
 import {
   UserBirthData,
@@ -21,7 +21,8 @@ import {
   Printer,
   ChevronDown,
   Key,
-  Bot
+  Bot,
+  ArrowDownCircle
 } from 'lucide-react';
 
 interface AIKundaliPredictorProps {
@@ -48,8 +49,10 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
 
   const [showApiKeyInput, setShowApiKeyInput] = useState<boolean>(false);
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
+  const [justCalculated, setJustCalculated] = useState<boolean>(false);
   const [activeHouseTab, setActiveHouseTab] = useState<number>(1);
   const [isPlayingMantra, setIsPlayingMantra] = useState<boolean>(false);
+  const resultRef = useRef<HTMLDivElement>(null);
 
   // Computed Kundali Analysis
   const [kundali, setKundali] = useState<FullKundaliAnalysis>(() =>
@@ -71,9 +74,10 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsCalculating(true);
+    setJustCalculated(false);
     audioEngine.playTempleBell();
 
-    await new Promise((res) => setTimeout(res, 450));
+    await new Promise((res) => setTimeout(res, 350));
 
     // 1. Calculate the exact astronomical Kundali
     const calculated = generateExactKundali(formData);
@@ -96,10 +100,16 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
 
     setKundali(calculated);
     setIsCalculating(false);
+    setJustCalculated(true);
     setInteractiveAnswer(null);
 
     // Play subtle chime on complete
     audioEngine.playNavChime();
+
+    // Smoothly scroll down to the generated Kundali result card on mobile & desktop
+    setTimeout(() => {
+      resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
   };
 
   const handleAskAdditionalQuestion = async (e: React.FormEvent) => {
@@ -352,6 +362,43 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
             </div>
           )}
 
+          {/* Quick 1-Click Test Presets */}
+          <div className="flex flex-wrap items-center gap-2 pt-1 pb-2">
+            <span className="text-[11px] font-bold text-stone-500 dark:text-stone-400">
+              त्वरित चाचणी उदाहरणे:
+            </span>
+            <button
+              type="button"
+              onClick={() => setFormData({
+                name: 'राहुल शिंदे (पुणे)',
+                gender: 'male',
+                birthDate: '1998-05-15',
+                birthTime: '08:30',
+                birthPlace: 'पुणे, महाराष्ट्र',
+                specificQuery: 'माझे करिअर, धनयोग व लग्नाचे योग कधी आहेत?',
+                apiKey: formData.apiKey || '',
+              })}
+              className="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 dark:bg-amber-950 dark:hover:bg-amber-900 text-amber-800 dark:text-amber-300 text-[11px] font-bold transition-all"
+            >
+              👤 उदाहरण १ (युवा साधक)
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData({
+                name: 'प्रिया कुलकर्णी',
+                gender: 'female',
+                birthDate: '2001-10-24',
+                birthTime: '14:15',
+                birthPlace: 'नाशिक, महाराष्ट्र',
+                specificQuery: 'उच्च शिक्षण, सरकारी नोकरी व विदेश प्रवास योग',
+                apiKey: formData.apiKey || '',
+              })}
+              className="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 dark:bg-amber-950 dark:hover:bg-amber-900 text-amber-800 dark:text-amber-300 text-[11px] font-bold transition-all"
+            >
+              👩 उदाहरण २ (विद्यार्थी / नोकरी)
+            </button>
+          </div>
+
           {/* Submit Button */}
           <div className="pt-2 flex flex-wrap items-center gap-3">
             <button
@@ -367,11 +414,29 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
               • अचूक नक्षत्र चरण, ग्रह दृष्टी, १२ भाव व साडेसाती विश्लेषण
             </span>
           </div>
+
+          {/* Success Banner on Calculate */}
+          {justCalculated && (
+            <div className="p-3 rounded-2xl bg-emerald-500/15 border-2 border-emerald-500 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-2 animate-fadeIn mt-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span>आपली एआय जन्म पत्रिका यशस्वीरीत्या तयार झाली आहे!</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => resultRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-extrabold shadow-sm active:scale-95 transition-all self-start sm:self-auto"
+              >
+                <span>खाली पत्रिका पहा</span>
+                <ArrowDownCircle className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </form>
       </div>
 
       {/* 3. Generated Kundali Showcase */}
-      <div className="space-y-8 animate-fadeIn">
+      <div ref={resultRef} className="space-y-8 animate-fadeIn scroll-mt-6">
         {/* Profile Card Header */}
         <div className="rounded-3xl bg-gradient-to-br from-amber-500/15 via-white to-amber-500/5 dark:from-stone-900 dark:via-stone-900/80 dark:to-stone-950 border-2 border-amber-400/60 dark:border-amber-700/60 p-5 sm:p-8 shadow-xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-stone-200 dark:border-stone-800">
@@ -836,7 +901,7 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-saffron-600 to-amber-600 hover:brightness-110 text-white font-bold text-xs shadow transition-all active:scale-95"
               >
                 {isPlayingMantra ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-                <span>{isPlayingMantra ? 'मंत्र थांबवा' : 'मंत्रोच्चारण ऐका (Big B)'}</span>
+                <span>{isPlayingMantra ? 'मंत्र थांबवा' : 'मंत्रोच्चारण ऐका (वैदिक पंडितजी)'}</span>
               </button>
             </div>
 

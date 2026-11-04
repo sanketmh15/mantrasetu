@@ -514,7 +514,7 @@ class AudioEngine {
   /**
    * Pre-tuned phonetic English strings for sacred mantras & greetings.
    * When a system only has English TTS voices (e.g. standard Windows with Microsoft Ravi),
-   * this allows Ravi to speak authentic Sanskrit/Marathi mantras in deep Big B baritone
+   * this allows Ravi to speak authentic Sanskrit/Marathi mantras in deep Vedic Brahman baritone
    * without skipping Devanagari characters or producing 0ms silence.
    */
   private sacredOverrides: Record<string, string> = {

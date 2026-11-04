@@ -615,6 +615,43 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
         </button>
       </div>
 
+      {/* 1.3. AI Janam Kundali Quick Spotlight Banner */}
+      <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-indigo-950 via-purple-950 to-stone-950 border-2 border-amber-500/50 shadow-xl mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4 text-white w-full">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner border border-amber-400/40 shrink-0">
+            🔮
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm sm:text-base font-bold font-serifDev text-amber-200">
+                {currentLang === 'en'
+                  ? 'AI Janam Kundali & 12 Bhavas Prediction'
+                  : currentLang === 'hi'
+                  ? '॥ वैदिक एआई जन्म कुंडली एवं १२ भाव जीवन फलकथन ॥'
+                  : '॥ वैदिक एआय जन्म कुंडली व १२ भाव संपूर्ण भविष्य ॥'}
+              </span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500 text-stone-950 font-mono">
+                AI वैदिक
+              </span>
+            </div>
+            <p className="text-xs text-stone-300 mt-1 max-w-xl leading-relaxed">
+              {currentLang === 'en'
+                ? 'Calculate your exact Lagna, Moon sign, Nakshatra, 12 Bhavas, Sade Sati, Manglik Dosha, and personalized Vedic life predictions.'
+                : 'आपल्या जन्मतारीख व वेळेवरून अचूक लग्न, चंद्र रास, नक्षत्र, १२ भाव विश्लेषण, साडेसाती, मंगळ दोष आणि संपूर्ण शास्त्रोक्त जीवन भविष्य एका क्लिकमध्ये पाहा.'}
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => onNavigateTab('kundali')}
+          className="px-4 py-2.5 rounded-xl font-bold font-serifDev text-xs flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-saffron-500 text-stone-950 hover:brightness-110 shadow-lg transition-all shrink-0 active:scale-95"
+        >
+          <span>🔮</span>
+          <span>{currentLang === 'en' ? 'Open Kundali' : 'कुंडली तयार करा'}</span>
+          <ChevronRight className="w-4 h-4 text-stone-950" />
+        </button>
+      </div>
+
       {/* 1.5 Devotee Account, Login & Logout Hub */}
       {currentUser ? (
         <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-amber-500/15 via-stone-900/60 to-amber-500/10 border border-amber-500/40 shadow-lg mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 animate-fadeIn w-full">
