@@ -566,89 +566,125 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
                 {/* Inner Diamond */}
                 <polygon points="200,10 390,200 200,390 10,200" fill="#1c1815" stroke="#F59E0B" strokeWidth="2" />
 
-                {/* House Labels & Content Overlay in SVG */}
-                {/* House 1 (Top Center Diamond) */}
+                {/* House Labels & Content Overlay in SVG (Exact AstroSage Format) */}
+                {/* House 1 (Top Center Diamond - Lagna) */}
                 <g onClick={() => setActiveHouseTab(1)} className="cursor-pointer hover:opacity-80">
-                  <text x="200" y="65" textAnchor="middle" fill="#FBBF24" fontSize="12" fontWeight="bold">१ (Lagna)</text>
-                  <text x="200" y="90" textAnchor="middle" fill="#FFFFFF" fontSize="11" fontWeight="bold">{kundali.houses[0]?.signNameMr}</text>
-                  <text x="200" y="115" textAnchor="middle" fill="#34D399" fontSize="10">{kundali.houses[0]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="200" y="55" textAnchor="middle" fill="#FBBF24" fontSize="13" fontWeight="bold">
+                    {kundali.houses[0]?.signNumber} • {kundali.houses[0]?.signNameMr} (लग्न)
+                  </text>
+                  <text x="200" y="78" textAnchor="middle" fill="#34D399" fontSize="11" fontWeight="bold">
+                    {kundali.houses[0]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ') || '—'}
+                  </text>
                 </g>
 
                 {/* House 2 (Top Left Triangle) */}
                 <g onClick={() => setActiveHouseTab(2)} className="cursor-pointer hover:opacity-80">
-                  <text x="105" y="45" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">२</text>
-                  <text x="105" y="65" textAnchor="middle" fill="#FFFFFF" fontSize="10">{kundali.houses[1]?.signNameMr}</text>
-                  <text x="105" y="85" textAnchor="middle" fill="#34D399" fontSize="9">{kundali.houses[1]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="105" y="45" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
+                    {kundali.houses[1]?.signNumber} {kundali.houses[1]?.signNameMr}
+                  </text>
+                  <text x="105" y="72" textAnchor="middle" fill="#34D399" fontSize="9.5">
+                    {kundali.houses[1]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
+                  </text>
                 </g>
 
                 {/* House 3 (Left Top Triangle) */}
                 <g onClick={() => setActiveHouseTab(3)} className="cursor-pointer hover:opacity-80">
-                  <text x="50" y="110" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">३</text>
-                  <text x="50" y="130" textAnchor="middle" fill="#FFFFFF" fontSize="10">{kundali.houses[2]?.signNameMr}</text>
-                  <text x="50" y="150" textAnchor="middle" fill="#34D399" fontSize="9">{kundali.houses[2]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="55" y="115" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
+                    {kundali.houses[2]?.signNumber} {kundali.houses[2]?.signNameMr}
+                  </text>
+                  <text x="55" y="142" textAnchor="middle" fill="#34D399" fontSize="9.5">
+                    {kundali.houses[2]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
+                  </text>
                 </g>
 
-                {/* House 4 (Left Diamond) */}
+                {/* House 4 (Left Diamond - Sukha) */}
                 <g onClick={() => setActiveHouseTab(4)} className="cursor-pointer hover:opacity-80">
-                  <text x="110" y="195" textAnchor="middle" fill="#FBBF24" fontSize="12" fontWeight="bold">४ (सुख)</text>
-                  <text x="110" y="215" textAnchor="middle" fill="#FFFFFF" fontSize="11">{kundali.houses[3]?.signNameMr}</text>
-                  <text x="110" y="235" textAnchor="middle" fill="#34D399" fontSize="10">{kundali.houses[3]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="110" y="195" textAnchor="middle" fill="#FBBF24" fontSize="12" fontWeight="bold">
+                    {kundali.houses[3]?.signNumber} {kundali.houses[3]?.signNameMr} (४)
+                  </text>
+                  <text x="110" y="222" textAnchor="middle" fill="#34D399" fontSize="10.5">
+                    {kundali.houses[3]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ') || '—'}
+                  </text>
                 </g>
 
                 {/* House 5 (Left Bottom Triangle) */}
                 <g onClick={() => setActiveHouseTab(5)} className="cursor-pointer hover:opacity-80">
-                  <text x="50" y="280" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">५</text>
-                  <text x="50" y="300" textAnchor="middle" fill="#FFFFFF" fontSize="10">{kundali.houses[4]?.signNameMr}</text>
-                  <text x="50" y="320" textAnchor="middle" fill="#34D399" fontSize="9">{kundali.houses[4]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="55" y="280" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
+                    {kundali.houses[4]?.signNumber} {kundali.houses[4]?.signNameMr}
+                  </text>
+                  <text x="55" y="308" textAnchor="middle" fill="#34D399" fontSize="9.5">
+                    {kundali.houses[4]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
+                  </text>
                 </g>
 
                 {/* House 6 (Bottom Left Triangle) */}
                 <g onClick={() => setActiveHouseTab(6)} className="cursor-pointer hover:opacity-80">
-                  <text x="105" y="340" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">६</text>
-                  <text x="105" y="360" textAnchor="middle" fill="#FFFFFF" fontSize="10">{kundali.houses[5]?.signNameMr}</text>
-                  <text x="105" y="375" textAnchor="middle" fill="#34D399" fontSize="9">{kundali.houses[5]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="105" y="345" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
+                    {kundali.houses[5]?.signNumber} {kundali.houses[5]?.signNameMr}
+                  </text>
+                  <text x="105" y="370" textAnchor="middle" fill="#34D399" fontSize="9.5">
+                    {kundali.houses[5]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
+                  </text>
                 </g>
 
-                {/* House 7 (Bottom Center Diamond) */}
+                {/* House 7 (Bottom Center Diamond - Jaya) */}
                 <g onClick={() => setActiveHouseTab(7)} className="cursor-pointer hover:opacity-80">
-                  <text x="200" y="275" textAnchor="middle" fill="#FBBF24" fontSize="12" fontWeight="bold">७ (जाया)</text>
-                  <text x="200" y="300" textAnchor="middle" fill="#FFFFFF" fontSize="11">{kundali.houses[6]?.signNameMr}</text>
-                  <text x="200" y="325" textAnchor="middle" fill="#34D399" fontSize="10">{kundali.houses[6]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="200" y="280" textAnchor="middle" fill="#FBBF24" fontSize="12" fontWeight="bold">
+                    {kundali.houses[6]?.signNumber} {kundali.houses[6]?.signNameMr} (७)
+                  </text>
+                  <text x="200" y="308" textAnchor="middle" fill="#34D399" fontSize="10.5">
+                    {kundali.houses[6]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ') || '—'}
+                  </text>
                 </g>
 
                 {/* House 8 (Bottom Right Triangle) */}
                 <g onClick={() => setActiveHouseTab(8)} className="cursor-pointer hover:opacity-80">
-                  <text x="295" y="340" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">८</text>
-                  <text x="295" y="360" textAnchor="middle" fill="#FFFFFF" fontSize="10">{kundali.houses[7]?.signNameMr}</text>
-                  <text x="295" y="375" textAnchor="middle" fill="#34D399" fontSize="9">{kundali.houses[7]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="295" y="345" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
+                    {kundali.houses[7]?.signNumber} {kundali.houses[7]?.signNameMr}
+                  </text>
+                  <text x="295" y="370" textAnchor="middle" fill="#34D399" fontSize="9.5">
+                    {kundali.houses[7]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
+                  </text>
                 </g>
 
                 {/* House 9 (Right Bottom Triangle) */}
                 <g onClick={() => setActiveHouseTab(9)} className="cursor-pointer hover:opacity-80">
-                  <text x="350" y="280" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">९</text>
-                  <text x="350" y="300" textAnchor="middle" fill="#FFFFFF" fontSize="10">{kundali.houses[8]?.signNameMr}</text>
-                  <text x="350" y="320" textAnchor="middle" fill="#34D399" fontSize="9">{kundali.houses[8]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="345" y="280" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
+                    {kundali.houses[8]?.signNumber} {kundali.houses[8]?.signNameMr}
+                  </text>
+                  <text x="345" y="308" textAnchor="middle" fill="#34D399" fontSize="9.5">
+                    {kundali.houses[8]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
+                  </text>
                 </g>
 
-                {/* House 10 (Right Diamond) */}
+                {/* House 10 (Right Diamond - Karma) */}
                 <g onClick={() => setActiveHouseTab(10)} className="cursor-pointer hover:opacity-80">
-                  <text x="290" y="195" textAnchor="middle" fill="#FBBF24" fontSize="12" fontWeight="bold">१० (कर्म)</text>
-                  <text x="290" y="215" textAnchor="middle" fill="#FFFFFF" fontSize="11">{kundali.houses[9]?.signNameMr}</text>
-                  <text x="290" y="235" textAnchor="middle" fill="#34D399" fontSize="10">{kundali.houses[9]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="290" y="195" textAnchor="middle" fill="#FBBF24" fontSize="12" fontWeight="bold">
+                    {kundali.houses[9]?.signNumber} {kundali.houses[9]?.signNameMr} (१०)
+                  </text>
+                  <text x="290" y="222" textAnchor="middle" fill="#34D399" fontSize="10.5">
+                    {kundali.houses[9]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ') || '—'}
+                  </text>
                 </g>
 
                 {/* House 11 (Right Top Triangle) */}
                 <g onClick={() => setActiveHouseTab(11)} className="cursor-pointer hover:opacity-80">
-                  <text x="350" y="110" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">११</text>
-                  <text x="350" y="130" textAnchor="middle" fill="#FFFFFF" fontSize="10">{kundali.houses[10]?.signNameMr}</text>
-                  <text x="350" y="150" textAnchor="middle" fill="#34D399" fontSize="9">{kundali.houses[10]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="345" y="115" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
+                    {kundali.houses[10]?.signNumber} {kundali.houses[10]?.signNameMr}
+                  </text>
+                  <text x="345" y="142" textAnchor="middle" fill="#34D399" fontSize="9.5">
+                    {kundali.houses[10]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
+                  </text>
                 </g>
 
                 {/* House 12 (Top Right Triangle) */}
                 <g onClick={() => setActiveHouseTab(12)} className="cursor-pointer hover:opacity-80">
-                  <text x="295" y="45" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">१२</text>
-                  <text x="295" y="65" textAnchor="middle" fill="#FFFFFF" fontSize="10">{kundali.houses[11]?.signNameMr}</text>
-                  <text x="295" y="85" textAnchor="middle" fill="#34D399" fontSize="9">{kundali.houses[11]?.planets.map(p => p.symbol).join(' ')}</text>
+                  <text x="295" y="45" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
+                    {kundali.houses[11]?.signNumber} {kundali.houses[11]?.signNameMr}
+                  </text>
+                  <text x="295" y="72" textAnchor="middle" fill="#34D399" fontSize="9.5">
+                    {kundali.houses[11]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
+                  </text>
                 </g>
               </svg>
             </div>
