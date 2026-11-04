@@ -236,7 +236,8 @@ class AudioEngine {
       try {
         this.isTTSAborted = false;
         const langCode = lang.startsWith('mr') ? 'mr' : lang.startsWith('hi') || lang.startsWith('sa') ? 'hi' : 'en';
-        const chunks = this.splitTextIntoChunks(text, 120);
+        const normalized = this.normalizeSacredText(text, langCode === 'en');
+        const chunks = this.splitTextIntoChunks(normalized, 120);
         if (!chunks.length) {
           onEnd?.();
           resolve(true);
@@ -268,8 +269,9 @@ class AudioEngine {
             return;
           }
 
-          const chunkText = chunks[chunkIndex];
+          const rawChunk = chunks[chunkIndex];
           chunkIndex++;
+          const chunkText = this.normalizeSacredText(rawChunk, langCode === 'en');
 
           const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${langCode}&client=tw-ob&q=${encodeURIComponent(chunkText)}`;
 
@@ -581,17 +583,35 @@ class AudioEngine {
     'मंत्रसेतु पावन भक्ति संकुल में आपका हार्दिक स्वागत है। भगवान शिव, श्री राम एवं विठुराया के आशीर्वाद से आपका दिन मंगलमय एवं शांतिमय हो।':
       'Sanatan Amrutdhara paavan bhakti sankul mein aapka haardik swaagat hai. Bhagwan Shiv, Shri Ram evam Vithuraaya ke aasheervaad se aapka din mangalmay evam shaantimay ho.',
     'नमस्कार... ॐ गं गणपतये नमः। वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥':
-      'Namaskaar... Om Gam Ganapataye Namaha. Vakratunda Mahakaya Suryakoti Samaprabha, Nirvighnam Kuru Me Deva Sarva Karyeshu Sarvada.',
+      'Namaskaar... Ohm Gam Ganapataye Namaha. Vakratunda Mahakaya Suryakoti Samaprabha, Nirvighnam Kuru Me Deva Sarva Karyeshu Sarvada.',
     'ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्। उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात्॥':
-      'Om Tryambakam Yajaamahe Sugandhim Pushtivardhanam, Urvaarukamiva Bandhanaan Mrityor Muksheeya Maamritaat.',
+      'Ohm Tryambakam Yajaamahe Sugandhim Pushtivardhanam, Urvaarukamiva Bandhanaan Mrityor Muksheeya Maamritaat.',
     'राम कृष्ण हरी, जय जय राम कृष्ण हरी। पुंडलिक वरदे हरी विठ्ठल, श्री ज्ञानदेव तुकाराम। पंढरीनाथ महाराज की जय॥':
       'Ram Krishna Hari, Jai Jai Ram Krishna Hari. Pundalik Varade Hari Vitthal, Shri Dnyanadev Tukaram, Pandharinath Maharaj Ki Jai.',
     'श्रीगुरु चरन सरोज रज, निज मनु मुकुरु सुधारि। बरनऊं रघुबर बिमल जसु, जो दायकु फल चारि॥ जय हनुमान ज्ञान गुन सागर, जय कपीस तिहुं लोक उजागर॥':
       'Shri Guru Charan Saroj Raj, Nij Manu Mukuru Sudhaari. Barnau Raghuvar Bimal Jasu, Jo Daayaku Phal Chaari. Jai Hanuman Gyan Gun Saagar, Jai Kapees Tihun Lok Ujaagar.',
     'ॐ नमः शिवाय':
-      'Om Namah Shivaaya.',
+      'Ohm Namah Shivaaya.',
+    'ॐ नमः शिवाय।':
+      'Ohm Namah Shivaaya.',
+    'ॐ':
+      'Ohm',
+    'ओम्':
+      'Ohm',
+    'ॐ गं गणपतये नमः':
+      'Ohm Gam Ganapataye Namah.',
+    'ॐ गं गणपतये नमः।':
+      'Ohm Gam Ganapataye Namah.',
+    'ॐ नमो भगवते वासुदेवाय':
+      'Ohm Namo Bhagavate Vaasudevaaya.',
+    'ॐ विठ्ठलाय नमः':
+      'Ohm Vitthalaaya Namah.',
+    'ॐ हनुमते नमः':
+      'Ohm Hanumate Namah.',
+    'ॐ शांतिः शांतिः शांतिः':
+      'Ohm Shaanteeh Shaanteeh Shaanteeh.',
     'ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्॥':
-      'Om Bhoor Bhuva-ha Swaha, Tat Savitur Varenyam, Bhargo Devasya Dheemahi, Dhiyo Yo Nah Prachodayaat.',
+      'Ohm Bhoor Bhuva-ha Swaha, Tat Savitur Varenyam, Bhargo Devasya Dheemahi, Dhiyo Yo Nah Prachodayaat.',
     'सनातन अमृतधारा पावन भक्ती दालनात आपले सहर्ष स्वागत आहे.':
       'Sanatan Amrutdhara paavan bhakti daalnaat aaple saharsha swaagat aahe.',
     'सनातन अमृतधारा पावन भक्ति संकुल में आपका हार्दिक स्वागत है।':
@@ -619,6 +639,38 @@ class AudioEngine {
     'सनातन अमृतधारा सात्विक भक्ती भांडारात आपले सहर्ष स्वागत आहे.':
       'Sanatan Amrutdhara saatvik bhakti bhaandaaraat aaple saharsha swaagat aahe.'
   };
+
+  /**
+   * Sacred Devanagari and Vedic Phonetic Normalizer:
+   * Replaces raw glyphs like 'ॐ' (\u0950) with their pure phonetic equivalents
+   * ('ओम् ' in Devanagari, 'Ohm ' in Roman) so that no speech engine (Google TTS,
+   * Sarvam AI Bulbul, SAPI 5) spells the letters "O-M" or glitches.
+   */
+  public normalizeSacredText(text: string, isEnglishTarget = false): string {
+    if (!text || typeof text !== 'string') return '';
+
+    let res = text;
+
+    if (isEnglishTarget) {
+      // For English TTS voices: Replace 'ॐ' and standalone 'Om' with 'Ohm'
+      // SAPI 5 / English TTS synthesizers read 'Ohm' as the sacred sound "OHM",
+      // whereas 'Om' is often spelled out letter-by-letter as "O... M...".
+      res = res.replace(/[\u0950ॐ]/g, 'Ohm ');
+      res = res.replace(/\b[Oo]m\b/g, 'Ohm');
+      res = res.replace(/\bOM\b/g, 'Ohm');
+    } else {
+      // For Devanagari TTS voices (Google TTS, Sarvam Bulbul V4, native Hindi/Marathi):
+      // The symbol 'ॐ' (\u0950) is an ancient Vedic ligature that many TTS dictionaries
+      // do not pronounce or spell out as "ओ-एम" (O-M).
+      // Replacing 'ॐ' with 'ओम् ' (O + ma with halant) guarantees authentic Vedic Om chanting!
+      res = res.replace(/[\u0950ॐ]/g, 'ओम् ');
+      // Also catch English 'Om' or 'OM' inside predominantly Indian text
+      res = res.replace(/\b[Oo]m\b/g, 'ओम्');
+      res = res.replace(/\bOM\b/g, 'ओम्');
+    }
+
+    return res.replace(/\s+/g, ' ').trim();
+  }
 
   /**
    * Translates Devanagari script to phonetic Roman text for English-only TTS engines.
@@ -661,7 +713,7 @@ class AudioEngine {
       const next = text[i + 1];
 
       if (ch === 'ॐ') {
-        out += 'Om ';
+        out += 'Ohm ';
       } else if (vowels[ch]) {
         out += vowels[ch];
       } else if (consonants[ch]) {
@@ -687,7 +739,7 @@ class AudioEngine {
         out += ch;
       }
     }
-    return out.replace(/\s+/g, ' ').trim();
+    return out.replace(/\bOm\b/g, 'Ohm').replace(/\s+/g, ' ').trim();
   }
 
   /**
@@ -932,10 +984,14 @@ class AudioEngine {
       }
     };
 
+    // Pre-normalize sacred Vedic glyphs (ॐ / Om) so no engine spells "O-M" or glitches
+    const isEnglishLang = (lang || '').toLowerCase().startsWith('en');
+    const normalizedText = this.normalizeSacredText(text, isEnglishLang);
+
     // 1. If AI voiceover (Sarvam AI Bulbul V3 / ElevenLabs) is configured, prioritize it
     if (aiVoiceover.hasAnyKeyConfigured()) {
       try {
-        const aiAudio = await aiVoiceover.synthesizeDevotionalAudio(text, lang);
+        const aiAudio = await aiVoiceover.synthesizeDevotionalAudio(normalizedText, lang);
         if (aiAudio?.url) {
           const played = await this.playHumanAudio(aiAudio.url, safeEnd);
           if (played) return;
@@ -947,7 +1003,7 @@ class AudioEngine {
 
     // 2. High-Fidelity Google Native Indian TTS (Authentic Marathi/Hindi pronunciation, calm unhurried pace)
     try {
-      const googleSuccess = await this.playGoogleTTS(text, lang, safeEnd, this.persona, userRate);
+      const googleSuccess = await this.playGoogleTTS(normalizedText, lang, safeEnd, this.persona, userRate);
       if (googleSuccess) {
         return;
       }
@@ -956,7 +1012,7 @@ class AudioEngine {
     }
 
     // 3. Direct Instant Speech Synthesis Fallback (Runs locally within browser)
-    this.speakSynthesisFallback(text, lang, userRate, safeEnd);
+    this.speakSynthesisFallback(normalizedText, lang, userRate, safeEnd);
   }
 
   /**
@@ -1004,7 +1060,7 @@ class AudioEngine {
 
       const textToSpeak = (isEnglishVoice || !voiceConfig.isDevanagariCapable)
         ? this.toPhoneticRoman(phraseText, lang)
-        : phraseText;
+        : this.normalizeSacredText(phraseText, false);
 
       const targetLang = isEnglishVoice
         ? voiceConfig.voice!.lang

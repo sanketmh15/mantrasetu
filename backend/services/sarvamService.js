@@ -26,7 +26,8 @@ class SarvamService {
       throw new Error('SARVAM_API_KEY is not configured in environment variables.');
     }
 
-    const cleanText = (text || '').trim();
+    // Normalize sacred Vedic ligature ॐ to 'ओम् ' so Bulbul V4 Flash speaks pure Om without spelling
+    const cleanText = (text || '').replace(/[\u0950ॐ]/g, 'ओम् ').trim();
     if (!cleanText) {
       throw new Error('Text parameter is required.');
     }
@@ -107,3 +108,4 @@ class SarvamService {
 }
 
 module.exports = new SarvamService();
+

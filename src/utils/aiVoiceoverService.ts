@@ -363,7 +363,8 @@ class AIVoiceoverService {
     const apiKey = this.getSarvamApiKey();
     if (!apiKey) return null;
 
-    const trimmedText = options.text.trim();
+    // Normalize sacred Vedic ligature ॐ to 'ओम् ' so Bulbul V4 Flash doesn't spell or glitch
+    const trimmedText = (options.text || '').replace(/[\u0950ॐ]/g, 'ओम् ').trim();
     if (!trimmedText) return null;
 
     // RULE 1: STRICT SANSKRIT GUARD
