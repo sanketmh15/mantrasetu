@@ -183,11 +183,11 @@ export const JapaCounter: React.FC<JapaCounterProps> = ({ currentLang, preselect
       </div>
 
       {/* Main Chanting Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#1c1917] to-[#12100e] border border-stone-800 shadow-2xl text-center relative overflow-hidden">
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#151311] border border-amber-200 dark:border-stone-800 shadow-xl text-center relative overflow-hidden">
         
         {/* Mantra Selector */}
         <div className="max-w-md mx-auto mb-6">
-          <label className="text-xs text-stone-400 block mb-1.5 font-medium">
+          <label className="text-xs text-stone-600 dark:text-stone-400 block mb-1.5 font-medium">
             {currentLang === 'en' ? 'Select Mantra for Japa' : currentLang === 'hi' ? 'जप हेतु मन्त्र चुनें' : 'जपासाठी मंत्र निवडा'}
           </label>
           <select
@@ -196,7 +196,7 @@ export const JapaCounter: React.FC<JapaCounterProps> = ({ currentLang, preselect
               setSelectedMantraId(e.target.value);
               setCurrentCount(0);
             }}
-            className="w-full bg-stone-900 text-stone-200 border border-stone-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-saffron-500 font-medium"
+            className="w-full bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-stone-200 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-500 font-medium"
           >
             {activeList.map((m) => (
               <option key={m.id} value={m.id}>
@@ -207,19 +207,19 @@ export const JapaCounter: React.FC<JapaCounterProps> = ({ currentLang, preselect
         </div>
 
         {/* Display Current Mantra */}
-        <div className="my-4 p-4 rounded-2xl bg-stone-950/70 border border-stone-800/80 max-w-lg mx-auto">
-          <p className="text-xl sm:text-2xl font-bold text-saffron-300 font-devanagari tracking-wide">
+        <div className="my-4 p-4 rounded-2xl bg-amber-50/80 dark:bg-stone-950/70 border border-amber-200 dark:border-stone-800/80 max-w-lg mx-auto shadow-sm">
+          <p className="text-xl sm:text-2xl font-bold text-amber-900 dark:text-saffron-300 font-devanagari tracking-wide">
             {activeMantra.devanagari}
           </p>
-          <p className="text-xs text-stone-400 mt-1 font-mono">
+          <p className="text-xs text-stone-600 dark:text-stone-400 mt-1 font-mono">
             {activeMantra.roman}
           </p>
           <div className="mt-2 flex items-center justify-center gap-2">
             <button
-              onClick={() => audioEngine.speakText(activeMantra.devanagari, 'hi-IN', 0.78)}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-stone-800 text-stone-300 hover:text-white border border-stone-700 transition-colors"
+              onClick={() => audioEngine.speakText(activeMantra.devanagari, currentLang === 'mr' ? 'mr-IN' : 'hi-IN', 0.78)}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs bg-amber-100 dark:bg-stone-800 text-amber-900 dark:text-stone-300 hover:text-amber-950 dark:hover:text-white border border-amber-300 dark:border-stone-700 transition-colors shadow-sm font-medium"
             >
-              <Volume2 className="w-3.5 h-3.5 text-saffron-400" />
+              <Volume2 className="w-3.5 h-3.5 text-amber-600 dark:text-saffron-400" />
               <span>{currentLang === 'en' ? 'Listen Pronunciation' : 'उच्चारण ऐका'}</span>
             </button>
           </div>

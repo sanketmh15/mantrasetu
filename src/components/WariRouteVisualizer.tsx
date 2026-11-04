@@ -378,30 +378,30 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
 
       {/* 2. Key Metrics Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-4 rounded-2xl bg-gradient-to-b from-[#1c1815] to-[#12100e] border border-stone-800 text-center shadow-md">
-          <span className="text-[11px] text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Total Route Distance' : 'एकूण पायी अंतर'}</span>
-          <p className="text-xl sm:text-2xl font-bold text-amber-300 mt-0.5">{totalKm} km</p>
-          <span className="text-[11px] text-stone-300 font-medium">{activeRoute.length} {currentLang === 'en' ? 'Palkhi Halts' : 'पावन मुक्काम'}</span>
+        <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-center shadow-sm">
+          <span className="text-[11px] text-stone-600 dark:text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Total Route Distance' : 'एकूण पायी अंतर'}</span>
+          <p className="text-xl sm:text-2xl font-bold text-amber-800 dark:text-amber-300 mt-0.5">{totalKm} km</p>
+          <span className="text-[11px] text-stone-500 dark:text-stone-300 font-medium">{activeRoute.length} {currentLang === 'en' ? 'Palkhi Halts' : 'पावन मुक्काम'}</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-gradient-to-b from-[#1c1815] to-[#12100e] border border-stone-800 text-center shadow-md">
-          <span className="text-[11px] text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Pilgrim Count' : 'वारकरी भाविक'}</span>
-          <p className="text-xl sm:text-2xl font-bold text-saffron-400 mt-0.5">१५,००,०००+</p>
-          <span className="text-[11px] text-stone-300 font-medium">{currentLang === 'en' ? 'Varkari Devotees' : 'श्रद्धाळू माऊली'}</span>
+        <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-center shadow-sm">
+          <span className="text-[11px] text-stone-600 dark:text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Pilgrim Count' : 'वारकरी भाविक'}</span>
+          <p className="text-xl sm:text-2xl font-bold text-saffron-700 dark:text-saffron-400 mt-0.5">१५,००,०००+</p>
+          <span className="text-[11px] text-stone-500 dark:text-stone-300 font-medium">{currentLang === 'en' ? 'Varkari Devotees' : 'श्रद्धाळू माऊली'}</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-gradient-to-b from-[#1c1815] to-[#12100e] border border-stone-800 text-center shadow-md">
-          <span className="text-[11px] text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Tradition Age' : 'परंपरा वय'}</span>
-          <p className="text-xl sm:text-2xl font-bold text-yellow-400 mt-0.5">८००+ वर्षे</p>
-          <span className="text-[11px] text-stone-300 font-medium">{currentLang === 'en' ? 'Since 13th Century' : '१३ व्या शतकापासून'}</span>
+        <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-center shadow-sm">
+          <span className="text-[11px] text-stone-600 dark:text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Tradition Age' : 'परंपरा वय'}</span>
+          <p className="text-xl sm:text-2xl font-bold text-amber-700 dark:text-yellow-400 mt-0.5">८००+ वर्षे</p>
+          <span className="text-[11px] text-stone-500 dark:text-stone-300 font-medium">{currentLang === 'en' ? 'Since 13th Century' : '१३ व्या शतकापासून'}</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-gradient-to-b from-[#1c1815] to-[#12100e] border border-stone-800 text-center shadow-md">
-          <span className="text-[11px] text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Ringan Ceremonies' : 'रिंगण सोहळे'}</span>
-          <p className="text-xl sm:text-2xl font-bold text-emerald-400 mt-0.5">
+        <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-center shadow-sm">
+          <span className="text-[11px] text-stone-600 dark:text-amber-200/90 block font-semibold">{currentLang === 'en' ? 'Ringan Ceremonies' : 'रिंगण सोहळे'}</span>
+          <p className="text-xl sm:text-2xl font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">
             {activeRoute.filter((h) => h.ringanType !== 'none').length} {currentLang === 'en' ? 'Grand Ringans' : 'भव्य रिंगणे'}
           </p>
-          <span className="text-[11px] text-stone-300 font-medium">गोल व उभे रिंगण</span>
+          <span className="text-[11px] text-stone-500 dark:text-stone-300 font-medium">गोल व उभे रिंगण</span>
         </div>
       </div>
 
@@ -659,16 +659,16 @@ export const WariRouteVisualizer: React.FC<WariRouteVisualizerProps> = ({ curren
       </div>
 
       {/* 5. Varkari 24-Hour Daily Schedule (वारकरी दिनक्रम) */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#191613] to-[#110f0e] border border-amber-900/40 shadow-xl">
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#191613] border border-amber-200 dark:border-amber-900/40 shadow-xl">
         <div className="max-w-3xl mb-6">
-          <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block flex items-center gap-1.5">
+          <span className="text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider block flex items-center gap-1.5">
             <Clock className="w-4 h-4" />
             <span>{currentLang === 'en' ? 'The Spiritual Routine' : 'वारकरी नित्य दिनक्रम'}</span>
           </span>
-          <h3 className="text-2xl sm:text-3xl font-extrabold font-serifDev text-white mt-1">
+          <h3 className="text-2xl sm:text-3xl font-extrabold font-serifDev text-stone-900 dark:text-white mt-1">
             {currentLang === 'en' ? '24-Hour Daily Schedule in Wari' : 'वारीतील पावन २४ तासांचा शिस्तबद्ध दिनक्रम'}
           </h3>
-          <p className="text-xs sm:text-sm text-stone-200 mt-1">
+          <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-200 mt-1">
             लाखो वारकऱ्यांची वाटचाल ही कोणत्याही पोलिसांशिवाय अवघ्या जगात एकमेव अशी शिस्तबद्ध व शांततापूर्ण साधना मानली जाते.
           </p>
         </div>

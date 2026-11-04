@@ -231,12 +231,12 @@ class AudioEngine {
    * Uses persistent shared AudioElement to guarantee 100% continuous playback on mobile (Android/iOS)
    * with smooth chunk transitions and calibrated speed for uniform sound on ALL devices.
    */
-  public playGoogleTTS(text: string, lang = 'mr', onEnd?: () => void, persona?: VoicePersona): Promise<boolean> {
+  public playGoogleTTS(text: string, lang = 'mr', onEnd?: () => void, persona?: VoicePersona, customRate?: number): Promise<boolean> {
     return new Promise((resolve) => {
       try {
         this.isTTSAborted = false;
         const langCode = lang.startsWith('mr') ? 'mr' : lang.startsWith('hi') || lang.startsWith('sa') ? 'hi' : 'en';
-        const chunks = this.splitTextIntoChunks(text, 130);
+        const chunks = this.splitTextIntoChunks(text, 120);
         if (!chunks.length) {
           onEnd?.();
           resolve(true);
@@ -248,9 +248,10 @@ class AudioEngine {
         this.currentHumanAudio = audio;
 
         // Calibrated speaking pace for cross-device consistency:
-        // 0.88 for unhurried Vedic Brahman chant, 0.94 for divine melodious
+        // 0.78 for calm, unhurried, authentic devotional cadence; 0.82 for divine melodious
         const activePersona = persona || this.persona || 'vedic_brahman';
-        const rate = activePersona === 'vedic_brahman' ? 0.88 : 0.94;
+        const defaultRate = activePersona === 'vedic_brahman' ? 0.78 : 0.82;
+        const rate = customRate ? Math.max(0.65, Math.min(1.0, customRate)) : defaultRate;
         audio.playbackRate = rate;
 
         const playNext = () => {
@@ -276,7 +277,7 @@ class AudioEngine {
           audio.playbackRate = rate; // Consistent across chunks
 
           audio.onended = () => {
-            // Gentle natural pause between chunks (140ms)
+            // Gentle natural pause between chunks (180ms)
             setTimeout(() => {
               if (!this.isTTSAborted) {
                 playNext();
@@ -284,13 +285,17 @@ class AudioEngine {
                 onEnd?.();
                 resolve(false);
               }
-            }, 140);
+            }, 180);
           };
 
           audio.onerror = () => {
             console.warn('Google TTS audio playback warning on chunk:', chunkIndex);
             if (!this.isTTSAborted) {
-              if (chunkIndex < chunks.length) {
+              if (chunkIndex <= 1) {
+                // If the very first chunk failed (e.g. offline, blocked), immediately fail and fallback!
+                this.currentHumanAudio = null;
+                resolve(false);
+              } else if (chunkIndex < chunks.length) {
                 playNext();
               } else {
                 this.currentHumanAudio = null;
@@ -518,6 +523,30 @@ class AudioEngine {
    * without skipping Devanagari characters or producing 0ms silence.
    */
   private sacredOverrides: Record<string, string> = {
+    'राम कृष्ण हरी, जय जय राम कृष्ण हरी': 'Ram Krishna Hari, Jai Jai Ram Krishna Hari.',
+    'राम कृष्ण हरी': 'Ram Krishna Hari.',
+    'ज्ञानोबा माऊली तुकाराम': 'Dnyanoba Mauli Tukaram.',
+    'ज्ञानोबा माऊली तुकाराम, ज्ञानोबा माऊली तुकाराम': 'Dnyanoba Mauli Tukaram, Dnyanoba Mauli Tukaram.',
+    'ज्ञानोबा माऊली तुकाराम, ज्ञानोबा माऊली तुकाराम!': 'Dnyanoba Mauli Tukaram, Dnyanoba Mauli Tukaram!',
+    'पुंडलिक वरदे हरी विठ्ठल, श्री ज्ञानदेव तुकाराम': 'Pundalik Varade Hari Vitthal, Shri Dnyanadev Tukaram.',
+    'पुंडलिक वरदे हरी विठ्ठल, श्री ज्ञानदेव तुकाराम! पंढरीनाथ महाराज की जय!': 'Pundalik Varade Hari Vitthal, Shri Dnyanadev Tukaram! Pandharinath Maharaj Ki Jai!',
+    'पुंडलिक वरदे हरी विठ्ठल, श्री ज्ञानदेव तुकाराम। पंढरीनाथ महाराज की जय॥': 'Pundalik Varade Hari Vitthal, Shri Dnyanadev Tukaram, Pandharinath Maharaj Ki Jai.',
+    'पंढरीनाथ महाराज की जय': 'Pandharinath Maharaj Ki Jai.',
+    'विठू माऊली': 'Vithu Mauli.',
+    'विठ्ठल विठ्ठल जय हरी विठ्ठल': 'Vitthal Vitthal Jai Hari Vitthal.',
+    'श्री मयूरेश्वर': 'Shree Mayooreshwar.',
+    'श्री सिद्धिविनायक': 'Shree Siddhivinaayak.',
+    'श्री बल्लाळेश्वर': 'Shree Ballaaleshwar.',
+    'श्री वरदविनायक': 'Shree Varadavinaayak.',
+    'श्री चिंतामणी': 'Shree Chintaamani.',
+    'श्री गिरिजात्मज': 'Shree Girijaatmaj.',
+    'श्री विघ्नेश्वर': 'Shree Vighneshwar.',
+    'श्री महागणपती': 'Shree Mahaaganapati.',
+    'श्री त्र्यंबकेश्वर': 'Shree Tryambakeshwar.',
+    'श्री भीमाशंकर': 'Shree Bheemashankar.',
+    'श्री घृष्णेश्वर': 'Shree Ghrushneshwar.',
+    'श्री परळी वैजनाथ': 'Shree Parli Vaijanaath.',
+    'श्री औंढा नागनाथ': 'Shree Aundha Naaganaath.',
     'सनातन अमृतधारा पावन भक्ती दालनात आपले सहर्ष स्वागत आहे. महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला आजचा दिवस मंगलमय व शांततेचा जावो.':
       'Sanatan Amrutdhara paavan bhakti daalnaat aaple saharsha swaagat aahe. Mahadev, Prabhu Shri Ram aani Vithu Mauli chya krupe-ne aaplaa aajj-chaa divas mangalmay aani shaant-te-cha jaavo.',
     'सनातन अमृतधारा पावन भक्ती दालनात आपले सहर्ष स्वागत आहे. महादेव, प्रभू श्रीराम आणि विठूमाऊलीच्या कृपेने आपला दिवस मंगलमय जावो.':
@@ -536,10 +565,6 @@ class AudioEngine {
       'Om Tryambakam Yajaamahe Sugandhim Pushtivardhanam, Urvaarukamiva Bandhanaan Mrityor Muksheeya Maamritaat.',
     'राम कृष्ण हरी, जय जय राम कृष्ण हरी। पुंडलिक वरदे हरी विठ्ठल, श्री ज्ञानदेव तुकाराम। पंढरीनाथ महाराज की जय॥':
       'Ram Krishna Hari, Jai Jai Ram Krishna Hari. Pundalik Varade Hari Vitthal, Shri Dnyanadev Tukaram, Pandharinath Maharaj Ki Jai.',
-    'राम कृष्ण हरि, जय जय राम कृष्ण हरि':
-      'Ram Krishna Hari, Jai Jai Ram Krishna Hari.',
-    'ज्ञानोबा माऊली तुकाराम, ज्ञानोबा माऊली तुकाराम':
-      'Dnyanoba Mauli Tukaram, Dnyanoba Mauli Tukaram.',
     'श्रीगुरु चरन सरोज रज, निज मनु मुकुरु सुधारि। बरनऊं रघुबर बिमल जसु, जो दायकु फल चारि॥ जय हनुमान ज्ञान गुन सागर, जय कपीस तिहुं लोक उजागर॥':
       'Shri Guru Charan Saroj Raj, Nij Manu Mukuru Sudhaari. Barnau Raghuvar Bimal Jasu, Jo Daayaku Phal Chaari. Jai Hanuman Gyan Gun Saagar, Jai Kapees Tihun Lok Ujaagar.',
     'ॐ नमः शिवाय':
@@ -568,12 +593,6 @@ class AudioEngine {
       'Har Har Gange! Simhastha Kumbh Mela Nashik Trimbakeshwar va Prayagraj paavan parvaat aaple swaagat aahe.',
     'ज्ञानोबा माऊली तुकाराम! पंढरपूर आषाढी वारी पालखी महामार्ग दालनात आपले सहर्ष स्वागत आहे.':
       'Dnyanoba Mauli Tukaram! Pandharpur Aashadhi Wari palkhi mahamarg daalnaat aaple saharsha swaagat aahe.',
-    'ज्ञानोबा माऊली तुकाराम, ज्ञानोबा माऊली तुकाराम!':
-      'Dnyanoba Mauli Tukaram, Dnyanoba Mauli Tukaram!',
-    'राम कृष्ण हरी, जय जय राम कृष्ण हरी! राम कृष्ण हरी, जय जय राम कृष्ण हरी!':
-      'Ram Krishna Hari, Jai Jai Ram Krishna Hari! Ram Krishna Hari, Jai Jai Ram Krishna Hari!',
-    'पुंडलिक वरदे हरी विठ्ठल, श्री ज्ञानदेव तुकाराम! पंढरीनाथ महाराज की जय!':
-      'Pundalik Varade Hari Vitthal, Shri Dnyanadev Tukaram! Pandharinath Maharaj Ki Jai!',
     'दैनिक नक्षत्र पत्रिका, रास उपाय आणि जन्म कुंडली दालनात आपले स्वागत आहे.':
       'Dainik Nakshatra patrika, rashi upaay aani janma kundali daalnaat aaple swaagat aahe.',
     'सनातन अमृतधारा सात्विक भक्ती भांडारात आपले सहर्ष स्वागत आहे.':
@@ -581,13 +600,16 @@ class AudioEngine {
   };
 
   /**
-   * Translates Devanagari script to phonetic Roman text for English-only TTS engines
+   * Translates Devanagari script to phonetic Roman text for English-only TTS engines.
+   * Tailored for accurate Marathi and Sanskrit pronunciation (e.g., 'dnya' for ज्ञ, 'ru' for ऋ).
    */
-  public toPhoneticRoman(text: string): string {
+  public toPhoneticRoman(text: string, lang = 'mr'): string {
     const trimmed = text.trim();
     if (this.sacredOverrides[trimmed]) {
       return this.sacredOverrides[trimmed];
     }
+
+    const isMarathi = (lang || '').toLowerCase().startsWith('mr');
 
     const consonants: Record<string, string> = {
       'क': 'ka', 'ख': 'kha', 'ग': 'ga', 'घ': 'gha', 'ङ': 'nga',
@@ -596,16 +618,19 @@ class AudioEngine {
       'त': 'ta', 'थ': 'tha', 'द': 'da', 'ध': 'dha', 'न': 'na',
       'प': 'pa', 'फ': 'pha', 'ब': 'ba', 'भ': 'bha', 'म': 'ma',
       'य': 'ya', 'र': 'ra', 'ल': 'la', 'व': 'va', 'श': 'sha', 'ष': 'sha',
-      'स': 'sa', 'ह': 'ha', 'ळ': 'la', 'क्ष': 'ksha', 'ज्ञ': 'gya'
+      'स': 'sa', 'ह': 'ha', 'ळ': 'la', 'क्ष': 'ksha',
+      'ज्ञ': isMarathi ? 'dnya' : 'gya'
     };
 
     const vowels: Record<string, string> = {
-      'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri',
+      'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo',
+      'ऋ': isMarathi ? 'ru' : 'ri',
       'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au', 'अं': 'am', 'अः': 'aha'
     };
 
     const matras: Record<string, string> = {
-      'ा': 'aa', 'ि': 'i', 'ी': 'ee', 'ु': 'u', 'ू': 'oo', 'ृ': 'ri',
+      'ा': 'aa', 'ि': 'i', 'ी': 'ee', 'ु': 'u', 'ू': 'oo',
+      'ृ': isMarathi ? 'ru' : 'ri',
       'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au'
     };
 
@@ -644,12 +669,10 @@ class AudioEngine {
     return out.replace(/\s+/g, ' ').trim();
   }
 
-
-
   /**
    * Discovers and selects the best native Indian voice for speech synthesis.
    * Calibrates pitch, rate, and voice match across Android, iOS, Windows, and Mac
-   * so that the voice persona remains majestic and uniform across ALL devices!
+   * with priority to authentic native Marathi / Hindi Devanagari synthesizers.
    */
   public getBestBrahmanVoice(preferredLang?: string, customPersona?: VoicePersona): {
     voice: SpeechSynthesisVoice | null;
@@ -661,13 +684,14 @@ class AudioEngine {
     const activePersona = customPersona || this.persona || 'vedic_brahman';
     const pref = (preferredLang || '').toLowerCase();
     const isMarathiPreferred = pref.startsWith('mr');
+    const isHindiPreferred = pref.startsWith('hi') || pref.startsWith('sa');
 
-    // Calibrated persona acoustic properties (uniform across mobile & desktop)
-    let pitch = 0.88; // Reverberant solemn tone for Vedic Brahman / Panditji
-    let rate = 0.86;  // Majestic, unhurried cadence
+    // Calibrated persona acoustic properties (unhurried, devotional, dignified pace)
+    let pitch = 0.90;
+    let rate = 0.78; // Calm, respectful pace for mantras and prayers (senior-friendly)
     if (activePersona === 'divine_melodious') {
       pitch = 1.00;
-      rate = 0.92;
+      rate = 0.82; // Gentle, melodious pace
     }
 
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -680,69 +704,132 @@ class AudioEngine {
     }
     if (!voices.length) {
       // In iOS or asynchronous browsers before voices trigger, do NOT fail!
-      // Return null voice with targetLang 'hi-IN' so the browser invokes its internal language pack!
+      // Return null voice with targetLang so the browser invokes its internal language pack!
       return { voice: null, isDevanagariCapable: true, targetLang: isMarathiPreferred ? 'mr-IN' : 'hi-IN', pitch, rate };
     }
 
-    // 1. Prioritize rich Indian male voices for authentic chanting
-    const maleIndianVoice = voices.find((v) => {
-      const vn = (v.name || '').toLowerCase();
-      const vl = (v.lang || '').toLowerCase();
-      return (
-        vn.includes('hemant') ||
-        vn.includes('rishi') ||
-        vn.includes('madhav') ||
-        vn.includes('pradeep') ||
-        vn.includes('ravi') ||
-        (vl.startsWith('hi') && (vn.includes('male') || vn.includes('online')))
-      );
-    });
-    if (maleIndianVoice) {
-      return { voice: maleIndianVoice, isDevanagariCapable: true, targetLang: maleIndianVoice.lang, pitch, rate };
-    }
-
-    // 2. Language-targeted match for Marathi (mr)
+    // 1. Language-targeted match for Marathi (mr)
     if (isMarathiPreferred) {
       const marathiVoice = voices.find((v) => {
         const vl = (v.lang || '').toLowerCase();
         const vn = (v.name || '').toLowerCase();
-        return vl.startsWith('mr') || vn.includes('marathi');
+        return (
+          vl.startsWith('mr') ||
+          vn.includes('marathi') ||
+          vn.includes('मराठी') ||
+          vn.includes('aarohi') ||
+          vn.includes('manoj')
+        );
+      });
+      if (marathiVoice) {
+        return { voice: marathiVoice, isDevanagariCapable: true, targetLang: 'mr-IN', pitch, rate };
+      }
+
+      // If no native Marathi voice is installed, use native Hindi/Sanskrit Devanagari voice!
+      // Hindi voices share the same Devanagari script and pronounce words authentically
+      // without translating to robotic English!
+      const hindiDevanagariVoice = voices.find((v) => {
+        const vl = (v.lang || '').toLowerCase();
+        const vn = (v.name || '').toLowerCase();
+        return (
+          vl.startsWith('hi') ||
+          vl.startsWith('sa') ||
+          vn.includes('hindi') ||
+          vn.includes('हिन्दी') ||
+          vn.includes('kalpana') ||
+          vn.includes('hemant') ||
+          vn.includes('swara') ||
+          vn.includes('madhav') ||
+          vn.includes('lekha')
+        );
+      });
+      if (hindiDevanagariVoice) {
+        return { voice: hindiDevanagariVoice, isDevanagariCapable: true, targetLang: 'hi-IN', pitch, rate };
+      }
+    }
+
+    // 2. Language-targeted match for Hindi / Sanskrit (hi / sa)
+    if (isHindiPreferred) {
+      const hindiVoice = voices.find((v) => {
+        const vl = (v.lang || '').toLowerCase();
+        const vn = (v.name || '').toLowerCase();
+        return (
+          vl.startsWith('hi') ||
+          vl.startsWith('sa') ||
+          vn.includes('hindi') ||
+          vn.includes('हिन्दी') ||
+          vn.includes('kalpana') ||
+          vn.includes('hemant') ||
+          vn.includes('swara') ||
+          vn.includes('madhav') ||
+          vn.includes('lekha')
+        );
+      });
+      if (hindiVoice) {
+        return { voice: hindiVoice, isDevanagariCapable: true, targetLang: 'hi-IN', pitch, rate };
+      }
+
+      const marathiVoice = voices.find((v) => {
+        const vl = (v.lang || '').toLowerCase();
+        const vn = (v.name || '').toLowerCase();
+        return vl.startsWith('mr') || vn.includes('marathi') || vn.includes('aarohi');
       });
       if (marathiVoice) {
         return { voice: marathiVoice, isDevanagariCapable: true, targetLang: 'mr-IN', pitch, rate };
       }
     }
 
-    // 3. Language-targeted match for Hindi / Sanskrit (hi / sa)
-    const hindiVoice = voices.find((v) => {
+    // 3. Any general Devanagari capable Indian voice (Hindi / Marathi / Sanskrit)
+    const generalDevanagariVoice = voices.find((v) => {
       const vl = (v.lang || '').toLowerCase();
       const vn = (v.name || '').toLowerCase();
       return (
         vl.startsWith('hi') ||
+        vl.startsWith('mr') ||
+        vl.startsWith('sa') ||
         vn.includes('hindi') ||
+        vn.includes('marathi') ||
         vn.includes('kalpana') ||
         vn.includes('hemant') ||
         vn.includes('swara') ||
-        vn.includes('lekha')
+        vn.includes('aarohi')
       );
     });
-    if (hindiVoice) {
-      return { voice: hindiVoice, isDevanagariCapable: true, targetLang: 'hi-IN', pitch, rate };
+    if (generalDevanagariVoice) {
+      return {
+        voice: generalDevanagariVoice,
+        isDevanagariCapable: true,
+        targetLang: generalDevanagariVoice.lang.startsWith('mr') ? 'mr-IN' : 'hi-IN',
+        pitch,
+        rate
+      };
     }
 
-    // 4. Any Indian English voice (Rishi, Veena, Microsoft Ravi, Google English India)
+    // 4. On Apple / Android mobile devices where voices might not be named explicitly,
+    // returning voice: null with targetLang allows the OS's native multilingual TTS engine to speak Devanagari!
+    const isMobileDevice = typeof navigator !== 'undefined' && /android|iphone|ipad|ipod/i.test(navigator.userAgent || '');
+    if (isMobileDevice) {
+      return { voice: null, isDevanagariCapable: true, targetLang: isMarathiPreferred ? 'mr-IN' : 'hi-IN', pitch, rate };
+    }
+
+    // 5. Last-resort fallback for desktop environments with ONLY English voices (e.g. Windows with Microsoft Ravi / David):
     const indianEnglish = voices.find((v) => {
       const vl = (v.lang || '').toLowerCase();
       const vn = (v.name || '').toLowerCase();
-      return vl.includes('in') || vn.includes('india') || vn.includes('rishi') || vn.includes('veena') || vn.includes('ravi');
+      return (
+        vn.includes('ravi') ||
+        vn.includes('rishi') ||
+        vn.includes('veena') ||
+        vl.includes('en-in') ||
+        (vl.includes('en') && vn.includes('india'))
+      );
     });
     if (indianEnglish) {
-      return { voice: indianEnglish, isDevanagariCapable: true, targetLang: 'hi-IN', pitch, rate };
+      // Slower rate for English transliteration so words are clear and not rushed
+      return { voice: indianEnglish, isDevanagariCapable: false, targetLang: indianEnglish.lang, pitch, rate: 0.70 };
     }
 
-    // 5. On Apple devices (iOS Safari, macOS) without explicit voice names,
-    // do NOT assign an American voice (like Samantha or Daniel)!
-    // Returning voice: null with targetLang: 'hi-IN' instructs iOS to invoke its native Hindi synthesizer!
+    // 6. Final fallback: invoke OS internal language pack
     return { voice: null, isDevanagariCapable: true, targetLang: isMarathiPreferred ? 'mr-IN' : 'hi-IN', pitch, rate };
   }
 
@@ -837,7 +924,17 @@ class AudioEngine {
       }
     }
 
-    // 2. Direct Instant Speech Synthesis (Runs immediately within user activation token, 0 delay, 100% reliable)
+    // 2. High-Fidelity Google Native Indian TTS (Authentic Marathi/Hindi pronunciation, calm unhurried pace)
+    try {
+      const googleSuccess = await this.playGoogleTTS(text, lang, safeEnd, this.persona, userRate);
+      if (googleSuccess) {
+        return;
+      }
+    } catch (err) {
+      console.warn('Google TTS skipped, using local speech synthesis:', err);
+    }
+
+    // 3. Direct Instant Speech Synthesis Fallback (Runs locally within browser)
     this.speakSynthesisFallback(text, lang, userRate, safeEnd);
   }
 
@@ -885,7 +982,7 @@ class AudioEngine {
         !voiceConfig.voice.lang.toLowerCase().startsWith('sa');
 
       const textToSpeak = (isEnglishVoice || !voiceConfig.isDevanagariCapable)
-        ? this.toPhoneticRoman(phraseText)
+        ? this.toPhoneticRoman(phraseText, lang)
         : phraseText;
 
       const targetLang = isEnglishVoice
@@ -915,7 +1012,7 @@ class AudioEngine {
             } else {
               onEnd?.();
             }
-          }, 180);
+          }, 240);
         }
       };
 

@@ -207,34 +207,34 @@ export function SatvikDevotionalStore({ currentLang }: SatvikDevotionalStoreProp
           return (
             <div
               key={product.id}
-              className="p-5 rounded-3xl bg-gradient-to-b from-[#181513] to-[#100e0d] border border-stone-800 hover:border-amber-600/50 transition-all flex flex-col justify-between shadow-xl group"
+              className="p-5 rounded-3xl bg-white dark:bg-[#181513] border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600/50 transition-all flex flex-col justify-between shadow-sm group"
             >
               <div>
                 {/* Top Badge & Image Icon */}
                 <div className="flex items-start justify-between mb-3">
-                  <span className="text-4xl p-2.5 rounded-2xl bg-stone-950 border border-stone-800 shadow-inner group-hover:scale-110 transition-transform">
+                  <span className="text-4xl p-2.5 rounded-2xl bg-amber-50/70 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 shadow-inner group-hover:scale-110 transition-transform">
                     {product.imageIcon}
                   </span>
 
                   {product.badge && (
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-950/90 border border-amber-700/60 text-amber-300 shadow-sm">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/90 border border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-300 shadow-sm">
                       {product.badge[currentLang] || product.badge.mr}
                     </span>
                   )}
                 </div>
 
                 {/* Rating */}
-                <div className="flex items-center gap-1.5 text-xs text-stone-400 mb-1.5">
-                  <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                  <span className="font-bold text-stone-200">{product.rating}</span>
+                <div className="flex items-center gap-1.5 text-xs text-stone-500 dark:text-stone-400 mb-1.5">
+                  <Star className="w-3.5 h-3.5 text-amber-500 dark:text-yellow-400 fill-amber-500 dark:fill-yellow-400" />
+                  <span className="font-bold text-stone-800 dark:text-stone-200">{product.rating}</span>
                   <span className="text-[11px] text-stone-500">({product.reviewsCount} परीक्षणे)</span>
                 </div>
 
-                <h3 className="text-sm sm:text-base font-bold text-white font-serifDev leading-snug line-clamp-2">
+                <h3 className="text-sm sm:text-base font-bold text-stone-900 dark:text-white font-serifDev leading-snug line-clamp-2">
                   {product.name[currentLang] || product.name.mr}
                 </h3>
 
-                <p className="text-xs text-stone-300 mt-2 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-stone-600 dark:text-stone-300 mt-2 line-clamp-2 leading-relaxed">
                   {product.description[currentLang] || product.description.mr}
                 </p>
 

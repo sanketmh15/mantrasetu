@@ -52,12 +52,28 @@ html:not(.dark) .bg-\[\#14120f\]\/95 {
   box-shadow: 0 4px 20px -2px rgba(180, 83, 9, 0.08) !important;
 }
 
-/* Main Cards */
+/* Main Cards & Gradients in Light Mode */
 html:not(.dark) .bg-\[\#171513\],
 html:not(.dark) .bg-\[\#1c1917\],
 html:not(.dark) .bg-\[\#1c1815\],
-html:not(.dark) .bg-\[\#12100e\] {
-  background: #ffffff !important;
+html:not(.dark) .bg-\[\#12100e\],
+html:not(.dark) .bg-\[\#14161f\],
+html:not(.dark) [class*="from-\[\#1c1815\]"],
+html:not(.dark) [class*="from-\[\#14161f\]"],
+html:not(.dark) [class*="from-\[\#191613\]"],
+html:not(.dark) [class*="from-\[\#181513\]"],
+html:not(.dark) [class*="from-\[\#1c1917\]"],
+html:not(.dark) [class*="from-\[\#18130e\]"],
+html:not(.dark) [class*="from-\[\#1c140c\]"],
+html:not(.dark) [class*="from-\[\#12100e\]"],
+html:not(.dark) [class*="from-\[\#100e0d\]"],
+html:not(.dark) .from-\[\#1c1815\],
+html:not(.dark) .from-\[\#14161f\],
+html:not(.dark) .from-\[\#191613\],
+html:not(.dark) .from-\[\#181513\],
+html:not(.dark) .from-\[\#1c1917\] {
+  background-image: none !important;
+  background-color: #ffffff !important;
   border-color: #e8e2d4 !important;
   box-shadow: 0 4px 18px -2px rgba(180, 83, 9, 0.07) !important;
 }

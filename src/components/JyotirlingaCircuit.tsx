@@ -41,16 +41,16 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
         </p>
 
         {/* Traditional Sloka Box */}
-        <div className="mt-4 p-4 rounded-2xl bg-stone-900/80 border border-blue-900/40 max-w-xl mx-auto text-center shadow-lg">
-          <p className="text-sm sm:text-base font-bold text-blue-300 font-devanagari leading-relaxed">
+        <div className="mt-4 p-4 rounded-2xl bg-blue-50/80 dark:bg-stone-900/80 border border-blue-200 dark:border-blue-900/40 max-w-xl mx-auto text-center shadow-sm">
+          <p className="text-sm sm:text-base font-bold text-blue-950 dark:text-blue-300 font-devanagari leading-relaxed">
             {jyotirlingaSloka}
           </p>
           <div className="mt-2 flex items-center justify-center gap-2">
             <button
-              onClick={() => audioEngine.speakText(jyotirlingaSloka, 'hi-IN', 0.78)}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-stone-800 text-stone-300 hover:text-white border border-stone-700 transition-colors"
+              onClick={() => audioEngine.speakText(jyotirlingaSloka, currentLang === 'mr' ? 'mr-IN' : 'hi-IN', 0.78)}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-blue-100 dark:bg-stone-800 text-blue-950 dark:text-stone-300 hover:text-blue-900 dark:hover:text-white border border-blue-300 dark:border-stone-700 transition-colors shadow-sm font-medium"
             >
-              <Volume2 className="w-3.5 h-3.5 text-blue-400" />
+              <Volume2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
               <span>{currentLang === 'en' ? 'Listen Jyotirlinga Sloka' : 'द्वादश ज्योतिर्लिंग श्लोक ऐका'}</span>
             </button>
           </div>
@@ -58,7 +58,7 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
       </div>
 
       {/* Sequential Horizontal Stepper */}
-      <div className="mb-8 p-3 rounded-2xl bg-stone-900 border border-stone-800 overflow-x-auto no-scrollbar">
+      <div className="mb-8 p-3 rounded-2xl bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 overflow-x-auto no-scrollbar shadow-inner">
         <div className="flex items-center gap-2 min-w-max">
           {maharashtraJyotirlingas.map((temple) => {
             const isSelected = temple.id === selectedTempleId;
@@ -68,12 +68,12 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
                 onClick={() => setSelectedTempleId(temple.id)}
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
                   isSelected
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-950 scale-105'
-                    : 'bg-stone-800/80 text-stone-300 hover:bg-stone-700'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-900/20 scale-105'
+                    : 'bg-white dark:bg-stone-800/80 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:border-blue-400'
                 }`}
               >
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                  isSelected ? 'bg-white text-stone-900' : 'bg-stone-900 text-blue-400'
+                  isSelected ? 'bg-white text-stone-900' : 'bg-blue-100 dark:bg-stone-900 text-blue-900 dark:text-blue-400'
                 }`}>
                   {temple.sequence}
                 </span>
@@ -85,66 +85,67 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
       </div>
 
       {/* Active Temple Spotlight Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#14161f] to-[#0d0f17] border border-blue-900/40 shadow-2xl mb-12">
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#10121a] border border-blue-200 dark:border-blue-900/40 shadow-xl mb-12">
         <div className="flex flex-col lg:flex-row items-start justify-between gap-6">
           
           <div className="max-w-2xl">
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-500 text-stone-950">
+              <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-sm">
                 {currentLang === 'en' ? `Jyotirlinga #${templeIndiaNumber(activeTemple.jyotirlingaNumberInIndia)} of India` : `भारतातील ${activeTemple.jyotirlingaNumberInIndia} वे ज्योतिर्लिंग`}
               </span>
-              <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-stone-900 text-blue-300 border border-blue-800/60">
+              <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-50 dark:bg-stone-900 text-blue-900 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60">
                 🌊 {activeTemple.riverAssociation}
               </span>
-              <span className="text-xs text-stone-400">
+              <span className="text-xs text-stone-600 dark:text-stone-400 font-medium">
                 📍 {activeTemple.city}, {activeTemple.district}
               </span>
             </div>
 
             {/* Title */}
-            <h3 className="text-2xl sm:text-3xl font-bold text-white font-serifDev mb-2">
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-stone-900 dark:text-white font-serifDev mb-2">
               {activeTemple.name[currentLang]}
             </h3>
-            <p className="text-xs text-blue-300/90 font-medium mb-4">
-              🏛️ {activeTemple.historicalEra}
+            <p className="text-xs sm:text-sm text-blue-900 dark:text-blue-300 font-semibold mb-4 flex items-center gap-1.5">
+              <span>🏛️</span>
+              <span>{activeTemple.historicalEra}</span>
             </p>
 
             {/* Significance */}
-            <p className="text-sm text-stone-200 leading-relaxed mb-4">
+            <p className="text-sm text-stone-700 dark:text-stone-200 leading-relaxed mb-4">
               {activeTemple.significance[currentLang]}
             </p>
 
             {/* Special Feature Callout */}
-            <div className="p-4 rounded-2xl bg-stone-950/80 border border-stone-800 text-xs sm:text-sm text-blue-200/90 mb-4 flex items-start gap-3">
-              <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-blue-50/90 dark:bg-stone-950/80 border border-blue-200 dark:border-stone-800 text-xs sm:text-sm text-stone-800 dark:text-blue-200/90 mb-4 flex items-start gap-3 shadow-sm">
+              <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="block text-blue-300 mb-0.5">
+                <strong className="block text-blue-900 dark:text-blue-300 font-bold mb-1">
                   {currentLang === 'en' ? 'Tradition & Sacred Darshan:' : 'विशेष परंपरा व दर्शन:'}
                 </strong>
-                <p>{activeTemple.specialTradition[currentLang]}</p>
+                <p className="text-stone-800 dark:text-blue-100/90 leading-relaxed">{activeTemple.specialTradition[currentLang]}</p>
               </div>
             </div>
 
             {/* How to Reach Details */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-stone-400 border-t border-stone-800/80 pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-stone-600 dark:text-stone-400 border-t border-stone-200 dark:border-stone-800/80 pt-4">
               <div>
-                <span className="font-semibold text-stone-300 block mb-0.5">🚆 By Rail:</span>
+                <span className="font-bold text-stone-900 dark:text-stone-200 block mb-0.5">🚆 By Rail:</span>
                 <p>{activeTemple.howToReach.rail}</p>
               </div>
               <div>
-                <span className="font-semibold text-stone-300 block mb-0.5">🚌 By Road:</span>
+                <span className="font-bold text-stone-900 dark:text-stone-200 block mb-0.5">🚌 By Road:</span>
                 <p>{activeTemple.howToReach.road}</p>
               </div>
             </div>
           </div>
 
           {/* Right Action Column with Temple Photo */}
-          <div className="w-full lg:w-80 p-5 rounded-2xl bg-stone-950 border border-stone-800/80 flex flex-col justify-between text-center">
+          <div className="w-full lg:w-80 p-5 rounded-2xl bg-blue-50/50 dark:bg-stone-950 border border-blue-200 dark:border-stone-800/80 flex flex-col justify-between text-center shadow-sm">
             <div>
               {/* Authentic Temple Photo */}
               {SACRED_PLACE_REGISTRY[activeTemple.imageTag]?.imageUrl && (
-                <div className="relative h-44 w-full rounded-xl overflow-hidden border border-blue-500/40 shadow-lg mb-4 bg-stone-900 group">
+                <div className="relative h-44 w-full rounded-xl overflow-hidden border border-blue-400/60 dark:border-blue-500/40 shadow-lg mb-4 bg-stone-900 group">
                   <img
                     src={SACRED_PLACE_REGISTRY[activeTemple.imageTag].imageUrl}
                     alt={activeTemple.name[currentLang]}
@@ -152,23 +153,23 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] font-bold text-blue-300 bg-stone-950/80 px-2 py-0.5 rounded-md border border-blue-500/30">
+                  <span className="absolute bottom-2 left-2 text-[10px] font-bold text-blue-900 dark:text-blue-300 bg-white/95 dark:bg-stone-950/80 px-2 py-0.5 rounded-md border border-blue-300 dark:border-blue-500/30 shadow-sm">
                     🔱 {activeTemple.city}
                   </span>
                 </div>
               )}
 
-              <span className="text-xs uppercase tracking-wider text-stone-500 font-semibold block mb-1">
+              <span className="text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400 font-bold block mb-1">
                 {currentLang === 'en' ? 'Sanctum Timings' : 'दर्शन वेळ'}
               </span>
-              <p className="text-sm font-bold text-white flex items-center justify-center gap-1.5 mb-4">
-                <Clock className="w-4 h-4 text-blue-400" />
+              <p className="text-sm font-bold text-stone-900 dark:text-white flex items-center justify-center gap-1.5 mb-4">
+                <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 <span>{activeTemple.timings}</span>
               </p>
 
-              <div className="p-3 rounded-xl bg-blue-950/30 border border-blue-900/40 text-[11px] text-blue-200/80 text-left mb-6">
-                <span className="font-semibold text-blue-300 block mb-1">🌿 Worship Etiquette:</span>
-                <p>
+              <div className="p-3 rounded-xl bg-blue-100/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/40 text-[11px] text-stone-800 dark:text-blue-200/80 text-left mb-6 shadow-sm">
+                <span className="font-bold text-blue-900 dark:text-blue-300 block mb-1">🌿 Worship Etiquette:</span>
+                <p className="leading-relaxed">
                   {currentLang === 'en'
                     ? 'Fresh unblemished Bilva leaves, pure cold water, and white flowers are traditional offerings to the Shivalinga.'
                     : 'ताजी स्वच्छ बेलाची पाने, थंड पाणी आणि पांढरी फुले शिवलिंगावर अर्पण करावीत.'}
@@ -180,7 +181,7 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
               href={activeTemple.googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-blue-950 transition-all"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all"
             >
               <Navigation className="w-4 h-4" />
               <span>{currentLang === 'en' ? 'Open in Google Maps' : 'गुगल मॅप्सवर रस्ता पहा'}</span>
@@ -192,7 +193,7 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
       </div>
 
       {/* Grid of All 5 Jyotirlingas */}
-      <h3 className="text-xl font-bold text-white font-serifDev mb-4 flex items-center gap-2">
+      <h3 className="text-xl font-bold text-stone-900 dark:text-white font-serifDev mb-4 flex items-center gap-2">
         <span>🔱</span>
         <span>{currentLang === 'en' ? 'All 5 Maharashtra Jyotirlingas' : 'महाराष्ट्रातील सर्व ५ ज्योतिर्लिंगे'}</span>
       </h3>
@@ -209,8 +210,8 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
               }}
               className={`rounded-2xl border overflow-hidden transition-all cursor-pointer flex flex-col justify-between ${
                 temple.id === selectedTempleId
-                  ? 'bg-blue-950/40 border-blue-500 shadow-md ring-1 ring-blue-500/50'
-                  : 'bg-stone-900/60 border-stone-800 hover:border-stone-700'
+                  ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-500 shadow-md ring-1 ring-blue-500/50'
+                  : 'bg-white dark:bg-stone-900/60 border-stone-200 dark:border-stone-800 hover:border-blue-400 hover:shadow-md'
               }`}
             >
               {placeImg && (
@@ -232,14 +233,14 @@ export const JyotirlingaCircuit: React.FC<JyotirlingaCircuitProps> = ({ currentL
               )}
               <div className="p-3 sm:p-4 flex flex-col justify-between flex-grow">
                 <div>
-                  <h4 className="font-bold text-white text-sm font-serifDev mb-1">
+                  <h4 className="font-bold text-stone-900 dark:text-white text-sm font-serifDev mb-1">
                     {temple.name[currentLang]}
                   </h4>
-                  <p className="text-xs text-stone-400 line-clamp-2">
+                  <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2">
                     {temple.significance[currentLang]}
                   </p>
                 </div>
-                <div className="mt-3 pt-2 border-t border-stone-800/80 flex items-center justify-between text-[11px] text-blue-400 font-medium">
+                <div className="mt-3 pt-2 border-t border-stone-200 dark:border-stone-800/80 flex items-center justify-between text-[11px] text-blue-800 dark:text-blue-400 font-semibold">
                   <span>{currentLang === 'en' ? 'View Details' : 'तपशील पहा'}</span>
                   <span>→</span>
                 </div>

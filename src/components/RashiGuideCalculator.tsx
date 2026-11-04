@@ -445,25 +445,25 @@ export function RashiGuideCalculator({
             {filteredNakshatras.map((nak) => (
               <div
                 key={nak.number}
-                className="p-5 rounded-2xl bg-gradient-to-b from-[#181513] to-[#100e0d] border border-stone-800 hover:border-amber-600/50 transition-all space-y-2.5 shadow-md"
+                className="p-5 rounded-2xl bg-white dark:bg-[#181513] border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600/50 transition-all space-y-2.5 shadow-sm"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-2xl">{nak.symbol.split(' ')[1] || '⭐'}</span>
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-stone-950 text-amber-300 font-semibold border border-stone-800">
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-950 text-amber-800 dark:text-amber-300 font-semibold border border-stone-200 dark:border-stone-800">
                     नक्षत्र #{nak.number} • {nak.rulingPlanet}
                   </span>
                 </div>
 
                 <div>
-                  <h4 className="text-base font-bold text-white font-serifDev">
+                  <h4 className="text-base font-bold text-stone-900 dark:text-white font-serifDev">
                     {nak.name[currentLang] || nak.name.mr}
                   </h4>
-                  <p className="text-xs text-stone-400">
-                    देवता: <strong className="text-stone-200">{nak.deity}</strong> • गण: {nak.gana}
+                  <p className="text-xs text-stone-600 dark:text-stone-400">
+                    देवता: <strong className="text-stone-800 dark:text-stone-200">{nak.deity}</strong> • गण: {nak.gana}
                   </p>
                 </div>
 
-                <p className="text-xs text-stone-300 leading-relaxed bg-black/30 p-2.5 rounded-xl border border-stone-800/80">
+                <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed bg-stone-50 dark:bg-black/30 p-2.5 rounded-xl border border-stone-200 dark:border-stone-800/80">
                   {nak.nature[currentLang] || nak.nature.mr}
                 </p>
 
