@@ -18,6 +18,12 @@ export interface PlanetPlacement {
   degree: number;
   status: 'उच्च (Exalted)' | 'स्वराशी (Own)' | 'मित्र (Friendly)' | 'सम (Neutral)' | 'शत्रू (Enemy)' | 'नीच (Debilitated)';
   isRetrograde?: boolean;
+  degreeFormatted?: string; // e.g. "14° 22'"
+  nakshatraName?: string; // e.g. "अनुराधा"
+  nakshatraPada?: number; // 1 to 4
+  navamshaSign?: string; // e.g. "वृश्चिक"
+  navamshaSignNum?: number; // 1 to 12
+  abbrMr?: string; // e.g. "रवि", "चं", "मं", "बु", "गु", "शु", "श", "रा", "के"
 }
 
 export interface HouseDetail {
@@ -84,6 +90,11 @@ export interface AstrologicalPillars {
   luckyDay: string;
   ishtadevata: string;
   beejMantra: string;
+  lagnaDegree?: number;
+  lagnaDegreeFormatted?: string;
+  lagnaNakshatra?: NakshatraInfo;
+  lagnaPada?: number;
+  ayanamsaFormatted?: string;
 }
 
 export interface AIPredictionReport {
@@ -100,7 +111,10 @@ export interface FullKundaliAnalysis {
   user: UserBirthData;
   pillars: AstrologicalPillars;
   houses: HouseDetail[];
+  navamshaHouses: HouseDetail[];
+  navamshaLagna: RashiInfo;
   planets: PlanetPlacement[];
+  lagnaPlacement?: PlanetPlacement;
   doshas: DoshaAnalysis;
   predictions: AIPredictionReport;
   currentDasha: {
@@ -562,6 +576,20 @@ const NAKSHATRA_YONIS: string[] = [
 // ==========================================
 // 4. MAIN EXACT KUNDALI GENERATOR (ASTROSAGE EQUIVALENT)
 // ==========================================
+export function getNavamshaSign(siderealDeg: number): number {
+  const signIdx = Math.floor(siderealDeg / 30);
+  const degInSign = siderealDeg % 30;
+  const navIdxInSign = Math.floor(degInSign / (30 / 9)); // 0 to 8
+
+  let startSign = 0;
+  if ([0, 4, 8].includes(signIdx)) startSign = 0; // Aries, Leo, Sagittarius
+  else if ([1, 5, 9].includes(signIdx)) startSign = 9; // Taurus, Virgo, Capricorn
+  else if ([2, 6, 10].includes(signIdx)) startSign = 6; // Gemini, Libra, Aquarius
+  else startSign = 3; // Cancer, Scorpio, Pisces
+
+  return (startSign + navIdxInSign) % 12;
+}
+
 export function generateExactKundali(birthData: UserBirthData): FullKundaliAnalysis {
   // 1. Parse Date and Time safely
   const [yStr, mStr, dStr] = (birthData.birthDate || '1998-05-15').split(/[-/]/);
@@ -634,6 +662,18 @@ export function generateExactKundali(birthData: UserBirthData): FullKundaliAnaly
   const ascTrop = getAscendant(JD, T, utcHours, lat, lon);
   const lagnaSid = normalize(ascTrop - ayanamsa);
 
+  // Degrees, Nakshatra, and Pada of Lagna
+  const degWithinLagna = lagnaSid % 30;
+  const dL = Math.floor(degWithinLagna);
+  const mL = Math.floor((degWithinLagna - dL) * 60);
+  const lagnaDegreeFormatted = `${dL}° ${mL < 10 ? '0' : ''}${mL}'`;
+
+  // Ayanamsa formatted
+  const dAy = Math.floor(ayanamsa);
+  const mAy = Math.floor((ayanamsa - dAy) * 60);
+  const sAy = Math.floor(((ayanamsa - dAy) * 60 - mAy) * 60);
+  const ayanamsaFormatted = `${dAy}° ${mAy < 10 ? '0' : ''}${mAy}' ${sAy < 10 ? '0' : ''}${sAy}"`;
+
   // Rashis (0 to 11: Mesha=0, Vrishabha=1, Mithuna=2, etc.)
   const lagnaSignIndex = Math.floor(lagnaSid / 30);
   const moonSignIndex = Math.floor(moonSid / 30);
@@ -648,6 +688,11 @@ export function generateExactKundali(birthData: UserBirthData): FullKundaliAnaly
   const nakshatraIndex = Math.floor(moonSid / nakLen);
   const nakshatra = nakshatraDatabase[nakshatraIndex] || nakshatraDatabase[0];
   const pada = Math.floor((moonSid % nakLen) / (nakLen / 4)) + 1;
+
+  // Lagna Nakshatra & Pada
+  const lagnaNakIdx = Math.floor(lagnaSid / nakLen);
+  const lagnaNakshatra = nakshatraDatabase[lagnaNakIdx] || nakshatraDatabase[0];
+  const lagnaPada = Math.floor((lagnaSid % nakLen) / (nakLen / 4)) + 1;
 
   // 9. Authentic Vedic Panchang
   const tithiAngle = normalize(moonSid - sunSid);
@@ -732,6 +777,29 @@ export function generateExactKundali(birthData: UserBirthData): FullKundaliAnaly
     const house = ((pSignIdx - lagnaSignIndex + 12) % 12) + 1;
     const degInSign = Math.round((pSidDeg % 30) * 10) / 10;
 
+    const degWithinSign = pSidDeg % 30;
+    const dInt = Math.floor(degWithinSign);
+    const mInt = Math.floor((degWithinSign - dInt) * 60);
+    const degreeFormatted = `${dInt}° ${mInt < 10 ? '0' : ''}${mInt}'`;
+
+    const pNakLen = 360 / 27;
+    const pNakIdx = Math.floor(pSidDeg / pNakLen);
+    const pNak = nakshatraDatabase[pNakIdx] || nakshatraDatabase[0];
+    const pPada = Math.floor((pSidDeg % pNakLen) / (pNakLen / 4)) + 1;
+
+    const navSignIdx = getNavamshaSign(pSidDeg);
+    const navRashi = rashiDatabase[navSignIdx] || rashiDatabase[0];
+
+    const abbrMr = pName.includes('रवि') ? 'रवि'
+      : pName.includes('चंद्र') ? 'चं'
+      : pName.includes('मंगळ') ? 'मं'
+      : pName.includes('बुध') ? 'बु'
+      : pName.includes('गुरु') ? 'गु'
+      : pName.includes('शुक्र') ? 'शु'
+      : pName.includes('शनि') ? 'श'
+      : pName.includes('राहू') ? 'रा'
+      : 'के';
+
     let status: PlanetPlacement['status'] = 'मित्र (Friendly)';
 
     // Authentic Vedic Exaltation / Debilitation / Own Rashi
@@ -803,6 +871,12 @@ export function generateExactKundali(birthData: UserBirthData): FullKundaliAnaly
       degree: degInSign,
       status,
       isRetrograde: isRetro,
+      degreeFormatted,
+      nakshatraName: pNak.name.mr,
+      nakshatraPada: pPada,
+      navamshaSign: navRashi.name.mr,
+      navamshaSignNum: navSignIdx + 1,
+      abbrMr,
     };
   };
 
@@ -996,7 +1070,31 @@ export function generateExactKundali(birthData: UserBirthData): FullKundaliAnaly
   const luckyNumBase = ((lagnaSignIndex + 1) * 3 + day) % 9 || 9;
   const luckyNumbers = `${luckyNumBase}, ${(luckyNumBase + 2) % 9 + 1}, ${(luckyNumBase + 5) % 9 + 1}`;
 
-  // 16. Comprehensive AI Predictions
+  // 16. Calculate Navamsha (D9) Chart
+  const navLagnaSignIdx = getNavamshaSign(lagnaSid);
+  const navamshaLagna = rashiDatabase[navLagnaSignIdx] || rashiDatabase[0];
+
+  const navamshaHouses: HouseDetail[] = [];
+  for (let h = 1; h <= 12; h++) {
+    const rashiIdx = (navLagnaSignIdx + h - 1) % 12;
+    const rashi = rashiDatabase[rashiIdx] || rashiDatabase[0];
+    const hPlanets = planets.filter((p) => p.navamshaSignNum === rashiIdx + 1);
+
+    navamshaHouses.push({
+      houseNumber: h,
+      nameMr: `${h} ला नवमांश भाव`,
+      nameEn: `Navamsha House #${h}`,
+      signNumber: rashiIdx + 1,
+      signNameMr: rashi.name.mr,
+      signNameEn: rashi.name.en,
+      rulingPlanet: rashi.rulingPlanet.mr,
+      significanceMr: houseSignificancesMr[h - 1] || 'नवमांश स्थान',
+      significanceEn: houseSignificancesEn[h - 1] || 'Navamsha House',
+      planets: hPlanets,
+    });
+  }
+
+  // 17. Comprehensive AI Predictions
   const predictions: AIPredictionReport = generateAIPredictions({
     birthData,
     lagnaSign,
@@ -1009,6 +1107,25 @@ export function generateExactKundali(birthData: UserBirthData): FullKundaliAnaly
     houses,
     planets,
   });
+
+  // Lagna placement for planetary positions table
+  const lagnaNavSignIdx = getNavamshaSign(lagnaSid);
+  const lagnaNavRashi = rashiDatabase[lagnaNavSignIdx] || rashiDatabase[0];
+  const lagnaPlacement: PlanetPlacement = {
+    name: 'लग्न (Lagna)',
+    symbol: '🚩',
+    house: 1,
+    rashiName: lagnaSign.name.mr,
+    degree: Math.round(degWithinLagna * 10) / 10,
+    status: 'स्वराशी (Own)',
+    isRetrograde: false,
+    degreeFormatted: lagnaDegreeFormatted,
+    nakshatraName: lagnaNakshatra.name.mr,
+    nakshatraPada: lagnaPada,
+    navamshaSign: lagnaNavRashi.name.mr,
+    navamshaSignNum: lagnaNavSignIdx + 1,
+    abbrMr: 'लग्न',
+  };
 
   return {
     user: {
@@ -1040,9 +1157,17 @@ export function generateExactKundali(birthData: UserBirthData): FullKundaliAnaly
       luckyDay: lagnaSign.auspiciousDay.mr,
       ishtadevata: moonSign.ishtaDevata.mr,
       beejMantra: moonSign.beejMantra.sanskrit,
+      lagnaDegree: Math.round(degWithinLagna * 10) / 10,
+      lagnaDegreeFormatted,
+      lagnaNakshatra,
+      lagnaPada,
+      ayanamsaFormatted,
     },
     houses,
+    navamshaHouses,
+    navamshaLagna,
     planets,
+    lagnaPlacement,
     doshas,
     predictions,
     currentDasha,

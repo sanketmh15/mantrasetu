@@ -5,6 +5,7 @@ import {
   FullKundaliAnalysis,
   generateExactKundali,
   fetchGeminiKundaliPrediction,
+  resolveCityCoords,
 } from '../utils/aiKundaliEngine';
 import { audioEngine } from '../utils/audioSynth';
 import {
@@ -22,7 +23,13 @@ import {
   ChevronDown,
   Key,
   Bot,
-  ArrowDownCircle
+  ArrowDownCircle,
+  Sun,
+  Moon,
+  Clock,
+  MapPin,
+  Table,
+  Check
 } from 'lucide-react';
 
 interface AIKundaliPredictorProps {
@@ -30,6 +37,32 @@ interface AIKundaliPredictorProps {
   onNavigateTab?: (tab: string) => void;
   onOpenJapaWithMantra?: (mantraTitle: string) => void;
 }
+
+const POPULAR_MAHARASHTRA_CITIES = [
+  'पुणे', 'मुंबई', 'नाशिक', 'नागपूर', 'छ. संभाजीनगर',
+  'कोल्हापूर', 'सोलापूर', 'ठाणे', 'सातारा', 'सांगली',
+  'लातूर', 'जळगाव', 'नांदेड', 'अमरावती', 'धुळे',
+  'रत्नागिरी', 'शिर्डी', 'पंढरपूर', 'नवी दिल्ली'
+];
+
+const QUICK_TIME_PRESETS = [
+  { label: '🌅 ०६:०० सकाळ', time: '06:00' },
+  { label: '☀️ ०८:३० सकाळ', time: '08:30' },
+  { label: '🌞 १२:०० दुपार', time: '12:00' },
+  { label: '🌤️ १४:१५ दुपार', time: '14:15' },
+  { label: '🌆 १८:३० संध्याकाळ', time: '18:30' },
+  { label: '🌙 २०:३० रात्र', time: '20:30' },
+  { label: '🌌 २३:४५ मध्यरात्र', time: '23:45' },
+];
+
+const toDevanagariDigits = (num: number): string => {
+  const digits = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+  return num
+    .toString()
+    .split('')
+    .map(d => digits[parseInt(d, 10)] ?? d)
+    .join('');
+};
 
 export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
   currentLang,
@@ -51,6 +84,7 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
   const [justCalculated, setJustCalculated] = useState<boolean>(false);
   const [activeHouseTab, setActiveHouseTab] = useState<number>(1);
+  const [chartView, setChartView] = useState<'d1' | 'd9' | 'table'>('d1');
   const [isPlayingMantra, setIsPlayingMantra] = useState<boolean>(false);
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -70,6 +104,30 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
   const [interactiveQuestion, setInteractiveQuestion] = useState<string>('');
   const [interactiveAnswer, setInteractiveAnswer] = useState<string | null>(null);
   const [isAskingAI, setIsAskingAI] = useState<boolean>(false);
+
+  // Time parsing helper
+  const [timeH, timeM] = (formData.birthTime || '08:30').split(':');
+  const parsedTimeH = parseInt(timeH, 10);
+  const isTimePM = !isNaN(parsedTimeH) && parsedTimeH >= 12;
+  const display12H = isNaN(parsedTimeH) ? 8 : parsedTimeH % 12 === 0 ? 12 : parsedTimeH % 12;
+  const display12HStr = display12H < 10 ? `0${display12H}` : `${display12H}`;
+  const displayMinuteStr = timeM || '30';
+
+  const setAmMode = () => {
+    let newH = isNaN(parsedTimeH) ? 8 : parsedTimeH;
+    if (newH >= 12) newH -= 12;
+    const newTime = `${newH < 10 ? '0' : ''}${newH}:${displayMinuteStr}`;
+    setFormData(prev => ({ ...prev, birthTime: newTime }));
+  };
+
+  const setPmMode = () => {
+    let newH = isNaN(parsedTimeH) ? 8 : parsedTimeH;
+    if (newH < 12) newH += 12;
+    const newTime = `${newH < 10 ? '0' : ''}${newH}:${displayMinuteStr}`;
+    setFormData(prev => ({ ...prev, birthTime: newTime }));
+  };
+
+  const resolvedLocation = resolveCityCoords(formData.birthPlace);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -189,7 +247,8 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
     window.print();
   };
 
-  const selectedHouseDetail = kundali.houses.find((h) => h.houseNumber === activeHouseTab) || kundali.houses[0];
+  const currentHouses = chartView === 'd9' ? kundali.navamshaHouses : kundali.houses;
+  const selectedHouseDetail = currentHouses.find((h) => h.houseNumber === activeHouseTab) || currentHouses[0];
 
   return (
     <section className="py-6 sm:py-10 max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 w-full">
@@ -296,27 +355,102 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
               />
             </div>
 
-            {/* Birth Time */}
+            {/* Birth Time with 12-hr AM/PM Switcher */}
             <div>
-              <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                जन्मवेळ (Exact Time):
-              </label>
-              <input
-                type="time"
-                required
-                value={formData.birthTime}
-                onChange={(e) => setFormData({ ...formData, birthTime: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs sm:text-sm text-stone-900 dark:text-white focus:outline-none focus:border-amber-500"
-              />
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-bold text-stone-700 dark:text-stone-300">
+                  जन्मवेळ (Exact Time):
+                </label>
+                <span className="text-[10.5px] font-bold text-amber-700 dark:text-amber-400">
+                  {isTimePM ? '🌙 दुपार/रात्र' : '☀️ सकाळ'} ({display12HStr}:{displayMinuteStr})
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="time"
+                  required
+                  value={formData.birthTime}
+                  onChange={(e) => setFormData({ ...formData, birthTime: e.target.value })}
+                  className="flex-1 px-3 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs sm:text-sm text-stone-900 dark:text-white focus:outline-none focus:border-amber-500 font-mono font-bold"
+                />
+
+                {/* AM / PM Toggle Buttons */}
+                <div className="inline-flex rounded-xl p-1 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 shrink-0">
+                  <button
+                    type="button"
+                    onClick={setAmMode}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1 transition-all ${
+                      !isTimePM
+                        ? 'bg-amber-500 text-stone-950 shadow-sm'
+                        : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                    }`}
+                    title="सकाळची वेळ (AM)"
+                  >
+                    <Sun className="w-3.5 h-3.5" />
+                    <span>AM</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={setPmMode}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1 transition-all ${
+                      isTimePM
+                        ? 'bg-indigo-600 text-white shadow-sm'
+                        : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                    }`}
+                    title="दुपार/रात्रीची वेळ (PM)"
+                  >
+                    <Moon className="w-3.5 h-3.5" />
+                    <span>PM</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-1 flex items-center justify-between text-[10px] text-stone-500 dark:text-stone-400">
+                <span>२४ तास फॉरमॅट: <strong className="font-mono text-stone-700 dark:text-stone-300">{formData.birthTime}</strong></span>
+                <span className="font-bold text-amber-600 dark:text-amber-400">
+                  {isTimePM ? 'रात्री/दुपारी' : 'सकाळी'} {display12HStr}:{displayMinuteStr}
+                </span>
+              </div>
             </div>
+          </div>
+
+          {/* Quick Time Presets Strip */}
+          <div className="flex flex-wrap items-center gap-1.5 px-3 py-2 rounded-2xl bg-amber-500/5 dark:bg-stone-950 border border-amber-500/20">
+            <span className="text-[11px] font-bold text-stone-600 dark:text-stone-400 flex items-center gap-1 mr-1">
+              <Clock className="w-3.5 h-3.5 text-amber-600" />
+              <span>वेळ त्वरित निवडा:</span>
+            </span>
+            {QUICK_TIME_PRESETS.map((qt) => (
+              <button
+                key={qt.time}
+                type="button"
+                onClick={() => setFormData({ ...formData, birthTime: qt.time })}
+                className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold transition-all ${
+                  formData.birthTime === qt.time
+                    ? 'bg-amber-600 text-white shadow-sm'
+                    : 'bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-300 hover:bg-amber-100 border border-stone-200 dark:border-stone-800'
+                }`}
+              >
+                {qt.label}
+              </button>
+            ))}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Birth Place */}
             <div>
-              <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                जन्मस्थान (Place of Birth):
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-bold text-stone-700 dark:text-stone-300">
+                  जन्मस्थान (Place of Birth):
+                </label>
+                <span className="text-[10.5px] font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>{resolvedLocation.matchedName}</span>
+                </span>
+              </div>
+
               <input
                 type="text"
                 required
@@ -325,6 +459,32 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
                 placeholder="उदा. पुणे, नाशिक, मुंबई, कोल्हापूर..."
                 className="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs sm:text-sm text-stone-900 dark:text-white focus:outline-none focus:border-amber-500"
               />
+
+              <div className="mt-1 flex items-center gap-1 text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">
+                <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span>
+                  अक्षांश: <strong>{resolvedLocation.lat}° N</strong>, रेखांश: <strong>{resolvedLocation.lon}° E</strong>
+                </span>
+              </div>
+
+              {/* Quick District Chips */}
+              <div className="flex flex-wrap items-center gap-1 pt-2">
+                <span className="text-[10px] text-stone-500 dark:text-stone-400 font-bold mr-1">प्रमुख जिल्हे:</span>
+                {POPULAR_MAHARASHTRA_CITIES.map((cName) => (
+                  <button
+                    key={cName}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, birthPlace: `${cName}, महाराष्ट्र` })}
+                    className={`px-2 py-0.5 rounded-md text-[10.5px] font-medium transition-all ${
+                      formData.birthPlace.includes(cName)
+                        ? 'bg-emerald-600 text-white font-bold shadow-sm'
+                        : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200'
+                    }`}
+                  >
+                    {cName}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Specific Life Question */}
@@ -332,12 +492,12 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
               <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
                 आपला विशेष प्रश्न किंवा चिंता (Specific Question for AI):
               </label>
-              <input
-                type="text"
+              <textarea
+                rows={3}
                 value={formData.specificQuery || ''}
                 onChange={(e) => setFormData({ ...formData, specificQuery: e.target.value })}
-                placeholder="उदा. माझे लग्न कधी होईल? / सरकारी नोकरी मिळेल का? / व्यवसाय कसा राहील?"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs sm:text-sm text-stone-900 dark:text-white focus:outline-none focus:border-amber-500"
+                placeholder="उदा. माझे लग्न कधी होईल? / करिअरमध्ये प्रगती व नोकरीतील बदल कधी? / व्यवसाय कसा राहील?"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 text-xs sm:text-sm text-stone-900 dark:text-white focus:outline-none focus:border-amber-500 resize-none"
               />
             </div>
           </div>
@@ -541,243 +701,590 @@ export const AIKundaliPredictor: React.FC<AIKundaliPredictorProps> = ({
           </div>
         </div>
 
-        {/* 4. Traditional Indian Diamond Kundali Chart & House Navigator */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
-          {/* North Indian Diamond Chart SVG Graphic */}
-          <div className="lg:col-span-6 rounded-3xl bg-stone-950 border-2 border-amber-600/60 p-4 sm:p-6 shadow-2xl relative">
-            <div className="flex items-center justify-between mb-3 border-b border-stone-800 pb-2">
-              <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
-                <Compass className="w-4 h-4 text-amber-400" />
-                <span>पारंपरिक उत्तर भारतीय जन्म कुंडली चक्र (Diamond Chart)</span>
-              </span>
-              <span className="text-[11px] text-stone-400">१२ भाव व नवग्रह स्थान</span>
+        {/* 4. AstroSage Multi-View Bar: D1 (Lagna) / D9 (Navamsha) / Planetary Table */}
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-stone-900/90 dark:bg-stone-950 p-3 sm:p-4 rounded-3xl border-2 border-amber-500/40 shadow-lg">
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setChartView('d1')}
+                className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-1.5 active:scale-95 ${
+                  chartView === 'd1'
+                    ? 'bg-amber-500 text-stone-950 shadow-md ring-2 ring-amber-400'
+                    : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
+                }`}
+              >
+                <span>🕉️</span>
+                <span>लग्न कुंडली (D1)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setChartView('d9')}
+                className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-1.5 active:scale-95 ${
+                  chartView === 'd9'
+                    ? 'bg-amber-500 text-stone-950 shadow-md ring-2 ring-amber-400'
+                    : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
+                }`}
+              >
+                <span>🪷</span>
+                <span>नवमांश कुंडली (D9)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setChartView('table')}
+                className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-1.5 active:scale-95 ${
+                  chartView === 'table'
+                    ? 'bg-amber-500 text-stone-950 shadow-md ring-2 ring-amber-400'
+                    : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
+                }`}
+              >
+                <Table className="w-4 h-4" />
+                <span>ग्रह स्थिती तक्ता (AstroSage Table)</span>
+              </button>
             </div>
 
-            <div className="relative aspect-square max-w-md mx-auto my-2 select-none">
-              <svg viewBox="0 0 400 400" className="w-full h-full drop-shadow-md">
-                {/* Outer Square */}
-                <rect x="10" y="10" width="380" height="380" fill="#141210" stroke="#B45309" strokeWidth="2.5" />
-                
-                {/* Cross Diagonals */}
-                <line x1="10" y1="10" x2="390" y2="390" stroke="#B45309" strokeWidth="1.8" />
-                <line x1="390" y1="10" x2="10" y2="390" stroke="#B45309" strokeWidth="1.8" />
-
-                {/* Inner Diamond */}
-                <polygon points="200,10 390,200 200,390 10,200" fill="#1c1815" stroke="#F59E0B" strokeWidth="2" />
-
-                {/* House Labels & Content Overlay in SVG (Exact AstroSage Format) */}
-                {/* House 1 (Top Center Diamond - Lagna) */}
-                <g onClick={() => setActiveHouseTab(1)} className="cursor-pointer hover:opacity-80">
-                  <text x="200" y="55" textAnchor="middle" fill="#FBBF24" fontSize="13" fontWeight="bold">
-                    {kundali.houses[0]?.signNumber} • {kundali.houses[0]?.signNameMr} (लग्न)
-                  </text>
-                  <text x="200" y="78" textAnchor="middle" fill="#34D399" fontSize="11" fontWeight="bold">
-                    {kundali.houses[0]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ') || '—'}
-                  </text>
-                </g>
-
-                {/* House 2 (Top Left Triangle) */}
-                <g onClick={() => setActiveHouseTab(2)} className="cursor-pointer hover:opacity-80">
-                  <text x="105" y="45" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
-                    {kundali.houses[1]?.signNumber} {kundali.houses[1]?.signNameMr}
-                  </text>
-                  <text x="105" y="72" textAnchor="middle" fill="#34D399" fontSize="9.5">
-                    {kundali.houses[1]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
-                  </text>
-                </g>
-
-                {/* House 3 (Left Top Triangle) */}
-                <g onClick={() => setActiveHouseTab(3)} className="cursor-pointer hover:opacity-80">
-                  <text x="55" y="115" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
-                    {kundali.houses[2]?.signNumber} {kundali.houses[2]?.signNameMr}
-                  </text>
-                  <text x="55" y="142" textAnchor="middle" fill="#34D399" fontSize="9.5">
-                    {kundali.houses[2]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
-                  </text>
-                </g>
-
-                {/* House 4 (Left Diamond - Sukha) */}
-                <g onClick={() => setActiveHouseTab(4)} className="cursor-pointer hover:opacity-80">
-                  <text x="110" y="195" textAnchor="middle" fill="#FBBF24" fontSize="12" fontWeight="bold">
-                    {kundali.houses[3]?.signNumber} {kundali.houses[3]?.signNameMr} (४)
-                  </text>
-                  <text x="110" y="222" textAnchor="middle" fill="#34D399" fontSize="10.5">
-                    {kundali.houses[3]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ') || '—'}
-                  </text>
-                </g>
-
-                {/* House 5 (Left Bottom Triangle) */}
-                <g onClick={() => setActiveHouseTab(5)} className="cursor-pointer hover:opacity-80">
-                  <text x="55" y="280" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
-                    {kundali.houses[4]?.signNumber} {kundali.houses[4]?.signNameMr}
-                  </text>
-                  <text x="55" y="308" textAnchor="middle" fill="#34D399" fontSize="9.5">
-                    {kundali.houses[4]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
-                  </text>
-                </g>
-
-                {/* House 6 (Bottom Left Triangle) */}
-                <g onClick={() => setActiveHouseTab(6)} className="cursor-pointer hover:opacity-80">
-                  <text x="105" y="345" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
-                    {kundali.houses[5]?.signNumber} {kundali.houses[5]?.signNameMr}
-                  </text>
-                  <text x="105" y="370" textAnchor="middle" fill="#34D399" fontSize="9.5">
-                    {kundali.houses[5]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
-                  </text>
-                </g>
-
-                {/* House 7 (Bottom Center Diamond - Jaya) */}
-                <g onClick={() => setActiveHouseTab(7)} className="cursor-pointer hover:opacity-80">
-                  <text x="200" y="280" textAnchor="middle" fill="#FBBF24" fontSize="12" fontWeight="bold">
-                    {kundali.houses[6]?.signNumber} {kundali.houses[6]?.signNameMr} (७)
-                  </text>
-                  <text x="200" y="308" textAnchor="middle" fill="#34D399" fontSize="10.5">
-                    {kundali.houses[6]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ') || '—'}
-                  </text>
-                </g>
-
-                {/* House 8 (Bottom Right Triangle) */}
-                <g onClick={() => setActiveHouseTab(8)} className="cursor-pointer hover:opacity-80">
-                  <text x="295" y="345" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
-                    {kundali.houses[7]?.signNumber} {kundali.houses[7]?.signNameMr}
-                  </text>
-                  <text x="295" y="370" textAnchor="middle" fill="#34D399" fontSize="9.5">
-                    {kundali.houses[7]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
-                  </text>
-                </g>
-
-                {/* House 9 (Right Bottom Triangle) */}
-                <g onClick={() => setActiveHouseTab(9)} className="cursor-pointer hover:opacity-80">
-                  <text x="345" y="280" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
-                    {kundali.houses[8]?.signNumber} {kundali.houses[8]?.signNameMr}
-                  </text>
-                  <text x="345" y="308" textAnchor="middle" fill="#34D399" fontSize="9.5">
-                    {kundali.houses[8]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
-                  </text>
-                </g>
-
-                {/* House 10 (Right Diamond - Karma) */}
-                <g onClick={() => setActiveHouseTab(10)} className="cursor-pointer hover:opacity-80">
-                  <text x="290" y="195" textAnchor="middle" fill="#FBBF24" fontSize="12" fontWeight="bold">
-                    {kundali.houses[9]?.signNumber} {kundali.houses[9]?.signNameMr} (१०)
-                  </text>
-                  <text x="290" y="222" textAnchor="middle" fill="#34D399" fontSize="10.5">
-                    {kundali.houses[9]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ') || '—'}
-                  </text>
-                </g>
-
-                {/* House 11 (Right Top Triangle) */}
-                <g onClick={() => setActiveHouseTab(11)} className="cursor-pointer hover:opacity-80">
-                  <text x="345" y="115" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
-                    {kundali.houses[10]?.signNumber} {kundali.houses[10]?.signNameMr}
-                  </text>
-                  <text x="345" y="142" textAnchor="middle" fill="#34D399" fontSize="9.5">
-                    {kundali.houses[10]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
-                  </text>
-                </g>
-
-                {/* House 12 (Top Right Triangle) */}
-                <g onClick={() => setActiveHouseTab(12)} className="cursor-pointer hover:opacity-80">
-                  <text x="295" y="45" textAnchor="middle" fill="#FCD34D" fontSize="11" fontWeight="bold">
-                    {kundali.houses[11]?.signNumber} {kundali.houses[11]?.signNameMr}
-                  </text>
-                  <text x="295" y="72" textAnchor="middle" fill="#34D399" fontSize="9.5">
-                    {kundali.houses[11]?.planets.map(p => `${p.symbol}${p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`).join(' ')}
-                  </text>
-                </g>
-              </svg>
+            <div className="text-[11px] text-amber-300 font-mono flex items-center gap-2 bg-stone-950/60 px-3 py-1.5 rounded-xl border border-stone-800 shrink-0">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>NC लाहिरी आयनांश: <strong>{kundali.pillars.ayanamsaFormatted || '23° 50\' 03"'}</strong></span>
             </div>
-
-            <p className="text-[11px] text-stone-400 text-center mt-2">
-              💡 कोणत्याही भावावर क्लिक करा आणि त्याचे सविस्तर विश्लेषण उजवीकडे पाहा.
-            </p>
           </div>
 
-          {/* Interactive 12 Bhavas Explainer */}
-          <div className="lg:col-span-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-5 sm:p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-3">
-              <span className="text-xs font-bold text-saffron-600 dark:text-saffron-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Layers className="w-4 h-4" />
-                <span>१२ भाव विश्लेषण (Click House to Inspect)</span>
-              </span>
-              <span className="text-xs font-bold text-amber-700 dark:text-amber-300">
-                निवडलेला भाव: #{activeHouseTab}
-              </span>
-            </div>
+          {/* VIEW A: Planetary Positions Table (ग्रह स्थिती तक्ता) */}
+          {chartView === 'table' ? (
+            <div className="rounded-3xl bg-white dark:bg-stone-900 border-2 border-amber-500/40 p-4 sm:p-6 shadow-xl space-y-4 animate-fadeIn">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-200 dark:border-stone-800 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-600 flex items-center justify-center font-bold">
+                    📊
+                  </div>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-black font-serifDev text-stone-900 dark:text-white">
+                      अचूक ग्रह स्पष्ट स्थिती तक्ता (AstroSage Equivalent Planetary Table)
+                    </h3>
+                    <p className="text-[11px] text-stone-500 dark:text-stone-400">
+                      प्रत्येक ग्रहाची अचूक रास, अंश-कला, नक्षत्र, चरण, गती आणि नवमांश स्थिती.
+                    </p>
+                  </div>
+                </div>
 
-            {/* Quick 12 Houses Chip Picker */}
-            <div className="flex flex-wrap gap-1.5 pb-2">
-              {kundali.houses.map((h) => (
-                <button
-                  key={h.houseNumber}
-                  type="button"
-                  onClick={() => setActiveHouseTab(h.houseNumber)}
-                  className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all ${
-                    activeHouseTab === h.houseNumber
-                      ? 'bg-amber-600 text-white shadow-md'
-                      : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-amber-100'
-                  }`}
-                >
-                  #{h.houseNumber} {h.signNameMr}
-                </button>
-              ))}
-            </div>
-
-            {/* Detailed Selected House Insight */}
-            <div className="p-4 rounded-2xl bg-amber-500/10 dark:bg-stone-950 border border-amber-400/40 space-y-2.5">
-              <div className="flex items-center justify-between">
-                <h4 className="text-base font-extrabold font-serifDev text-stone-950 dark:text-white">
-                  स्थान #{selectedHouseDetail.houseNumber}: {selectedHouseDetail.signNameMr} रास
-                </h4>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-bold">
-                  स्वामी: {selectedHouseDetail.rulingPlanet}
+                <span className="text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-3 py-1 rounded-xl border border-amber-300 dark:border-amber-800 self-start sm:self-auto">
+                  मानक: NC लाहिरी (Chitra Paksha)
                 </span>
               </div>
 
-              <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 font-medium leading-relaxed">
-                {selectedHouseDetail.significanceMr}
-              </p>
+              {/* Responsive Planetary Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs sm:text-sm">
+                  <thead>
+                    <tr className="border-b-2 border-amber-500/40 text-stone-600 dark:text-stone-300 text-[11px] uppercase tracking-wider bg-amber-500/10">
+                      <th className="py-2.5 px-3 font-extrabold">ग्रह (Planet)</th>
+                      <th className="py-2.5 px-3 font-extrabold">गती (Motion)</th>
+                      <th className="py-2.5 px-3 font-extrabold">रास (Rashi)</th>
+                      <th className="py-2.5 px-3 font-extrabold">अंश-कला (Degree)</th>
+                      <th className="py-2.5 px-3 font-extrabold">नक्षत्र व चरण (Nakshatra)</th>
+                      <th className="py-2.5 px-3 font-extrabold">भाव (House)</th>
+                      <th className="py-2.5 px-3 font-extrabold">नवमांश (D9 Sign)</th>
+                      <th className="py-2.5 px-3 font-extrabold">अवस्था (Dignity)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-200 dark:divide-stone-800 font-medium">
+                    {/* 1. Lagna Row */}
+                    <tr className="bg-amber-500/5 hover:bg-amber-500/10 transition-colors">
+                      <td className="py-2.5 px-3 font-extrabold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+                        <span>🚩</span>
+                        <span>लग्न (Lagna / Asc)</span>
+                      </td>
+                      <td className="py-2.5 px-3">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300">
+                          स्थिर (Rising)
+                        </span>
+                      </td>
+                      <td className="py-2.5 px-3 font-bold text-stone-900 dark:text-white">
+                        {kundali.pillars.lagnaSign.name.mr} ({kundali.houses[0]?.signNumber})
+                      </td>
+                      <td className="py-2.5 px-3 font-mono font-bold text-amber-700 dark:text-amber-400">
+                        {kundali.pillars.lagnaDegreeFormatted || '00° 00\''}
+                      </td>
+                      <td className="py-2.5 px-3">
+                        {kundali.pillars.lagnaNakshatra?.name.mr || kundali.pillars.nakshatra.name.mr} ({toDevanagariDigits(kundali.pillars.lagnaPada || 1)})
+                      </td>
+                      <td className="py-2.5 px-3 font-bold">
+                        #१ तनु भाव
+                      </td>
+                      <td className="py-2.5 px-3 font-bold text-purple-700 dark:text-purple-300">
+                        {kundali.navamshaLagna.name.mr} ({kundali.navamshaHouses[0]?.signNumber})
+                      </td>
+                      <td className="py-2.5 px-3">
+                        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-extrabold bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300">
+                          लग्न (उदय बिंदू)
+                        </span>
+                      </td>
+                    </tr>
 
-              <div className="pt-2 border-t border-amber-300/40 dark:border-stone-800 flex items-center justify-between text-xs">
-                <span className="text-stone-500 dark:text-stone-400 font-bold">
-                  या भावात स्थित ग्रह:
-                </span>
-                <span className="font-extrabold text-saffron-700 dark:text-saffron-400">
-                  {selectedHouseDetail.planets.length > 0
-                    ? selectedHouseDetail.planets.map((p) => `${p.name} (${p.degree}°) [${p.status}]`).join(', ')
-                    : 'कोणताही ग्रह नाही (स्वच्छ भाव)'}
-                </span>
+                    {/* 2. All 9 Grahas */}
+                    {kundali.planets.map((p) => (
+                      <tr key={p.name} className="hover:bg-amber-500/5 transition-colors">
+                        <td className="py-2.5 px-3 font-bold text-stone-900 dark:text-white flex items-center gap-1.5">
+                          <span className="text-base">{p.symbol}</span>
+                          <span>{p.name}</span>
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className={`px-2 py-0.5 rounded-md text-[10.5px] font-extrabold ${
+                            p.isRetrograde
+                              ? 'bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800'
+                              : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                          }`}>
+                            {p.isRetrograde ? 'वक्री (R)' : 'मार्गी (D)'}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 font-bold text-stone-900 dark:text-stone-200">
+                          {p.rashiName}
+                        </td>
+                        <td className="py-2.5 px-3 font-mono font-bold text-amber-700 dark:text-amber-400">
+                          {p.degreeFormatted || `${p.degree}°`}
+                        </td>
+                        <td className="py-2.5 px-3 text-stone-700 dark:text-stone-300">
+                          {p.nakshatraName || '—'} (चरण {toDevanagariDigits(p.nakshatraPada || 1)})
+                        </td>
+                        <td className="py-2.5 px-3 font-bold text-saffron-700 dark:text-saffron-400">
+                          भाव #{toDevanagariDigits(p.house)}
+                        </td>
+                        <td className="py-2.5 px-3 font-semibold text-purple-700 dark:text-purple-300">
+                          {p.navamshaSign || '—'} ({toDevanagariDigits(p.navamshaSignNum || 1)})
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className={`px-2 py-0.5 rounded-full text-[10.5px] font-extrabold ${
+                            p.status.includes('उच्च') || p.status.includes('स्वराशी')
+                              ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300'
+                              : p.status.includes('नीच')
+                              ? 'bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300'
+                              : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300'
+                          }`}>
+                            {p.status.split(' ')[0]}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* AstroSage direct verification note */}
+              <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-400/40 text-xs text-stone-700 dark:text-stone-300 flex items-start gap-2.5">
+                <Sparkles className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <span className="font-extrabold text-amber-900 dark:text-amber-200 block">
+                    ॲस्ट्रोसेज (AstroSage) ग्रह स्थिती ताडून पाहण्यासाठी मार्गदर्शन:
+                  </span>
+                  <p className="text-[11px] leading-relaxed">
+                    ॲस्ट्रोसेज ॲपमध्ये "Kundli" → "Graha Sthiti (ग्रह स्थिति)" उघडून वरील तक्त्यातील प्रत्येक ग्रहाचे अंश-कला, नक्षत्र आणि नवमांश ताडून पाहा. जर लग्न राशीमध्ये फरक दिसत असेल तर आपली जन्मवेळ <strong>AM (सकाळ)</strong> आहे की <strong>PM (दुपार/रात्र)</strong> हे फॉर्ममध्ये तपासून घ्या.
+                  </p>
+                </div>
               </div>
             </div>
+          ) : (
+            /* VIEW B & C: Diamond Chart (D1 or D9) + 12 Bhavas Inspector */
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-fadeIn">
+              
+              {/* North Indian Diamond Chart SVG Graphic */}
+              <div className="lg:col-span-6 rounded-3xl bg-stone-950 border-2 border-amber-600/60 p-4 sm:p-6 shadow-2xl relative">
+                <div className="flex items-center justify-between mb-3 border-b border-stone-800 pb-2">
+                  <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <Compass className="w-4 h-4 text-amber-400" />
+                    <span>
+                      {chartView === 'd9' ? '🪷 नवमांश कुंडली चक्र (D9 Chart)' : '🕉️ पारंपरिक लग्न कुंडली चक्र (D1 Chart)'}
+                    </span>
+                  </span>
+                  <span className="text-[11px] text-amber-400 font-bold bg-amber-950/80 px-2 py-0.5 rounded-lg border border-amber-800">
+                    {chartView === 'd9' ? `D9 लग्न: ${kundali.navamshaLagna.name.mr}` : `लग्न: ${kundali.pillars.lagnaSign.name.mr}`}
+                  </span>
+                </div>
 
-            {/* Planetary Table summary */}
-            <div className="space-y-1.5 pt-2">
-              <span className="text-xs font-bold text-stone-800 dark:text-stone-200 block">
-                नवग्रह भाव स्थिती व अंश (Planetary Degrees):
-              </span>
-              <div className="max-h-48 overflow-y-auto space-y-1 pr-1 text-xs">
-                {kundali.planets.map((p) => (
-                  <div
-                    key={p.name}
-                    className="flex items-center justify-between p-2 rounded-xl bg-stone-50 dark:bg-stone-950/60 border border-stone-200 dark:border-stone-800"
-                  >
-                    <span className="font-bold text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
-                      <span>{p.symbol}</span>
-                      <span>{p.name}</span>
-                    </span>
-                    <span className="text-stone-500 dark:text-stone-400">
-                      भाव #{p.house} ({p.rashiName}) • {p.degree}°
-                    </span>
-                    <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-400">
-                      {p.status}
+                <div className="relative aspect-square max-w-md mx-auto my-2 select-none">
+                  <svg viewBox="0 0 400 400" className="w-full h-full drop-shadow-md">
+                    {/* Interactive 12 House Polygons for Highlighting & Clicking */}
+                    {(() => {
+                      const curHouses = chartView === 'd9' ? kundali.navamshaHouses : kundali.houses;
+                      const h1 = curHouses[0] || kundali.houses[0];
+                      const h2 = curHouses[1] || kundali.houses[1];
+                      const h3 = curHouses[2] || kundali.houses[2];
+                      const h4 = curHouses[3] || kundali.houses[3];
+                      const h5 = curHouses[4] || kundali.houses[4];
+                      const h6 = curHouses[5] || kundali.houses[5];
+                      const h7 = curHouses[6] || kundali.houses[6];
+                      const h8 = curHouses[7] || kundali.houses[7];
+                      const h9 = curHouses[8] || kundali.houses[8];
+                      const h10 = curHouses[9] || kundali.houses[9];
+                      const h11 = curHouses[10] || kundali.houses[10];
+                      const h12 = curHouses[11] || kundali.houses[11];
+
+                      const renderPlanetsInHouse = (hData: typeof h1, cx: number, cy: number, spacing: number = 13.5) => {
+                        const hPlanets = hData?.planets || [];
+                        if (hPlanets.length === 0) return null;
+                        return (
+                          <g className="pointer-events-none">
+                            {hPlanets.map((p, idx) => {
+                              const y = cy + (idx - (hPlanets.length - 1) / 2) * spacing;
+                              const label = `${p.abbrMr || p.name.split(' ')[0]}${p.isRetrograde ? '(व)' : ''}`;
+                              return (
+                                <text
+                                  key={p.name + idx}
+                                  x={cx}
+                                  y={y}
+                                  textAnchor="middle"
+                                  fill="#34D399"
+                                  fontSize={hPlanets.length > 2 ? '9.5' : '11'}
+                                  fontWeight="bold"
+                                  className="select-none"
+                                  style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}
+                                >
+                                  {label}
+                                </text>
+                              );
+                            })}
+                          </g>
+                        );
+                      };
+
+                      return (
+                        <>
+                          {/* House 1: Top Diamond */}
+                          <polygon
+                            points="200,10 295,105 200,200 105,105"
+                            fill={activeHouseTab === 1 ? '#2b2114' : '#171310'}
+                            stroke={activeHouseTab === 1 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(1)}
+                          />
+
+                          {/* House 2: Top Left Triangle */}
+                          <polygon
+                            points="10,10 200,10 105,105"
+                            fill={activeHouseTab === 2 ? '#2b2114' : '#14110e'}
+                            stroke={activeHouseTab === 2 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(2)}
+                          />
+
+                          {/* House 3: Left Top Triangle */}
+                          <polygon
+                            points="10,10 10,200 105,105"
+                            fill={activeHouseTab === 3 ? '#2b2114' : '#14110e'}
+                            stroke={activeHouseTab === 3 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(3)}
+                          />
+
+                          {/* House 4: Left Diamond */}
+                          <polygon
+                            points="10,200 105,105 200,200 105,295"
+                            fill={activeHouseTab === 4 ? '#2b2114' : '#171310'}
+                            stroke={activeHouseTab === 4 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(4)}
+                          />
+
+                          {/* House 5: Left Bottom Triangle */}
+                          <polygon
+                            points="10,200 10,390 105,295"
+                            fill={activeHouseTab === 5 ? '#2b2114' : '#14110e'}
+                            stroke={activeHouseTab === 5 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(5)}
+                          />
+
+                          {/* House 6: Bottom Left Triangle */}
+                          <polygon
+                            points="10,390 200,390 105,295"
+                            fill={activeHouseTab === 6 ? '#2b2114' : '#14110e'}
+                            stroke={activeHouseTab === 6 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(6)}
+                          />
+
+                          {/* House 7: Bottom Diamond */}
+                          <polygon
+                            points="200,200 295,295 200,390 105,295"
+                            fill={activeHouseTab === 7 ? '#2b2114' : '#171310'}
+                            stroke={activeHouseTab === 7 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(7)}
+                          />
+
+                          {/* House 8: Bottom Right Triangle */}
+                          <polygon
+                            points="200,390 390,390 295,295"
+                            fill={activeHouseTab === 8 ? '#2b2114' : '#14110e'}
+                            stroke={activeHouseTab === 8 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(8)}
+                          />
+
+                          {/* House 9: Right Bottom Triangle */}
+                          <polygon
+                            points="390,200 390,390 295,295"
+                            fill={activeHouseTab === 9 ? '#2b2114' : '#14110e'}
+                            stroke={activeHouseTab === 9 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(9)}
+                          />
+
+                          {/* House 10: Right Diamond */}
+                          <polygon
+                            points="200,200 295,105 390,200 295,295"
+                            fill={activeHouseTab === 10 ? '#2b2114' : '#171310'}
+                            stroke={activeHouseTab === 10 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(10)}
+                          />
+
+                          {/* House 11: Right Top Triangle */}
+                          <polygon
+                            points="390,10 390,200 295,105"
+                            fill={activeHouseTab === 11 ? '#2b2114' : '#14110e'}
+                            stroke={activeHouseTab === 11 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(11)}
+                          />
+
+                          {/* House 12: Top Right Triangle */}
+                          <polygon
+                            points="200,10 390,10 295,105"
+                            fill={activeHouseTab === 12 ? '#2b2114' : '#14110e'}
+                            stroke={activeHouseTab === 12 ? '#F59E0B' : 'transparent'}
+                            strokeWidth="1.5"
+                            className="cursor-pointer transition-colors hover:fill-[#2d2417]"
+                            onClick={() => setActiveHouseTab(12)}
+                          />
+
+                          {/* Classical AstroSage Geometric Lines in Gold */}
+                          <rect x="10" y="10" width="380" height="380" fill="none" stroke="#B45309" strokeWidth="2.5" />
+                          <line x1="10" y1="10" x2="390" y2="390" stroke="#B45309" strokeWidth="1.8" />
+                          <line x1="390" y1="10" x2="10" y2="390" stroke="#B45309" strokeWidth="1.8" />
+                          <polygon points="200,10 390,200 200,390 10,200" fill="none" stroke="#F59E0B" strokeWidth="2" />
+
+                          {/* Devanagari Rashi Numbers (१-१२) in Rich Golden Typography */}
+                          {/* House 1 (Top Center Diamond - Lagna) */}
+                          <g className="pointer-events-none">
+                            <text x="200" y="42" textAnchor="middle" fill="#FCD34D" fontSize="14" fontWeight="bold">
+                              {toDevanagariDigits(h1.signNumber)}
+                            </text>
+                            <text x="200" y="56" textAnchor="middle" fill="#F59E0B" fontSize="9.5" fontWeight="bold">
+                              लग्न
+                            </text>
+                            {renderPlanetsInHouse(h1, 200, 115)}
+                          </g>
+
+                          {/* House 2 (Top Left Triangle) */}
+                          <g className="pointer-events-none">
+                            <text x="60" y="32" textAnchor="middle" fill="#FCD34D" fontSize="13" fontWeight="bold">
+                              {toDevanagariDigits(h2.signNumber)}
+                            </text>
+                            {renderPlanetsInHouse(h2, 115, 55)}
+                          </g>
+
+                          {/* House 3 (Left Top Triangle) */}
+                          <g className="pointer-events-none">
+                            <text x="28" y="65" textAnchor="middle" fill="#FCD34D" fontSize="13" fontWeight="bold">
+                              {toDevanagariDigits(h3.signNumber)}
+                            </text>
+                            {renderPlanetsInHouse(h3, 55, 125)}
+                          </g>
+
+                          {/* House 4 (Left Diamond) */}
+                          <g className="pointer-events-none">
+                            <text x="175" y="205" textAnchor="middle" fill="#FCD34D" fontSize="14" fontWeight="bold">
+                              {toDevanagariDigits(h4.signNumber)}
+                            </text>
+                            {renderPlanetsInHouse(h4, 95, 200)}
+                          </g>
+
+                          {/* House 5 (Left Bottom Triangle) */}
+                          <g className="pointer-events-none">
+                            <text x="28" y="345" textAnchor="middle" fill="#FCD34D" fontSize="13" fontWeight="bold">
+                              {toDevanagariDigits(h5.signNumber)}
+                            </text>
+                            {renderPlanetsInHouse(h5, 55, 275)}
+                          </g>
+
+                          {/* House 6 (Bottom Left Triangle) */}
+                          <g className="pointer-events-none">
+                            <text x="60" y="378" textAnchor="middle" fill="#FCD34D" fontSize="13" fontWeight="bold">
+                              {toDevanagariDigits(h6.signNumber)}
+                            </text>
+                            {renderPlanetsInHouse(h6, 115, 345)}
+                          </g>
+
+                          {/* House 7 (Bottom Center Diamond) */}
+                          <g className="pointer-events-none">
+                            <text x="200" y="368" textAnchor="middle" fill="#FCD34D" fontSize="14" fontWeight="bold">
+                              {toDevanagariDigits(h7.signNumber)}
+                            </text>
+                            {renderPlanetsInHouse(h7, 200, 285)}
+                          </g>
+
+                          {/* House 8 (Bottom Right Triangle) */}
+                          <g className="pointer-events-none">
+                            <text x="340" y="378" textAnchor="middle" fill="#FCD34D" fontSize="13" fontWeight="bold">
+                              {toDevanagariDigits(h8.signNumber)}
+                            </text>
+                            {renderPlanetsInHouse(h8, 285, 345)}
+                          </g>
+
+                          {/* House 9 (Right Bottom Triangle) */}
+                          <g className="pointer-events-none">
+                            <text x="372" y="345" textAnchor="middle" fill="#FCD34D" fontSize="13" fontWeight="bold">
+                              {toDevanagariDigits(h9.signNumber)}
+                            </text>
+                            {renderPlanetsInHouse(h9, 345, 275)}
+                          </g>
+
+                          {/* House 10 (Right Diamond) */}
+                          <g className="pointer-events-none">
+                            <text x="225" y="205" textAnchor="middle" fill="#FCD34D" fontSize="14" fontWeight="bold">
+                              {toDevanagariDigits(h10.signNumber)}
+                            </text>
+                            {renderPlanetsInHouse(h10, 305, 200)}
+                          </g>
+
+                          {/* House 11 (Right Top Triangle) */}
+                          <g className="pointer-events-none">
+                            <text x="372" y="65" textAnchor="middle" fill="#FCD34D" fontSize="13" fontWeight="bold">
+                              {toDevanagariDigits(h11.signNumber)}
+                            </text>
+                            {renderPlanetsInHouse(h11, 345, 125)}
+                          </g>
+
+                          {/* House 12 (Top Right Triangle) */}
+                          <g className="pointer-events-none">
+                            <text x="340" y="32" textAnchor="middle" fill="#FCD34D" fontSize="13" fontWeight="bold">
+                              {toDevanagariDigits(h12.signNumber)}
+                            </text>
+                            {renderPlanetsInHouse(h12, 285, 55)}
+                          </g>
+                        </>
+                      );
+                    })()}
+                  </svg>
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] text-stone-400 mt-2 px-1">
+                  <span>💡 पिवळे अंक = रास क्रमांक (१-१२)</span>
+                  <span>हिरवे अक्षर = ग्रह नाव • (व) = वक्री</span>
+                </div>
+              </div>
+
+              {/* Interactive 12 Bhavas Explainer */}
+              <div className="lg:col-span-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-5 sm:p-6 shadow-xl space-y-4">
+                <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-3">
+                  <span className="text-xs font-bold text-saffron-600 dark:text-saffron-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <Layers className="w-4 h-4" />
+                    <span>१२ भाव विश्लेषण ({chartView === 'd9' ? 'नवमांश भाव' : 'लग्न भाव'})</span>
+                  </span>
+                  <span className="text-xs font-bold text-amber-700 dark:text-amber-300">
+                    निवडलेला भाव: #{activeHouseTab}
+                  </span>
+                </div>
+
+                {/* Quick 12 Houses Chip Picker */}
+                <div className="flex flex-wrap gap-1.5 pb-2">
+                  {(chartView === 'd9' ? kundali.navamshaHouses : kundali.houses).map((h) => (
+                    <button
+                      key={h.houseNumber}
+                      type="button"
+                      onClick={() => setActiveHouseTab(h.houseNumber)}
+                      className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all ${
+                        activeHouseTab === h.houseNumber
+                          ? 'bg-amber-600 text-white shadow-md'
+                          : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-amber-100'
+                      }`}
+                    >
+                      #{h.houseNumber} {h.signNameMr}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Detailed Selected House Insight */}
+                <div className="p-4 rounded-2xl bg-amber-500/10 dark:bg-stone-950 border border-amber-400/40 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-base font-extrabold font-serifDev text-stone-950 dark:text-white">
+                      स्थान #{selectedHouseDetail.houseNumber}: {selectedHouseDetail.signNameMr} रास ({selectedHouseDetail.signNumber})
+                    </h4>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-bold">
+                      स्वामी: {selectedHouseDetail.rulingPlanet}
                     </span>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
 
+                  <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 font-medium leading-relaxed">
+                    {selectedHouseDetail.significanceMr}
+                  </p>
+
+                  <div className="pt-2 border-t border-amber-300/40 dark:border-stone-800 flex items-center justify-between text-xs">
+                    <span className="text-stone-500 dark:text-stone-400 font-bold">
+                      या भावात स्थित ग्रह:
+                    </span>
+                    <span className="font-extrabold text-saffron-700 dark:text-saffron-400">
+                      {selectedHouseDetail.planets.length > 0
+                        ? selectedHouseDetail.planets.map((p) => `${p.name} (${p.degreeFormatted || `${p.degree}°`}) [${p.status}]`).join(', ')
+                        : 'कोणताही ग्रह नाही (स्वच्छ भाव)'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Planetary Table summary */}
+                <div className="space-y-1.5 pt-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-stone-800 dark:text-stone-200 block">
+                      नवग्रह भाव स्थिती व अंश (Planetary Degrees):
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setChartView('table')}
+                      className="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline flex items-center gap-1"
+                    >
+                      <Table className="w-3 h-3" />
+                      <span>संपूर्ण तक्ता उघडा</span>
+                    </button>
+                  </div>
+
+                  <div className="max-h-48 overflow-y-auto space-y-1 pr-1 text-xs">
+                    {kundali.planets.map((p) => (
+                      <div
+                        key={p.name}
+                        className="flex items-center justify-between p-2 rounded-xl bg-stone-50 dark:bg-stone-950/60 border border-stone-200 dark:border-stone-800"
+                      >
+                        <span className="font-bold text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
+                          <span>{p.symbol}</span>
+                          <span>{p.name}</span>
+                          {p.isRetrograde && <span className="text-rose-600 font-bold text-[10px]">(व)</span>}
+                        </span>
+                        <span className="text-stone-500 dark:text-stone-400 font-mono">
+                          भाव #{toDevanagariDigits(p.house)} ({p.rashiName}) • {p.degreeFormatted || `${p.degree}°`}
+                        </span>
+                        <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-400">
+                          {p.status.split(' ')[0]}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          )}
         </div>
 
         {/* 5. Doshas Analysis & Shanti Remedies */}
