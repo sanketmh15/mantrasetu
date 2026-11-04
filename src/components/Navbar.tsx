@@ -178,6 +178,20 @@ export const ALL_SANATAN_TABS: TabItem[] = [
     category: 'bhakti'
   },
   {
+    id: 'audio-player',
+    label: { en: 'Sanatan Audio Player', hi: 'अमृतधारा ऑडियो प्लेयर', mr: '🎧 अमृतधारा ऑडिओ प्लेयर' },
+    desc: { en: 'Traditional Sanskrit chanting player with male/female voice & 108 japa', hi: 'सत्यशोधित पारंपरिक संस्कृत जप एवं १०८ माला प्लेयर', mr: 'सत्यशोधित पारंपरिक संस्कृत जप, १०८ माला व पुरुष/स्त्री स्वर' },
+    icon: Volume2,
+    category: 'bhakti'
+  },
+  {
+    id: 'voice-studio',
+    label: { en: 'AI Voice Studio', hi: 'AI स्वर स्टूडियो', mr: '🎙️ AI स्वर स्टुडिओ' },
+    desc: { en: 'Audition Sarvam Bulbul V4 Flash Marathi & Hindi devotional voices', hi: 'सर्वम बुलबुल V4 फ्लैश - मराठी व हिंदी समर्पित भक्ति स्वर ऑडिशन', mr: 'सर्वम बुलबुल V4 फ्लॅश - मराठी व हिंदी समर्पित भक्ती स्वर चाचणी' },
+    icon: Sparkles,
+    category: 'bhakti'
+  },
+  {
     id: 'vrat',
     label: { en: 'Vrat Guide', hi: 'व्रत मार्गदर्शक', mr: '🛡️ शास्त्रोक्त व्रत विधी' },
     desc: { en: 'Scriptural fasting rules, Ekadashi, Sankashti & Vrats', hi: 'एकादशी, संकष्टी, प्रदोष, वैभव लक्ष्मी व्रत विधि व नियम', mr: 'एकादशी, संकष्टी, प्रदोष, वैभव लक्ष्मी व्रतांचे नियम व उद्यापन' },

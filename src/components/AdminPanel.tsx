@@ -8,6 +8,7 @@ import {
   setCustomAudioMapping,
 } from '../utils/brahmanAudioService';
 import { aiVoiceover, AIVoiceProvider } from '../utils/aiVoiceoverService';
+import { VoiceAuditionStudio } from './VoiceAuditionStudio';
 import {
   Crown,
   Users,
@@ -68,14 +69,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [customAudioInput, setCustomAudioInput] = useState<string>('');
   const [audioSaveMsg, setAudioSaveMsg] = useState<string | null>(null);
 
-  // AI Voiceover Studio State (Sarvam AI Bulbul V3 & ElevenLabs)
+  // AI Voiceover Studio State (Sarvam AI Bulbul V4 Flash & ElevenLabs)
   const [sarvamApiKey, setSarvamApiKey] = useState(aiVoiceover.getSarvamApiKey());
   const [elevenApiKey, setElevenApiKey] = useState(aiVoiceover.getElevenLabsApiKey());
   const [aiProvider, setAiProvider] = useState<AIVoiceProvider>(aiVoiceover.getActiveProvider());
-  const [sarvamSpeaker, setSarvamSpeaker] = useState(aiVoiceover.getSarvamSpeaker());
+  const [sarvamSpeaker, setSarvamSpeaker] = useState(aiVoiceover.getHindiSpeaker());
   const [elevenVoiceId, setElevenVoiceId] = useState(aiVoiceover.getElevenVoiceId());
   const [aiTestLoading, setAiTestLoading] = useState(false);
   const [aiSaveMsg, setAiSaveMsg] = useState<string | null>(null);
+  const [showAuditionStudio, setShowAuditionStudio] = useState(false);
 
   // Search & Filter for 50 Deities
   const [godSearch, setGodSearch] = useState('');
@@ -878,63 +880,81 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     <span className="text-xs uppercase tracking-widest font-bold text-amber-300 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-400/30">
                       AI Voiceover Engine
                     </span>
-                    <span className="text-xs text-amber-200">Sarvam AI (Bulbul V3) • ElevenLabs</span>
+                    <span className="text-xs text-amber-200">Sarvam Bulbul V4 Flash • ElevenLabs</span>
                   </div>
                   <h4 className="text-lg sm:text-xl font-bold font-serifDev text-white mt-1">
                     अत्याधुनिक AI व्हॉईसओव्हर सेटअप (हिंदी व मराठी)
                   </h4>
                   <p className="text-xs text-stone-300 mt-0.5">
-                    सर्व ५० देवतांच्या मंत्र, आरती व अभिवादनासाठी भारतीय भाषांमध्ये सर्वोच्च उच्चार दर्जा.
+                    सर्व ५० देवतांच्या कथा, भावार्थ व आरत्यांसाठी Bulbul V4 Flash आणि संस्कृत मंत्रोच्चारासाठी सत्यशोधित ग्रंथालय.
                   </p>
                 </div>
               </div>
 
-              {/* Provider Selector */}
-              <div className="flex flex-wrap gap-1.5 p-1.5 bg-black/50 rounded-2xl border border-amber-500/30">
-                {(['auto', 'sarvam', 'elevenlabs', 'off'] as const).map((prov) => (
-                  <button
-                    key={prov}
-                    onClick={() => {
-                      setAiProvider(prov);
-                      aiVoiceover.setActiveProvider(prov);
-                    }}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                      aiProvider === prov
-                        ? 'bg-amber-600 text-white shadow-md'
-                        : 'text-stone-400 hover:text-white'
-                    }`}
-                  >
-                    {prov === 'auto'
-                      ? '⚡ ऑटो (Auto)'
-                      : prov === 'sarvam'
-                      ? '🇮🇳 Sarvam AI'
-                      : prov === 'elevenlabs'
-                      ? '🌐 ElevenLabs'
-                      : '🪷 ऑफलाईन'}
-                  </button>
-                ))}
+              {/* Actions: Audition Studio & Provider Selector */}
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => setShowAuditionStudio(!showAuditionStudio)}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-saffron-500 hover:from-amber-400 hover:to-saffron-400 text-stone-950 font-bold text-xs transition-all flex items-center gap-1.5 shadow-lg"
+                >
+                  <Mic className="w-3.5 h-3.5" />
+                  <span>{showAuditionStudio ? 'ऑडिशन बंद करा' : '🎙️ स्वर ऑडिशन स्टुडिओ उघडा'}</span>
+                </button>
+
+                {/* Provider Selector */}
+                <div className="flex flex-wrap gap-1.5 p-1.5 bg-black/50 rounded-2xl border border-amber-500/30">
+                  {(['auto', 'sarvam', 'elevenlabs', 'off'] as const).map((prov) => (
+                    <button
+                      key={prov}
+                      onClick={() => {
+                        setAiProvider(prov);
+                        aiVoiceover.setActiveProvider(prov);
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        aiProvider === prov
+                          ? 'bg-amber-600 text-white shadow-md'
+                          : 'text-stone-400 hover:text-white'
+                      }`}
+                    >
+                      {prov === 'auto'
+                        ? '⚡ ऑटो (Auto)'
+                        : prov === 'sarvam'
+                        ? '🇮🇳 Sarvam AI'
+                        : prov === 'elevenlabs'
+                        ? '🌐 ElevenLabs'
+                        : '🪷 ऑफलाईन'}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
+
+            {/* Embedded Live Audition Studio */}
+            {showAuditionStudio && (
+              <div className="p-4 sm:p-6 rounded-3xl bg-black/80 border-2 border-amber-400/60 shadow-2xl">
+                <VoiceAuditionStudio currentLang={currentLang} onClose={() => setShowAuditionStudio(false)} />
+              </div>
+            )}
 
             {/* Two Column Grid: Sarvam AI & ElevenLabs */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
               
-              {/* 1. Sarvam AI (Bulbul V3) Card */}
+              {/* 1. Sarvam AI (Bulbul V4 Flash) Card */}
               <div className="p-5 rounded-2xl bg-black/40 border border-amber-500/30 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-lg">🇮🇳</span>
                     <h5 className="font-bold text-sm text-amber-300 font-serifDev">
-                      Sarvam AI — Bulbul V3 (मराठी व हिंदी तज्ज्ञ)
+                      Sarvam AI — Bulbul V4 Flash (मराठी व हिंदी समर्पित भक्ती इंजिन)
                     </h5>
                   </div>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/30 font-bold">
-                    bulbul:v3
+                    bulbul:v4-flash
                   </span>
                 </div>
 
                 <p className="text-xs text-stone-300 leading-relaxed">
-                  भारतातील सर्वोत्तम जनरेटिव्ह टेक्स्ट-टू-स्पीच, जे अस्सल मराठी (`mr-IN`) आणि हिंदी (`hi-IN`) शुद्ध उच्चार, नैसर्गिक विराम व भक्तीभाव प्रदान करते.
+                  भारतातील अत्याधुनिक <strong>Bulbul V4 Flash</strong> मॉडेल. समर्पित मराठी व हिंदी भक्ती आवाजांसह ओघवती, सात्त्विक आणि शुद्ध उच्चार शैली प्रदान करते. (संस्कृत मंत्रोच्चारासाठी सत्यशोधित ऑडिओ लायब्ररी वापरली जाते).
                 </p>
 
                 <div className="space-y-3">
@@ -955,18 +975,28 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   <div>
                     <label className="block text-[11px] font-bold text-stone-300 mb-1 flex items-center gap-1.5">
                       <Cpu className="w-3.5 h-3.5 text-amber-400" />
-                      <span>आवाज वक्ता (Devotional Speaker):</span>
+                      <span>समर्पित भक्ती व कथन आवाज (Devotional Speaker):</span>
                     </label>
                     <select
                       value={sarvamSpeaker}
                       onChange={(e) => setSarvamSpeaker(e.target.value)}
                       className="w-full px-3 py-2 rounded-xl bg-stone-900 border border-stone-700 text-xs text-white focus:outline-none focus:border-amber-400"
                     >
-                      <option value="ratan">🪷 रतन (गंभीर पुरोहित / Solemn Temple Baritone)</option>
-                      <option value="arvind">🕉️ अरविंद (वैदिक शास्त्री / Traditional Priest)</option>
-                      <option value="meera">🌺 मीरा (मधुर भक्तिमय / Melodious Female Devotional)</option>
-                      <option value="aditya">🚩 आदित्य (स्पष्ट शास्त्रीय / Clear Classical Male)</option>
-                      <option value="ananya">🌸 अनन्या (शांत ध्यान / Peaceful Meditative Female)</option>
+                      <optgroup label="🪷 हिंदी समर्पित भक्ती आवाज (Hindi Devotional)">
+                        <option value="ishita_hi_devotional">🌸 ईशिता (Ishita) — मुख्य स्त्री भक्ती वाचक</option>
+                        <option value="mani_hi_devotional">🕉️ मणि (Mani) — मुख्य पुरुष पुरोहित वाचक</option>
+                        <option value="nachiket_hi_devotional">🌿 नचिकेता (Nachiket) — वैदिक साधक स्वर</option>
+                        <option value="ratan_hi_devotional">🏛️ रतन (Ratan) — गंभीर मंदिर बारिटोन</option>
+                        <option value="shubh_hi_devotional">🚩 शुभ (Shubh) — शास्त्रीय मंत्रोच्चार</option>
+                        <option value="girish_hi_devotional">📜 गिरीश (Girish) — संतवाणी व कथावाचक</option>
+                      </optgroup>
+                      <optgroup label="🚩 मराठी समर्पित कथन आवाज (Marathi Narration)">
+                        <option value="mrunal_mr_narration">🌸 मृणाल (Mrunal) — मुख्य मराठी स्त्री कथन</option>
+                        <option value="soham_mr_narration">🚩 सोहम (Soham) — मुख्य मराठी पुरुष कथन</option>
+                        <option value="rupali_mr_stories">🪔 रूपाली (Rupali) — भावकथा व संस्कार</option>
+                        <option value="mukul_mr_stories">🌾 मुकुल (Mukul) — वारकरी व मंदिर माहात्म्य</option>
+                        <option value="neha_mr_narration">🌺 नेहा (Neha) — दैनंदिन सुविचार</option>
+                      </optgroup>
                     </select>
                   </div>
 
@@ -983,7 +1013,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         const url = await aiVoiceover.generateSarvamSpeech({
                           text: 'सुखकर्ता दुःखहर्ता वार्ता विघ्नाची । नुरवी पुरवी प्रेम कृपा जयाची ॥ जय देव जय मंगलमूर्ती ।',
                           lang: 'mr-IN',
-                          speaker: sarvamSpeaker,
+                          speaker: sarvamSpeaker.includes('_mr_') ? sarvamSpeaker : 'mrunal_mr_narration',
                           pace: 0.88,
                         });
                         setAiTestLoading(false);
@@ -997,7 +1027,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       className="px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-[11px] font-bold text-amber-200 transition-all flex items-center justify-center gap-1.5"
                     >
                       <Play className="w-3 h-3 text-amber-400" />
-                      <span>मराठी टेस्ट (Bulbul V3)</span>
+                      <span>मराठी टेस्ट (Bulbul V4)</span>
                     </button>
 
                     <button
@@ -1009,9 +1039,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         setAiTestLoading(true);
                         audioEngine.playTempleBell();
                         const url = await aiVoiceover.generateSarvamSpeech({
-                          text: 'ॐ गं गणपतये नमः। वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥',
+                          text: 'सनातन अमृतधारा भक्ति संकुल में आपका हार्दिक स्वागत है। भगवान शिव और श्री राम के आशीर्वाद से आपका दिन मंगलमय हो।',
                           lang: 'hi-IN',
-                          speaker: sarvamSpeaker,
+                          speaker: sarvamSpeaker.includes('_hi_') ? sarvamSpeaker : 'ishita_hi_devotional',
                           pace: 0.88,
                         });
                         setAiTestLoading(false);
@@ -1025,7 +1055,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       className="px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-[11px] font-bold text-amber-200 transition-all flex items-center justify-center gap-1.5"
                     >
                       <Play className="w-3 h-3 text-amber-400" />
-                      <span>हिंदी टेस्ट (Bulbul V3)</span>
+                      <span>हिंदी टेस्ट (Bulbul V4)</span>
                     </button>
                   </div>
                 </div>

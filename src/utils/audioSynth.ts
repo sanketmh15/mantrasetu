@@ -248,10 +248,10 @@ class AudioEngine {
         this.currentHumanAudio = audio;
 
         // Calibrated speaking pace for cross-device consistency:
-        // 0.78 for calm, unhurried, authentic devotional cadence; 0.82 for divine melodious
+        // 0.72 for calm, unhurried, authentic devotional cadence; 0.75 for divine melodious
         const activePersona = persona || this.persona || 'vedic_brahman';
-        const defaultRate = activePersona === 'vedic_brahman' ? 0.78 : 0.82;
-        const rate = customRate ? Math.max(0.65, Math.min(1.0, customRate)) : defaultRate;
+        const defaultRate = activePersona === 'vedic_brahman' ? 0.72 : 0.75;
+        const rate = customRate ? Math.max(0.60, Math.min(0.85, customRate)) : defaultRate;
         audio.playbackRate = rate;
 
         const playNext = () => {
@@ -523,6 +523,27 @@ class AudioEngine {
    * without skipping Devanagari characters or producing 0ms silence.
    */
   private sacredOverrides: Record<string, string> = {
+    // Sacred Ashtavinayak Sloka (Exact matches with linebreaks and single line)
+    'स्वस्ति श्री गणनायकं गजमुखं मोरेश्वरं सिद्धिदम् ।\nबल्लाळं मुरुडं विनायक महडं चिंतामणिं थेवरम् ॥\nलेण्याद्रिं गिरिजात्मजं सुवरदं विघ्नेश्वरं ओझरम् ।\nग्रामे रांजणसंस्थितं गणपतिः कुर्यात् सदा मंगलम् ॥':
+      'Swasti Shree Gana-naayakam Gaja-mukham Moreshwaram Siddhidam. Ballaalam Murudam Vinaayaka Mahadam Chintaamanim Thevaram. Lenyaadrim Girijaatmajam Suvaradam Vighneshwaram Ozharam. Graame Raanjan-samsthitam Ganapatih Kuryaat Sadaa Mangalam.',
+    'स्वस्ति श्री गणनायकं गजमुखं मोरेश्वरं सिद्धिदम् । बल्लाळं मुरुडं विनायक महडं चिंतामणिं थेवरम् ॥ लेण्याद्रिं गिरिजात्मजं सुवरदं विघ्नेश्वरं ओझरम् । ग्रामे रांजणसंस्थितं गणपतिः कुर्यात् सदा मंगलम् ॥':
+      'Swasti Shree Gana-naayakam Gaja-mukham Moreshwaram Siddhidam. Ballaalam Murudam Vinaayaka Mahadam Chintaamanim Thevaram. Lenyaadrim Girijaatmajam Suvaradam Vighneshwaram Ozharam. Graame Raanjan-samsthitam Ganapatih Kuryaat Sadaa Mangalam.',
+    
+    // Sacred 12 Jyotirlinga Sloka
+    'सौराष्ट्रे सोमनाथं च श्रीशैले मल्लिकार्जुनम् ।\nउज्जयिन्यां महाकालं ओंकारममलेश्वरम् ॥\nपरल्यां वैद्यनाथं च डाकिन्यां भीमशङ्करम् ।\nसेतुबन्धे तु रामेशं नागेशं दारुकावने ॥\nवाराणस्यां तु विश्वेशं त्र्यम्बकं गौतमीतटे ।\nहिमालये तु केदारं घुश्मेशं च शिवालये ॥':
+      'Saurashtre Somanatham cha, Shreeshaile Mallikarjunam. Ujjayinyam Mahakaalam, Omkaaram Amaleshwaram. Paralyam Vaidyanatham cha, Dakinyam Bheemashankaram. Setubandhe tu Ramesham, Nagesham Daarukavane. Varanasyam tu Vishwesham, Tryambakam Gautamee-tate. Himalaye tu Kedaram, Ghrushmesham cha Shivalaye.',
+    'सौराष्ट्रे सोमनाथं च श्रीशैले मल्लिकार्जुनम् । उज्जयिन्यां महाकालं ओंकारममलेश्वरम् ॥ परल्यां वैद्यनाथं च डाकिन्यां भीमशङ्करम् । सेतुबन्धे तु रामेशं नागेशं दारुकावने ॥ वाराणस्यां तु विश्वेशं त्र्यम्बकं गौतमीतटे । हिमालये तु केदारं घुश्मेशं च शिवालये ॥':
+      'Saurashtre Somanatham cha, Shreeshaile Mallikarjunam. Ujjayinyam Mahakaalam, Omkaaram Amaleshwaram. Paralyam Vaidyanatham cha, Dakinyam Bheemashankaram. Setubandhe tu Ramesham, Nagesham Daarukavane. Varanasyam tu Vishwesham, Tryambakam Gautamee-tate. Himalaye tu Kedaram, Ghrushmesham cha Shivalaye.',
+
+    // Common Pilgrimage Phrases & Sacred Temple Guidance
+    'लक्षात ठेवा: उर्वरित ७ देवस्थानांचे दर्शन झाल्यानंतर शेवटी पुन्हा मोरगावला येऊन यात्रेचा समारोप होतो.':
+      'Lakshat theva: urvarit saat devsthananche darshan zalyanantar shevati punha Morgaon-la yeun yaatrecha samaarop hoto.',
+    'दर सोमवारी दुपारी ४ ते ५ या वेळेत शिवलिंगावर ऐतिहासिक पेशवेकालीन सुवर्ण मुकुट चढवून विशेष दर्शन घडवले जाते.':
+      'Dar Somwari dupari char te paanch ya velet Shivalingavar aitihasik Peshwe-kaleen suvarna mukut chadhvoon vishesh darshan ghadavle jaate.',
+    'ताजी स्वच्छ बेलाची पाने, थंड पाणी आणि पांढरी फुले शिवलिंगावर अर्पण करावीत.':
+      'Taaji swachha belachi paane, thand paani aani paandhari phule Shivalingavar arpan karaavit.',
+    
+    // Core Sacred Chants
     'राम कृष्ण हरी, जय जय राम कृष्ण हरी': 'Ram Krishna Hari, Jai Jai Ram Krishna Hari.',
     'राम कृष्ण हरी': 'Ram Krishna Hari.',
     'ज्ञानोबा माऊली तुकाराम': 'Dnyanoba Mauli Tukaram.',
@@ -688,10 +709,10 @@ class AudioEngine {
 
     // Calibrated persona acoustic properties (unhurried, devotional, dignified pace)
     let pitch = 0.90;
-    let rate = 0.78; // Calm, respectful pace for mantras and prayers (senior-friendly)
+    let rate = 0.72; // Calm, respectful pace for mantras and prayers (senior-friendly, unhurried)
     if (activePersona === 'divine_melodious') {
       pitch = 1.00;
-      rate = 0.82; // Gentle, melodious pace
+      rate = 0.74; // Gentle, melodious pace
     }
 
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {

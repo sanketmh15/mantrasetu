@@ -49,6 +49,8 @@ import { LiveTempleDarshan } from './components/LiveTempleDarshan';
 import { RashiGuideCalculator } from './components/RashiGuideCalculator';
 import { AIKundaliPredictor } from './components/AIKundaliPredictor';
 import { AudioBhajanHub } from './components/AudioBhajanHub';
+import { SanatanAudioPlayer } from './components/SanatanAudioPlayer';
+import { VoiceAuditionStudio } from './components/VoiceAuditionStudio';
 import { DailyNotificationReminder } from './components/DailyNotificationReminder';
 import { SatvikDevotionalStore } from './components/SatvikDevotionalStore';
 import { UniversalGlobalSearch } from './components/UniversalGlobalSearch';
@@ -879,7 +881,17 @@ export function App() {
           <AudioBhajanHub currentLang={currentLang} />
         )}
 
-        {/* 35. DAILY NOTIFICATIONS & REMINDER TAB */}
+        {/* 35. SANATAN AUDIO PLAYER (TRADITIONAL SANSKRIT CHANTING) */}
+        {activeTab === 'audio-player' && (
+          <SanatanAudioPlayer currentLang={currentLang} />
+        )}
+
+        {/* 36. SARVAM BULBUL V4 FLASH DEVOTIONAL VOICE STUDIO */}
+        {activeTab === 'voice-studio' && (
+          <VoiceAuditionStudio currentLang={currentLang} onClose={() => navigateTo('home')} />
+        )}
+
+        {/* 37. DAILY NOTIFICATIONS & REMINDER TAB */}
         {activeTab === 'reminders' && (
           <DailyNotificationReminder currentLang={currentLang} />
         )}

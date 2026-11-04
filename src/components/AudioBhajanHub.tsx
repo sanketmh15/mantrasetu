@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Language } from '../types';
 import { bhajanDatabase, BhajanTrack } from '../data/bhajanHubData';
 import { audioEngine } from '../utils/audioSynth';
+import { SanatanAudioPlayer } from './SanatanAudioPlayer';
+import { VoiceAuditionStudio } from './VoiceAuditionStudio';
 import {
   Music,
   Play,
@@ -12,6 +14,8 @@ import {
   Share2,
   Sparkles,
   Layers,
+  Mic,
+  Headphones
 } from 'lucide-react';
 
 interface AudioBhajanHubProps {
@@ -19,6 +23,7 @@ interface AudioBhajanHubProps {
 }
 
 export function AudioBhajanHub({ currentLang }: AudioBhajanHubProps) {
+  const [activeAudioTab, setActiveAudioTab] = useState<'bhajan' | 'sanskrit' | 'audition'>('bhajan');
   const [selectedTrackId, setSelectedTrackId] = useState<string>('ghanashyama_sundara');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -112,8 +117,57 @@ export function AudioBhajanHub({ currentLang }: AudioBhajanHubProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-      {/* Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-950 via-[#211105] to-stone-950 border border-amber-600/30 p-6 sm:p-10 mb-8 shadow-2xl text-white">
+      {/* Top Level Audio Architecture Mode Switcher */}
+      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-8 p-1.5 rounded-2xl bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm">
+        <button
+          onClick={() => setActiveAudioTab('bhajan')}
+          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${
+            activeAudioTab === 'bhajan'
+              ? 'bg-gradient-to-r from-amber-600 to-saffron-600 text-white shadow-md'
+              : 'text-stone-700 dark:text-stone-300 hover:text-stone-950 dark:hover:text-white'
+          }`}
+        >
+          <Music className="w-4 h-4" />
+          <span>🎵 संत भजने व भूपाळ्या</span>
+        </button>
+
+        <button
+          onClick={() => setActiveAudioTab('sanskrit')}
+          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${
+            activeAudioTab === 'sanskrit'
+              ? 'bg-gradient-to-r from-amber-600 to-saffron-600 text-white shadow-md'
+              : 'text-stone-700 dark:text-stone-300 hover:text-stone-950 dark:hover:text-white'
+          }`}
+        >
+          <Headphones className="w-4 h-4" />
+          <span>🕉️ सत्यशोधित संस्कृत जप प्लेअर (१०८ जप)</span>
+        </button>
+
+        <button
+          onClick={() => setActiveAudioTab('audition')}
+          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${
+            activeAudioTab === 'audition'
+              ? 'bg-gradient-to-r from-amber-600 to-saffron-600 text-white shadow-md'
+              : 'text-stone-700 dark:text-stone-300 hover:text-stone-950 dark:hover:text-white'
+          }`}
+        >
+          <Mic className="w-4 h-4" />
+          <span>🎙️ Sarvam AI स्वर ऑडिशन स्टुडिओ (Bulbul V4)</span>
+        </button>
+      </div>
+
+      {activeAudioTab === 'sanskrit' && (
+        <SanatanAudioPlayer currentLang={currentLang} />
+      )}
+
+      {activeAudioTab === 'audition' && (
+        <VoiceAuditionStudio currentLang={currentLang} />
+      )}
+
+      {activeAudioTab === 'bhajan' && (
+        <>
+          {/* Hero Banner */}
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-950 via-[#211105] to-stone-950 border border-amber-600/30 p-6 sm:p-10 mb-8 shadow-2xl text-white">
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-200 text-xs font-semibold uppercase tracking-wider mb-3">
@@ -361,6 +415,8 @@ export function AudioBhajanHub({ currentLang }: AudioBhajanHubProps) {
           </div>
         </div>
       </div>
+      </>
+    )}
     </div>
   );
 }
