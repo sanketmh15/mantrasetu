@@ -133,61 +133,86 @@ const KARANAS_MR = ['बव', 'बालव', 'कौलव', 'तैतिल',
 
 /**
  * Mathematically and deterministically calculates complete Vedic Janam Kundali
+ * Hardened with defensive bounds, robust date/time parsing, and fallback safety
  */
 export function generateExactKundali(birthData: UserBirthData): FullKundaliAnalysis {
-  const dateObj = new Date(birthData.birthDate || '1998-05-15');
-  const [hourStr, minStr] = (birthData.birthTime || '08:30').split(':');
-  const hour = parseInt(hourStr || '8', 10);
-  const min = parseInt(minStr || '30', 10);
+  // 0. Defensive date parsing
+  let dateObj = new Date(birthData.birthDate || '1998-05-15');
+  if (isNaN(dateObj.getTime())) {
+    const parts = (birthData.birthDate || '').split(/[-/]/);
+    if (parts.length === 3) {
+      if (parts[0].length === 4) {
+        dateObj = new Date(parseInt(parts[0], 10), Math.max(0, parseInt(parts[1], 10) - 1), parseInt(parts[2], 10));
+      } else {
+        dateObj = new Date(parseInt(parts[2], 10), Math.max(0, parseInt(parts[1], 10) - 1), parseInt(parts[0], 10));
+      }
+    }
+  }
+  if (isNaN(dateObj.getTime())) {
+    dateObj = new Date(1998, 4, 15);
+  }
 
-  const dayOfMonth = dateObj.getDate();
-  const month = dateObj.getMonth(); // 0 to 11
-  const year = dateObj.getFullYear();
-  const dayOfWeek = dateObj.getDay();
+  // Defensive time parsing
+  const [hourStr, minStr] = (birthData.birthTime || '08:30').split(':');
+  let hour = parseInt(hourStr || '8', 10);
+  let min = parseInt(minStr || '30', 10);
+  if (isNaN(hour) || hour < 0 || hour > 23) hour = 8;
+  if (isNaN(min) || min < 0 || min > 59) min = 30;
+
+  const dayOfMonth = dateObj.getDate() || 15;
+  const month = dateObj.getMonth() || 4; // 0 to 11
+  const year = dateObj.getFullYear() || 1998;
+  const dayOfWeek = (dateObj.getDay() >= 0 && dateObj.getDay() <= 6) ? dateObj.getDay() : 0;
+
+  // Safe modulo helper that ALWAYS returns positive integer in [0, m - 1]
+  const safeMod = (val: number, m: number) => {
+    const res = Math.floor(val) % m;
+    return (res + m) % m;
+  };
 
   // 1. Calculate Sun Sign (Surya moves roughly 1 sign per month)
-  const sunSignIndex = (month + (dayOfMonth > 14 ? 0 : 11)) % 12;
-  const sunSign = rashiDatabase[sunSignIndex];
+  const sunSignIndex = safeMod(month + (dayOfMonth > 14 ? 0 : 11), 12);
+  const sunSign = rashiDatabase[sunSignIndex] || rashiDatabase[0];
 
   // 2. Calculate Moon Sign (Chandra moves ~2.25 days per sign)
-  const moonSeed = (dayOfMonth * 13 + month * 31 + year) % 27;
-  const moonSignIndex = Math.floor(moonSeed / 2.25) % 12;
-  const moonSign = rashiDatabase[moonSignIndex];
+  const moonSeed = safeMod(dayOfMonth * 13 + month * 31 + year, 27);
+  const moonSignIndex = safeMod(Math.floor(moonSeed / 2.25), 12);
+  const moonSign = rashiDatabase[moonSignIndex] || rashiDatabase[0];
 
   // 3. Calculate Ascendant / Lagna Sign (Rotates 360 deg in 24h => 1 sign every 2 hours)
   const lagnaOffset = Math.floor((hour + min / 60) / 2);
-  const lagnaIndex = (sunSignIndex + lagnaOffset) % 12;
-  const lagnaSign = rashiDatabase[lagnaIndex];
+  const lagnaIndex = safeMod(sunSignIndex + lagnaOffset, 12);
+  const lagnaSign = rashiDatabase[lagnaIndex] || rashiDatabase[0];
 
   // 4. Nakshatra & Pada
-  const nakshatraIndex = (dayOfMonth * 7 + month * 11 + year % 100) % 27;
-  const nakshatra = nakshatraDatabase[nakshatraIndex];
-  const pada = ((min + dayOfMonth) % 4) + 1;
+  const nakshatraIndex = safeMod(dayOfMonth * 7 + month * 11 + safeMod(year, 100), 27);
+  const nakshatra = nakshatraDatabase[nakshatraIndex] || nakshatraDatabase[0];
+  const pada = safeMod(min + dayOfMonth, 4) + 1;
 
   // 5. Gana & Nadi
-  const gana = nakshatra.gana;
+  const gana = nakshatra.gana || 'मनुष्य';
   const nadis: ('आद्य' | 'मध्य' | 'अंत्य')[] = ['आद्य', 'मध्य', 'अंत्य'];
-  const nadi = nadis[(nakshatra.number + pada) % 3];
+  const nadi = nadis[safeMod((nakshatra.number || 1) + pada, 3)];
 
   // 6. Panchang at Birth
-  const tithiIndex = ((dayOfMonth * 2 + month) % 30);
-  const tithi = TITHI_NAMES[tithiIndex];
-  const vaar = DAY_NAMES_MR[dayOfWeek];
-  const yoga = YOGAS_MR[(dayOfMonth + month * 2) % YOGAS_MR.length];
-  const karana = KARANAS_MR[(dayOfMonth * 3) % KARANAS_MR.length];
+  const tithiIndex = safeMod(dayOfMonth * 2 + month, 30);
+  const tithi = TITHI_NAMES[tithiIndex] || TITHI_NAMES[0];
+  const vaar = DAY_NAMES_MR[dayOfWeek] || DAY_NAMES_MR[0];
+  const yoga = YOGAS_MR[safeMod(dayOfMonth + month * 2, YOGAS_MR.length)] || YOGAS_MR[0];
+  const karana = KARANAS_MR[safeMod(dayOfMonth * 3, KARANAS_MR.length)] || KARANAS_MR[0];
 
   // 7. Ashtakoota items
   const varnas = ['ब्राह्मण (ज्ञान व साधना)', 'क्षत्रिय (नेतृत्व व पराक्रम)', 'वैश्य (व्यापार व समृद्धी)', 'शूद्र (सेवा व श्रम)'];
-  const varna = varnas[(lagnaIndex + moonSignIndex) % 4];
+  const varna = varnas[safeMod(lagnaIndex + moonSignIndex, 4)];
 
   const vashyas = ['चतुष्पद (संयमी)', 'मानव (बुद्धिमान)', 'जलचर (संवेदनशील)', 'वनचर (साहसी)', 'कीट (चिकाटी)'];
-  const vashya = vashyas[(nakshatra.number) % 5];
+  const vashya = vashyas[safeMod(nakshatra.number || 1, 5)];
 
   const taras = ['जन्म (आरोग्य)', 'संपत (धनलाभ)', 'विपत (सावध)', 'क्षेम (कल्याण)', 'प्रत्यरी (प्रयत्न)', 'साधक (सिद्धि)', 'निधन (संयम)', 'मित्र (सहकार्य)', 'परम मित्र (सौभाग्य)'];
-  const tara = taras[(nakshatra.number + pada) % 9];
+  const tara = taras[safeMod((nakshatra.number || 1) + pada, 9)];
 
   const yonis = ['अश्व (घोडा)', 'गज (हत्ती)', 'मेष (मेंढा)', 'सर्प', 'श्वान (कुत्रा)', 'मार्जार (मांजर)', 'मूषक (उंदीर)', 'सिंह', 'व्याघ्र', 'महिष', 'वानर', 'नकुल', 'हरिण'];
-  const yoni = yonis[(nakshatra.number) % yonis.length];
+  const yoni = yonis[safeMod(nakshatra.number || 1, yonis.length)];
 
   // 8. Lucky Metas
   const luckyGems: Record<string, { gem: string; metal: string }> = {
@@ -205,30 +230,30 @@ export function generateExactKundali(birthData: UserBirthData): FullKundaliAnaly
     pisces: { gem: 'पुष्कराज (Yellow Sapphire)', metal: 'सोने' }
   };
 
-  const gemMeta = luckyGems[lagnaSign.id] || { gem: 'पाचू किंवा स्फटिक', metal: 'चांदी' };
+  const gemMeta = (lagnaSign && lagnaSign.id && luckyGems[lagnaSign.id]) || { gem: 'पाचू किंवा स्फटिक', metal: 'चांदी' };
 
   // Lucky numbers
-  const baseNum = ((lagnaIndex + 1) * 3 + dayOfMonth) % 9 + 1;
+  const baseNum = safeMod((lagnaIndex + 1) * 3 + dayOfMonth, 9) + 1;
   const luckyNumbers = `${baseNum}, ${(baseNum + 3) % 9 + 1}, ${(baseNum + 6) % 9 + 1}`;
 
   // 9. 9 Grahas Placement across 12 Bhavas
   const grahaDefinitions = [
-    { name: 'रवि (Sun)', symbol: '☀️', baseHouse: ((sunSignIndex - lagnaIndex + 12) % 12) + 1 },
-    { name: 'चंद्र (Moon)', symbol: '🌙', baseHouse: ((moonSignIndex - lagnaIndex + 12) % 12) + 1 },
-    { name: 'मंगळ (Mars)', symbol: '♂️', baseHouse: ((lagnaIndex + 3 + (dayOfMonth % 4)) % 12) + 1 },
-    { name: 'बुध (Mercury)', symbol: '☿', baseHouse: ((sunSignIndex + (min % 2 === 0 ? 0 : 1) - lagnaIndex + 12) % 12) + 1 },
-    { name: 'गुरु (Jupiter)', symbol: '♃', baseHouse: (((year % 12) - lagnaIndex + 12) % 12) + 1 },
-    { name: 'शुक्र (Venus)', symbol: '♀', baseHouse: ((sunSignIndex + 2 - lagnaIndex + 12) % 12) + 1 },
-    { name: 'शनि (Saturn)', symbol: '♄', baseHouse: (((Math.floor(year / 2.5) % 12) - lagnaIndex + 12) % 12) + 1 },
-    { name: 'राहू (Rahu)', symbol: '☊', baseHouse: ((nakshatraIndex % 12) + 1) },
-    { name: 'केतू (Ketu)', symbol: '☋', baseHouse: (((nakshatraIndex % 12) + 6) % 12) + 1 },
+    { name: 'रवि (Sun)', symbol: '☀️', baseHouse: safeMod(sunSignIndex - lagnaIndex, 12) + 1 },
+    { name: 'चंद्र (Moon)', symbol: '🌙', baseHouse: safeMod(moonSignIndex - lagnaIndex, 12) + 1 },
+    { name: 'मंगळ (Mars)', symbol: '♂️', baseHouse: safeMod(lagnaIndex + 3 + (dayOfMonth % 4), 12) + 1 },
+    { name: 'बुध (Mercury)', symbol: '☿', baseHouse: safeMod(sunSignIndex + (min % 2 === 0 ? 0 : 1) - lagnaIndex, 12) + 1 },
+    { name: 'गुरु (Jupiter)', symbol: '♃', baseHouse: safeMod((year % 12) - lagnaIndex, 12) + 1 },
+    { name: 'शुक्र (Venus)', symbol: '♀', baseHouse: safeMod(sunSignIndex + 2 - lagnaIndex, 12) + 1 },
+    { name: 'शनि (Saturn)', symbol: '♄', baseHouse: safeMod(Math.floor(year / 2.5) - lagnaIndex, 12) + 1 },
+    { name: 'राहू (Rahu)', symbol: '☊', baseHouse: safeMod(nakshatraIndex, 12) + 1 },
+    { name: 'केतू (Ketu)', symbol: '☋', baseHouse: safeMod(nakshatraIndex + 6, 12) + 1 },
   ];
 
   const planets: PlanetPlacement[] = grahaDefinitions.map((g, idx) => {
     const house = g.baseHouse;
-    const rashiIdx = (lagnaIndex + house - 1) % 12;
-    const rashi = rashiDatabase[rashiIdx];
-    const deg = 5 + ((dayOfMonth * 7 + idx * 3) % 22);
+    const rashiIdx = safeMod(lagnaIndex + house - 1, 12);
+    const rashi = rashiDatabase[rashiIdx] || rashiDatabase[0];
+    const deg = 5 + safeMod(dayOfMonth * 7 + idx * 3, 22);
 
     let status: PlanetPlacement['status'] = 'मित्र (Friendly)';
     if (rashi.rulingPlanet.mr.includes(g.name.split(' ')[0])) {
@@ -289,8 +314,8 @@ export function generateExactKundali(birthData: UserBirthData): FullKundaliAnaly
 
   const houses: HouseDetail[] = [];
   for (let h = 1; h <= 12; h++) {
-    const rashiIdx = (lagnaIndex + h - 1) % 12;
-    const rashi = rashiDatabase[rashiIdx];
+    const rashiIdx = safeMod(lagnaIndex + h - 1, 12);
+    const rashi = rashiDatabase[rashiIdx] || rashiDatabase[0];
     const housePlanets = planets.filter((p) => p.house === h);
 
     houses.push({
@@ -301,8 +326,8 @@ export function generateExactKundali(birthData: UserBirthData): FullKundaliAnaly
       signNameMr: rashi.name.mr,
       signNameEn: rashi.name.en,
       rulingPlanet: rashi.rulingPlanet.mr,
-      significanceMr: houseSignificancesMr[h - 1],
-      significanceEn: houseSignificancesEn[h - 1],
+      significanceMr: houseSignificancesMr[h - 1] || 'शुभ स्थान',
+      significanceEn: houseSignificancesEn[h - 1] || 'Auspicious House',
       planets: housePlanets,
     });
   }

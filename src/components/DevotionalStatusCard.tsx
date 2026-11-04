@@ -67,6 +67,27 @@ const weekdayDeityMap: Record<number, { deity: string; marathiDay: string; color
   6: { deity: 'शनिदेव आणि हनुमान', marathiDay: 'शनिवार (शनिदेव व हनुमान)', colorName: 'नील वर्ण व तेल-सिंदूर', bgGradient: 'from-stone-900 via-indigo-950 to-stone-900' },
 };
 
+// Helper for canvas rounded rectangles with cross-browser compatibility
+function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  if (typeof ctx.roundRect === 'function') {
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, r);
+    ctx.closePath();
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+}
+
 export function DevotionalStatusCard({ currentLang }: DevotionalStatusCardProps) {
   const now = new Date();
   const dayIndex = now.getDay();
@@ -106,19 +127,13 @@ export function DevotionalStatusCard({ currentLang }: DevotionalStatusCardProps)
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleShareWhatsApp = () => {
-    const textToCopy = `🙏 *${getGreetingHeader()}* 🙏\n\n📅 *${dateString}* (${todayMeta.marathiDay})\n🚩 *आजचे आराध्य:* ${todayMeta.deity}\n\n📜 *संत विचार:*\n_${currentQuote.marathi}_\n— *${currentQuote.saint}*\n\n${senderName ? `🙏 प्रेषक: ${senderName}\n\n` : ''}🪔 *आपला दिवस मंगलमय जावो!*\n📲 सनातन अमृतधारा (Sanatan Amrutdhara) भक्ती ॲप`;
-    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(textToCopy)}`;
-    window.open(url, '_blank');
-  };
-
-  // Download Card as high-resolution PNG using HTML5 Canvas
-  const handleDownloadCard = () => {
+  // Generate 9:16 high-resolution canvas with defensive Devanagari styling
+  const generateStatusCanvas = (): HTMLCanvasElement | null => {
     const canvas = document.createElement('canvas');
     canvas.width = 1080;
     canvas.height = 1920; // 9:16 vertical standard
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) return null;
 
     // Draw luxury gradient background
     const gradient = ctx.createLinearGradient(0, 0, 0, 1920);
@@ -150,45 +165,48 @@ export function DevotionalStatusCard({ currentLang }: DevotionalStatusCardProps)
     ctx.lineWidth = 4;
     ctx.strokeRect(70, 70, 940, 1780);
 
+    const fontStack = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", "Mangal", sans-serif';
+
     // Header Branding
     ctx.fillStyle = '#fde68a';
-    ctx.font = 'bold 44px sans-serif';
+    ctx.font = `bold 44px ${fontStack}`;
     ctx.textAlign = 'center';
     ctx.fillText('॥ श्री गणेशाय नमः ॥', 540, 180);
 
     // Title / Greeting
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 56px sans-serif';
+    ctx.font = `bold 56px ${fontStack}`;
     ctx.fillText(getGreetingHeader(), 540, 270);
 
     // Date & Day Box
     ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-    ctx.roundRect(140, 330, 800, 130, 30);
+    drawRoundedRect(ctx, 140, 330, 800, 130, 30);
     ctx.fill();
     ctx.fillStyle = '#fef08a';
-    ctx.font = '38px sans-serif';
+    ctx.font = `38px ${fontStack}`;
     ctx.fillText(`${dateString}  •  ${todayMeta.marathiDay}`, 540, 410);
 
     // Deity Banner
     ctx.fillStyle = '#fbbf24';
-    ctx.font = 'bold 46px sans-serif';
+    ctx.font = `bold 46px ${fontStack}`;
     ctx.fillText(`🚩 आजचे पावन आराध्य: ${todayMeta.deity}`, 540, 560);
 
     // Center Sacred Mandala / Om Symbol
-    ctx.font = '160px sans-serif';
+    ctx.font = `160px ${fontStack}`;
     ctx.fillText('🕉️', 540, 760);
 
     // Quote Box
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-    ctx.roundRect(100, 920, 880, 560, 40);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.50)';
+    drawRoundedRect(ctx, 100, 920, 880, 560, 40);
     ctx.fill();
     ctx.strokeStyle = '#d97706';
     ctx.lineWidth = 3;
-    ctx.strokeRect(100, 920, 880, 560);
+    drawRoundedRect(ctx, 100, 920, 880, 560, 40);
+    ctx.stroke();
 
     // Quote text wrapping
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 44px sans-serif';
+    ctx.font = `bold 44px ${fontStack}`;
     ctx.textAlign = 'center';
 
     const words = currentQuote.marathi.split(' ');
@@ -209,27 +227,81 @@ export function DevotionalStatusCard({ currentLang }: DevotionalStatusCardProps)
 
     // Saint attribution
     ctx.fillStyle = '#fde047';
-    ctx.font = 'italic bold 42px sans-serif';
+    ctx.font = `italic bold 42px ${fontStack}`;
     ctx.fillText(`— ${currentQuote.saint}`, 540, y + 100);
 
     // Sender Personalized Name
     if (senderName) {
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 44px sans-serif';
+      ctx.font = `bold 44px ${fontStack}`;
       ctx.fillText(`प्रेषक: ${senderName} 🙏`, 540, 1620);
     }
 
     // Footer Watermark
     ctx.fillStyle = '#fef3c7';
-    ctx.font = '32px sans-serif';
+    ctx.font = `32px ${fontStack}`;
     ctx.fillText('📲 सनातन अमृतधारा (Sanatan Amrutdhara) — भक्ती व संस्कृतीचा पावन संगम', 540, 1790);
 
-    // Trigger Download
-    const dataUrl = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.download = `Sanatan_Amrutdhara_Status_${now.toISOString().split('T')[0]}.png`;
-    link.href = dataUrl;
-    link.click();
+    return canvas;
+  };
+
+  // Download Card as high-resolution PNG using HTML5 Canvas Blob
+  const handleDownloadCard = () => {
+    const canvas = generateStatusCanvas();
+    if (!canvas) return;
+
+    if (canvas.toBlob) {
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `Sanatan_Amrutdhara_Status_${now.toISOString().split('T')[0]}.png`;
+        link.href = blobUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 3000);
+      }, 'image/png');
+    } else {
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = `Sanatan_Amrutdhara_Status_${now.toISOString().split('T')[0]}.png`;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  // Direct 1-Click WhatsApp Status Image Share with Web Share API
+  const handleShareWhatsApp = async () => {
+    const canvas = generateStatusCanvas();
+    const textMsg = `🙏 *${getGreetingHeader()}* 🙏\n\n📅 *${dateString}* (${todayMeta.marathiDay})\n🚩 *आजचे आराध्य:* ${todayMeta.deity}\n\n📜 *संत विचार:*\n_${currentQuote.marathi}_\n— *${currentQuote.saint}*\n\n${senderName ? `🙏 प्रेषक: ${senderName}\n\n` : ''}🪔 *आपला दिवस मंगलमय जावो!*\n📲 सनातन अमृतधारा: https://sanketmh15.github.io/mantrasetu/`;
+
+    // Try native file sharing to WhatsApp Status
+    if (canvas && typeof navigator !== 'undefined' && navigator.share && navigator.canShare && canvas.toBlob) {
+      try {
+        const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/png'));
+        if (blob) {
+          const file = new File([blob], `Sanatan_Status_${now.toISOString().split('T')[0]}.png`, { type: 'image/png' });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: 'सनातन अमृतधारा व्हॉट्सॲप स्टेटस',
+              text: textMsg,
+            });
+            return;
+          }
+        }
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    // Fallback: download card image and open WhatsApp with ready text
+    handleDownloadCard();
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(textMsg)}`;
+    window.open(url, '_blank');
   };
 
   const gradientsList = [

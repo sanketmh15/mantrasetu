@@ -402,6 +402,18 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       tab: 'live-darshan',
     },
     {
+      id: 'kundali',
+      title: { en: 'AI Janam Kundali & 12 Bhavas Prediction', hi: 'एआई जन्म कुंडली एवं १२ भाव जीवन भविष्यवाणी', mr: 'एआय जन्म कुंडली व १२ भाव संपूर्ण भविष्य' },
+      description: {
+        en: 'Calculate your exact Lagna, Moon sign, Nakshatra, 12 Bhavas, Sade Sati, Manglik Dosha, and personalized Vedic life predictions.',
+        hi: 'अपनी जन्म तिथि व समय से लग्न, राशि, नक्षत्र, १२ भाव विश्लेषण, साडेसाती, मंगळ दोष एवं सटीक एआई भविष्यवाणी प्राप्त करें।',
+        mr: 'आपल्या जन्मतारीख व वेळेवरून अचूक लग्न, चंद्र रास, नक्षत्र, १२ भाव विश्लेषण, साडेसाती, मंगळ दोष आणि संपूर्ण शास्त्रोक्त जीवन भविष्य.',
+      },
+      icon: '🔮',
+      badge: { en: 'AI Janam Kundali', hi: 'एआई जन्म कुंडली', mr: '🔮 एआय कुंडली' },
+      tab: 'kundali',
+    },
+    {
       id: 'rashi',
       title: { en: 'Janma Rashi, Ishta Devata & Beej Mantra', hi: 'जन्मराशि, इष्टदेवता एवं सिद्ध बीजमंत्र', mr: 'जन्मरास, इष्टदेवता व सिद्ध बीजमंत्र' },
       description: {

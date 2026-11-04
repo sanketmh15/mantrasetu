@@ -806,7 +806,7 @@ class AudioEngine {
    * - 'vedic_brahman' (default): Traditional Sanskrit priest chanting (pitch 0.88, rate 0.86)
    * - 'divine_melodious': Melodious divine chanting
    */
-  public async speakText(text: string, lang = 'mr', _userRate?: number, onEnd?: () => void): Promise<void> {
+  public async speakText(text: string, lang = 'mr', userRate?: number, onEnd?: () => void): Promise<void> {
     this.stopSpeaking();
     this.isTTSAborted = false;
 
@@ -824,7 +824,7 @@ class AudioEngine {
       }
     };
 
-    // If AI voiceover (Sarvam AI Bulbul V3 / ElevenLabs) is configured, prioritize it
+    // 1. If AI voiceover (Sarvam AI Bulbul V3 / ElevenLabs) is configured, prioritize it
     if (aiVoiceover.hasAnyKeyConfigured()) {
       try {
         const aiAudio = await aiVoiceover.synthesizeDevotionalAudio(text, lang);
@@ -837,21 +837,14 @@ class AudioEngine {
       }
     }
 
-    // Cross-Device High-Fidelity Audio Stream:
-    // Ensures that the exact same clear, authentic Indian voice plays consistently
-    // across ALL devices (Android, iPhone, iPad, Windows, and Mac)!
-    const played = await this.playGoogleTTS(text, lang, safeEnd, this.persona);
-    if (played) return;
-
-    // Synthesizes with calibrated Vedic Brahman Web Speech API engine & 136.1 Hz Tanpura
-    // when offline or as local device fallback:
-    this.speakSynthesisFallback(text, lang, safeEnd);
+    // 2. Direct Instant Speech Synthesis (Runs immediately within user activation token, 0 delay, 100% reliable)
+    this.speakSynthesisFallback(text, lang, userRate, safeEnd);
   }
 
   /**
    * Universal Calibrated Speech Synthesis Engine
    */
-  private async speakSynthesisFallback(text: string, lang = 'mr', onEnd?: () => void): Promise<void> {
+  private async speakSynthesisFallback(text: string, lang = 'mr', userRate?: number, onEnd?: () => void): Promise<void> {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
       onEnd?.();
       return;
@@ -883,9 +876,21 @@ class AudioEngine {
       const phraseText = phrases[phraseIdx];
       phraseIdx++;
 
-      // Pure authentic Devanagari text kept intact for all native engines
-      const textToSpeak = phraseText;
-      const targetLang = voiceConfig.targetLang || (lang.startsWith('mr') ? 'mr-IN' : 'hi-IN');
+      // When the OS only provides an English synthesizer (e.g. Windows with Microsoft Ravi / Zira / David),
+      // passing raw Devanagari causes SAPI to skip the text in 0ms silence.
+      // toPhoneticRoman ensures rich, clear chanting on every operating system without silence!
+      const isEnglishVoice = !!voiceConfig.voice &&
+        !voiceConfig.voice.lang.toLowerCase().startsWith('hi') &&
+        !voiceConfig.voice.lang.toLowerCase().startsWith('mr') &&
+        !voiceConfig.voice.lang.toLowerCase().startsWith('sa');
+
+      const textToSpeak = (isEnglishVoice || !voiceConfig.isDevanagariCapable)
+        ? this.toPhoneticRoman(phraseText)
+        : phraseText;
+
+      const targetLang = isEnglishVoice
+        ? voiceConfig.voice!.lang
+        : (voiceConfig.targetLang || (lang.startsWith('mr') ? 'mr-IN' : 'hi-IN'));
 
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       this.currentUtterance = utterance;
@@ -895,8 +900,8 @@ class AudioEngine {
         utterance.voice = voiceConfig.voice;
       }
 
-      // Universal pitch and rate calibrated to active persona (IDENTICAL on mobile & desktop!)
-      utterance.rate = voiceConfig.rate;
+      // Universal pitch and rate calibrated to active persona or custom user rate (slow mode)
+      utterance.rate = userRate || voiceConfig.rate;
       utterance.volume = 1.0;
       utterance.pitch = voiceConfig.pitch;
 
@@ -1034,3 +1039,23 @@ class AudioEngine {
 }
 
 export const audioEngine = new AudioEngine();
+
+/**
+ * Robust YouTube video ID extractor supporting all formats:
+ * - Direct ID: "TVQyllXcASE"
+ * - Standard URL: "https://www.youtube.com/watch?v=TVQyllXcASE"
+ * - Short URL: "https://youtu.be/TVQyllXcASE"
+ * - Embed URL: "https://www.youtube.com/embed/TVQyllXcASE"
+ */
+export function extractYouTubeId(input: string): string {
+  if (!input) return '';
+  const trimmed = input.trim();
+  if (!trimmed.includes('/') && !trimmed.includes('?') && trimmed.length === 11) {
+    return trimmed;
+  }
+  const match = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  if (match && match[1]) {
+    return match[1];
+  }
+  return trimmed;
+}

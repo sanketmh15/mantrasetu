@@ -13,7 +13,7 @@ import {
   Heart
 } from 'lucide-react';
 import { getDeityAarti, DeityAartiDetail } from '../data/deityAartisData';
-import { audioEngine } from '../utils/audioSynth';
+import { audioEngine, extractYouTubeId } from '../utils/audioSynth';
 import { Language } from '../types';
 
 interface DeityAartiSectionProps {
@@ -142,13 +142,19 @@ export const DeityAartiSection: React.FC<DeityAartiSectionProps> = ({
         <div className="lg:col-span-5 flex flex-col space-y-4">
           {/* 16:9 Responsive YouTube Embed */}
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-lg border border-amber-300/40 dark:border-stone-700 group">
-            <iframe
-              src={`https://www.youtube-nocookie.com/embed/${currentAarti.youtubeId}?rel=0&modestbranding=1`}
-              title={currentAarti.youtubeTitle}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="w-full h-full border-0"
-            />
+            {extractYouTubeId(currentAarti.youtubeId) ? (
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${extractYouTubeId(currentAarti.youtubeId)}?rel=0&modestbranding=1`}
+                title={currentAarti.youtubeTitle}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full border-0"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-stone-400 text-xs">
+                <span>यूट्यूब व्हिडिओ लवकरच जोडला जाईल</span>
+              </div>
+            )}
           </div>
 
           {/* YouTube Video Title Badge */}
@@ -156,16 +162,18 @@ export const DeityAartiSection: React.FC<DeityAartiSectionProps> = ({
             <span className="truncate max-w-[75%] font-medium">
               📺 {currentAarti.youtubeTitle}
             </span>
-            <a
-              href={`https://www.youtube.com/watch?v=${currentAarti.youtubeId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-red-600 dark:text-red-400 font-bold hover:underline shrink-0"
-              title="Open directly in YouTube App"
-            >
-              <span>यूट्यूब ॲप</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+            {extractYouTubeId(currentAarti.youtubeId) && (
+              <a
+                href={`https://www.youtube.com/watch?v=${extractYouTubeId(currentAarti.youtubeId)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-red-600 dark:text-red-400 font-bold hover:underline shrink-0"
+                title="Open directly in YouTube App"
+              >
+                <span>यूट्यूब ॲप</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
           </div>
 
           {/* Quick Action Control Bar */}
